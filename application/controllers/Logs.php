@@ -40,7 +40,7 @@ class Logs extends CI_Controller {
             $start = $post['start'];
             $perpage = $post['length'];
             $order_by['by'] = $post['columns'][$post['order'][0]['column']]['data'];
-            $order_by['sort'] = $post['order'][0]['dira'];
+            $order_by['sort'] = $post['order'][0]['dir'];
             $count_all_records = $this->Logs_model->CountAllLogs();
             $count_filtered_records = $this->Logs_model->CountAllLogs($searchq);
             $records = $this->Logs_model->GetAllLogs($searchq,$order_by,$start,$perpage);
