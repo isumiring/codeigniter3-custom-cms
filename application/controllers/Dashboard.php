@@ -2,6 +2,14 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Dashboard Class
+ * @author ivan lubis <ivan.z.lubis@gmail.com>
+ * @version 3.0
+ * @category Controller
+ * @desc Dashboard Controller
+ * 
+ */
 class Dashboard extends CI_Controller {
 
     /**
@@ -24,3 +32,6 @@ class Dashboard extends CI_Controller {
     }
 
 }
+
+/* End of file Dashboard.php */
+/* Location: ./application/controllers/Dashboard.php */

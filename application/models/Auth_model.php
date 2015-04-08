@@ -3,8 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Auth Model Class
- * @author ivan lubis
- * @version 2.1
+ * @author ivan lubis <ivan.z.lubis@gmail.com>
+ * @version 3.0
  * @category Model
  * @desc authentication model
  * 
@@ -91,4 +91,4 @@ class Auth_model extends CI_Model
     }
 }
 /* End of file Auth_model.php */
-/* Location: ./application/model/Auth_model.php */
+/* Location: ./application/models/Auth_model.php */

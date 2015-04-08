@@ -1,6 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Login Class
+ * @author ivan lubis <ivan.z.lubis@gmail.com>
+ * @version 3.0
+ * @category Controller
+ * @desc Login Controller
+ * 
+ */
 class Login extends CI_Controller {
     
     /**
@@ -27,6 +35,14 @@ class Login extends CI_Controller {
         }
     }
     
+    /**
+     * lougout page
+     */
     public function logout() {
+        $this->session->sess_destroy();
+        redirect('login');
+        exit;
     }
 }
+/* End of file Login.php */
+/* Location: ./application/controllers/Login.php */

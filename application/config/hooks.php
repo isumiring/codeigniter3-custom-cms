@@ -14,18 +14,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $hook['post_controller_constructor'] = array(
     'class'    => 'FAT_Hooks',
     'function' => 'post_construct',
-    'filename' => 'hooks.php',
+    'filename' => 'FAT_Hooks.php',
     'filepath' => 'hooks'
 );
 $hook['post_controller_constructor'] = array(
     'class'    => 'FAT_Hooks',
     'function' => 'autentication',
-    'filename' => 'hooks.php',
+    'filename' => 'FAT_Hooks.php',
     'filepath' => 'hooks'
 );
 $hook['post_controller'] = array(
     'class'    => 'FAT_Hooks',
     'function' => 'view',
-    'filename' => 'hooks.php',
+    'filename' => 'FAT_Hooks.php',
     'filepath' => 'hooks'
 );

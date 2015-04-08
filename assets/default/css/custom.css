@@ -7,3 +7,9 @@
     margin-top: 50% ;
 }
 
+table#dataTables-list thead {
+    font-size: 12px;
+}
+table#dataTables-list tbody {
+    font-size: 11px;
+}

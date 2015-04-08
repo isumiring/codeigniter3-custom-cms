@@ -229,6 +229,33 @@ function adm_sess_userid()
 }
 
 /**
+ * get admin logged info by email session
+ * @return boolean
+ */
+function getAdminLoggedInfo() {
+    $CI = & get_instance();
+    $CI->load->library('session');
+    if ($CI->session->ADM_SESS == '') {
+        return false;
+    } else {
+        $ADM_SESS = $CI->session->ADM_SESS;
+        $sess = $ADM_SESS['admin_email'];
+        $CI->load->database();
+        $data = $CI->db
+                //->select('id_auth_user')
+                ->where('LCASE(email)',strtolower($sess))
+                ->limit(1)
+                ->get('auth_user')
+                ->row_array();
+        if ($data) {
+            return $data;
+        } else {
+            return false;
+        }
+    }
+}
+
+/**
  * retrieve auth user id from session
  * @author ivan lubis
  * @return string admin user id
@@ -237,18 +264,13 @@ function id_auth_user()
 {
     $CI = & get_instance();
     $CI->load->library('session');
-    if ($CI->session->userdata('ADM_SESS') == '') {
+    if ($CI->session->ADM_SESS == '') {
         return false;
     } else {
-        $ADM_SESS = $CI->session->userdata('ADM_SESS');
+        $ADM_SESS = $CI->session->ADM_SESS;
         $sess = $ADM_SESS['admin_email'];
         $CI->load->database();
-        $data = $CI->db
-                ->select('id_auth_user')
-                ->where('LCASE(email)',strtolower($sess))
-                ->limit(1)
-                ->get('auth_user')
-                ->row_array();
+        $data = getAdminLoggedInfo();
         if ($data) {
             return $data['id_auth_user'];
         } else {
@@ -264,12 +286,11 @@ function id_auth_user()
 function is_superadmin() {
     $CI = & get_instance();
     $CI->load->library('session');
-    if ($CI->session->userdata('ADM_SESS') == '') {
+    if ($CI->session->ADM_SESS == '') {
         return FALSE;
     } else {
-        $ADM_SESS = $CI->session->userdata('ADM_SESS');
-        $sess = $ADM_SESS['admin_type'];
-        if ($sess == 'superadmin') {
+        $data = getAdminLoggedInfo();
+        if (isset($data['is_superadmin']) && $data['is_superadmin'] == 1) {
             return TRUE;
         } else {
             return FALSE;

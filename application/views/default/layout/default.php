@@ -18,6 +18,12 @@
         <!-- Timeline CSS -->
         <link href="<?=CSS_URL?>timeline.css" rel="stylesheet"/>
 
+        <!-- DataTables CSS -->
+        <link href="<?=VENDOR_URL?>datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+
+        <!-- DataTables Responsive CSS -->
+        <link href="<?=VENDOR_URL?>datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+
         <!-- Custom CSS -->
         <link href="<?=CSS_URL?>sb-admin-2.css" rel="stylesheet"/>
         <link href="<?=CSS_URL?>animate.css" rel="stylesheet"/>
@@ -32,6 +38,18 @@
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
+
+        <!-- jQuery -->
+        <script src="<?=JS_URL?>jquery.min.js"></script>
+        
+        <!-- DataTables JavaScript -->
+        <script src="<?=VENDOR_URL?>datatables/media/js/jquery.dataTables.min.js"></script>
+        <script src="<?=VENDOR_URL?>datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+        <script type="text/javascript">
+            var token_name = '<?=$this->security->get_csrf_token_name()?>';
+            var token_key = '<?=$this->security->get_csrf_hash()?>';
+        </script>
+        <script src="<?=JS_URL?>custom.js"></script>
 
     </head>
 
@@ -48,7 +66,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?=base_url()?>">SB Admin v2.0</a>
+                    <a class="navbar-brand" href="<?=base_url()?>">CONTENT MANAGEMENT SYSTEM - <?=$site_info['site_name']?></a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -60,12 +78,12 @@
                             <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                            <li><a href="<?=site_url('profile')?>"><i class="fa fa-user fa-fw"></i> User Profile</a>
                             </li>
-                            <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                            <li><a href="<?=site_url('site')?>"><i class="fa fa-gear fa-fw"></i> Site Settings</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                            <li><a href="<?=site_url('logout')?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                             </li>
                         </ul>
                         <!-- /.dropdown-user -->
@@ -80,90 +98,7 @@
                             <li>
                                 <a href="<?=site_url('dashboard')?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                             </li>
-                            <li>
-                                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="flot.html">Flot Charts</a>
-                                    </li>
-                                    <li>
-                                        <a href="morris.html">Morris.js Charts</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-second-level -->
-                            </li>
-                            <li>
-                                <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
-                            </li>
-                            <li>
-                                <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="panels-wells.html">Panels and Wells</a>
-                                    </li>
-                                    <li>
-                                        <a href="buttons.html">Buttons</a>
-                                    </li>
-                                    <li>
-                                        <a href="notifications.html">Notifications</a>
-                                    </li>
-                                    <li>
-                                        <a href="typography.html">Typography</a>
-                                    </li>
-                                    <li>
-                                        <a href="icons.html"> Icons</a>
-                                    </li>
-                                    <li>
-                                        <a href="grid.html">Grid</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-second-level -->
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="#">Second Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Second Level Item</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Third Level <span class="fa arrow"></span></a>
-                                        <ul class="nav nav-third-level">
-                                            <li>
-                                                <a href="#">Third Level Item</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Third Level Item</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Third Level Item</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Third Level Item</a>
-                                            </li>
-                                        </ul>
-                                        <!-- /.nav-third-level -->
-                                    </li>
-                                </ul>
-                                <!-- /.nav-second-level -->
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
-                                    <li>
-                                        <a href="blank.html">Blank Page</a>
-                                    </li>
-                                    <li>
-                                        <a href="login.html">Login Page</a>
-                                    </li>
-                                </ul>
-                                <!-- /.nav-second-level -->
-                            </li>
+                            <?=$left_menu?>
                         </ul>
                     </div>
                     <!-- /.sidebar-collapse -->
@@ -198,9 +133,6 @@
 
         </div>
         <!-- /#wrapper -->
-
-        <!-- jQuery -->
-        <script src="<?=JS_URL?>jquery.min.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="<?=JS_URL?>bootstrap.min.js"></script>
