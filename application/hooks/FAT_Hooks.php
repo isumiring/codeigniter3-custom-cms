@@ -242,50 +242,6 @@ class FAT_Hooks {
     }
     
     /**
-     * get active auth menu
-     * @param int $id_parent
-     * @param int $id_menu
-     * @return int id parent of active menu
-     */
-    private function getActiveMenu($id_parent,$id_menu) {
-        $CI=&get_instance();
-        $CI->load->database();
-        $return = 0;
-        if ($id_parent == 0) {
-            return $id_menu;
-        }
-        $data = $CI->db
-                ->where('id_auth_menu',$id_parent)
-                ->get('auth_menu')
-                ->row_array();
-        if ($data) {
-            $return = $this->getActiveMenu($data['parent_auth_menu'], $data['id_auth_menu']);
-        }
-        return $return;
-    }
-    
-    /**
-     * get auth menu children
-     * @param int $id_parent
-     * @return array data
-     */
-    private function getMenuChildren($id_parent=0) {
-        $CI=&get_instance();
-        $CI->load->database();
-        $id_group = adm_sess_usergroupid();
-        $menus = $CI->db
-                ->where('auth_menu_group.id_auth_group',$id_group)
-                ->where('auth_menu.parent_auth_menu',$id_parent)
-                ->order_by('auth_menu.position','asc')
-                ->order_by('auth_menu.id_auth_menu','asc')
-                ->join('auth_menu','auth_menu.id_auth_menu=auth_menu_group.id_auth_menu','left')
-                ->get('auth_menu_group')
-                ->result_array();
-        
-        return $menus;
-    }
-    
-    /**
      * print auth menu children
      * @param int $id_parent
      * @return string return menu

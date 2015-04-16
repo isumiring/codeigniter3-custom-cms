@@ -301,19 +301,17 @@ function is_superadmin() {
 /**
  * retrieve session of admin user group id
  * @author ivan lubis
- * @return string admin user group id
+ * @return int admin user group id
  */
-function adm_sess_usergroupid()
-{
+function id_auth_group() {
     $CI = & get_instance();
     $CI->load->library('session');
-    if ($CI->session->userdata('ADM_SESS') == '')
-        $sess = 0;
-    else {
-        $ADM_SESS = $CI->session->userdata('ADM_SESS');
-        $sess = $ADM_SESS['admin_id_auth_group'];
+    if ($CI->session->ADM_SESS == '') {
+        return '0';
+    } else {
+        $data = getAdminLoggedInfo();
+        return $data['id_auth_group'];
     }
-    return $sess;
 }
 
 /**
@@ -334,142 +332,6 @@ function adm_is_superadmin($id_user)
         $row = $query->row_array();
         $return = $row['is_superadmin'];
     }
-    return $return;
-}
-
-/**
- *
- * @param int $id_group
- * @return int super admin group status 
- */
-function adm_group_is_superadmin($id_group)
-{
-    $return = 0;
-    $CI = & get_instance();
-    $CI->load->database();
-    $CI->db->where('id_auth_group', $id_group);
-    $CI->db->limit(1);
-    $query = $CI->db->get('auth_group');
-    if ($query->num_rows() > 0) {
-        $row = $query->row_array();
-        $return = $row['is_superadmin'];
-    }
-    return $return;
-}
-
-/**
- * retrieve session of admin user site id
- * @author ivan lubis
- * @return string admin user group id
- */
-function adm_sess_siteid()
-{
-    $CI = & get_instance();
-    $CI->load->library('session');
-    if ($CI->session->userdata('ADM_SESS') == '')
-        $sess = 0;
-    else {
-        $ADM_SESS = $CI->session->userdata('ADM_SESS');
-        $sess = $ADM_SESS['admin_id_site'];
-    }
-    return $sess;
-}
-
-/**
- * retrieve session of admin microsite user id
- * @author ivan lubis
- * @return string admin user id
- */
-function adm_microsite_sess_userid()
-{
-    $CI = & get_instance();
-    $CI->load->library('session');
-    if ($CI->session->userdata('MICROSITE_SESS') == '')
-        $sess = 0;
-    else {
-        $MICROSITE_SESS = $CI->session->userdata('MICROSITE_SESS');
-        $sess = $MICROSITE_SESS['microadmin_id_auth_user'];
-    }
-    return $sess;
-}
-
-/**
- * retrieve session of admin microsite user group id
- * @author ivan lubis
- * @return string admin user group id
- */
-function adm_microsite_sess_usergroupid()
-{
-    $CI = & get_instance();
-    $CI->load->library('session');
-    if ($CI->session->userdata('MICROSITE_SESS') == '')
-        $sess = 0;
-    else {
-        $MICROSITE_SESS = $CI->session->userdata('MICROSITE_SESS');
-        $sess = $MICROSITE_SESS['microadmin_id_auth_group'];
-    }
-    return $sess;
-}
-
-/**
- * retrieve session of admin user site id
- * @author ivan lubis
- * @return string admin user group id
- */
-function adm_microsite_sess_siteid()
-{
-    $CI = & get_instance();
-    $CI->load->library('session');
-    if ($CI->session->userdata('MICROSITE_SESS') == '')
-        $sess = 0;
-    else {
-        $MICROSITE_SESS = $CI->session->userdata('MICROSITE_SESS');
-        $sess = $MICROSITE_SESS['microadmin_id_site'];
-    }
-    return $sess;
-}
-
-/**
- * get administrator folder
- * @return string cms folder
- */
-function getAdminFolder()
-{
-    $CI = & get_instance();
-    $return = $CI->config->item('admin_folder');
-    return $return;
-}
-
-/**
- * get microsite administrator folder
- * @return string microsite cms folder
- */
-function getMicroAdminFolder()
-{
-    $CI = & get_instance();
-    $return = $CI->config->item('micrositeadmin_folder');
-    return $return;
-}
-
-/**
- * sort management
- * @param type $id_menu
- * @param type $urut
- * @param type $id_parents_menu
- * @param type $path_app
- * @param type $sort
- * @return string $return 
- */
-function sort_arrow($id_menu, $urut, $id_parents_menu, $path_app, $sort)
-{
-    if ($sort == 'down') {
-        $img = 'desc.gif';
-    } else {
-        $img = 'asc.gif';
-    }
-    $return = '<a id="sort_' . $sort . '-' . $id_menu . '" class="sort_arrow" onclick="javascript:change_sort(\'' . $urut . '\',\'' . $id_menu . '\',\'' . $id_parents_menu . '\',\'' . $sort . '\',\'' . $path_app . '\')">
-            <img src="' . base_url() . 'assets/images/admin/' . $img . '">
-    </a>';
     return $return;
 }
 
@@ -496,34 +358,6 @@ function auth_admin()
                 $CI->session->unset_userdata('ADM_SESS');
                 $CI->session->set_userdata('tmp_login_redirect', current_url());
                 redirect(getAdminFolder() . '/login');
-            }
-        }
-    }
-}
-
-/**
- * check admin microsite session authorization, return true or false 
- * @author ivan lubis
- * @return redirect to microsite cms login page
- */
-function auth_microsite_admin()
-{
-    $CI = & get_instance();
-    $CI->load->library('session');
-    if ($CI->session->userdata('MICROSITE_SESS') == '') {
-        $CI->session->set_userdata('tmp_login_site_redirect', current_url());
-        redirect(getMicroAdminFolder() . '/login');
-    } else {
-        $sess = $CI->session->userdata('MICROSITE_SESS');
-        if (base_url() != $sess['microadmin_url']) {
-            $CI->session->unset_userdata('MICROSITE_SESS');
-            $CI->session->set_userdata('tmp_login_site_redirect', current_url());
-            redirect(getMicroAdminFolder() . '/login');
-        } else {
-            if ($_SERVER['REMOTE_ADDR'] != $sess['microadmin_ip']) {
-                $CI->session->unset_userdata('MICROSITE_SESS');
-                $CI->session->set_userdata('tmp_login_site_redirect', current_url());
-                redirect(getMicroAdminFolder() . '/login');
             }
         }
     }

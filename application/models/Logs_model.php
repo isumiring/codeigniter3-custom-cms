@@ -75,6 +75,19 @@ class Logs_model extends CI_Model
                 ->count_all_results();
         return $total_records;
     }
+    
+    /**
+     * delete record
+     * @param mixed $ids array or int of id
+     */
+    function DeleteRecords($ids) {
+        if (is_array($ids)) {
+            $this->db->where_in('id_logs',$ids);
+        } else {
+            $this->db->where('id_logs',$ids);
+        }
+        $this->db->delete('logs');
+    }
 }
 /* End of file Logs_model.php */
 /* Location: ./application/models/Logs_model.php */

@@ -10,15 +10,8 @@
         </tr>
     </thead>
 </table>
-
+<br/><br/>
 <script type="text/javascript">
-    var columns = [
-        { 'data':'username' }, 
-        { 'data':'email' }, 
-        { 'data':'auth_group' }, 
-        { 'data':'action' }, 
-        { 'data':'desc','searchable':false,'sortable':false }, 
-        { 'data':'created','searchable':false }
-    ];
+    var columns = <?=json_encode($data_field)?>;
     list_dataTables('#dataTables-list','<?= $url_data ?>',columns);
 </script>

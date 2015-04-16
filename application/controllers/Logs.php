@@ -21,12 +21,36 @@ class Logs extends CI_Controller {
         $this->load->model('Logs_model');
         $this->class_path_name = $this->router->fetch_class();
     }
+    
     /**
      * index page
      */
     public function index() {
         $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
+        $this->data['data_field'] = array(
+            array(
+                'data'=>'username',
+            ),
+            array(
+                'data'=>'email',
+            ),
+            array(
+                'data'=>'auth_group',
+            ),
+            array(
+                'data'=>'action',
+            ),
+            array(
+                'data'=>'desc',
+                'searchable'=>false,
+                'sortable'=>false,
+            ),
+            array(
+                'data'=>'created',
+                'searchable'=>false,
+            )
+        );
     }
     
     /**
@@ -50,26 +74,20 @@ class Logs extends CI_Controller {
             $return['recordsFiltered'] = $count_filtered_records;
             $return['data'] = array();
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = 'row_'.$record['id'];
-                //$return['data'][$i]['DT_RowData'] = array('pkey'=>(int)$record['id']);
+                $return['data'][$row]['DT_RowId'] = $record['id'];
                 $return['data'][$row]['username'] = $record['username'];
                 $return['data'][$row]['email'] = $record['email'];
                 $return['data'][$row]['auth_group'] = $record['auth_group'];
                 $return['data'][$row]['action'] = $record['action'];
                 $return['data'][$row]['desc'] = $record['desc'];
                 $return['data'][$row]['created'] = custDateFormat($record['created'],'d M Y H:i:s');
-                /*$return['data'][$row] = array(
-                    $record['username'],
-                    $record['name'],
-                    $record['email'],
-                    $record['auth_group'],
-                    $record['action'],
-                    $record['desc'],
-                    custDateFormat($record['create_date'],'d M Y H:i:s'),
-                );*/
             }
-            echo json_encode($return);
+            header('Content-type: application/json');
+            exit (
+                json_encode($return)
+            );
         }
+        redirect($this->class_path_name);
     }
 }
 /* End of file Admin.php */

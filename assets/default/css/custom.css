@@ -13,3 +13,13 @@ table#dataTables-list thead {
 table#dataTables-list tbody {
     font-size: 11px;
 }
+table#dataTables-list tbody tr.selected {
+    background-color: #ccc;
+}
+table#dataTables-list tbody tr td.details-control {
+    cursor: pointer;
+    text-align: center;
+}
+.panel-body form .checkbox, .radio {
+    margin-top: 0;
+}

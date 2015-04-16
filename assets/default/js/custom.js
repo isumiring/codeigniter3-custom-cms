@@ -147,8 +147,9 @@ function list_data_table(element,url,perpage,columns) {
 
 function list_dataTables(element,url,columns,sort) {
     $(document).ready(function () {
+        var selected = [];
         var default_sort = (sort) ? sort : $(element+' thead th.default_sort').index(element+' thead th');
-        $(element).DataTable({
+        var DTTable = $(element).DataTable({
             "processing": true,
             "serverSide": true,
             /*"ajax": $.fn.dataTable.pipeline({
@@ -162,9 +163,58 @@ function list_dataTables(element,url,columns,sort) {
                     before.setRequestHeader(token_name, token_key);
                 }
             },
+            "rowCallback": function( row, data ) {
+                if ( $.inArray(data.DT_RowId, selected) !== - 1) {
+                    $(row).addClass('selected');
+                }
+            },
             "columns":columns,
             "order":[[default_sort,"desc"]]
         });
-        //datatable.columns('.default_sort').order('desc');
+        // selected row
+        $(element+' tbody').on('click', 'tr', function () {
+            var id = this.id;
+            var index = $.inArray(id, selected);
+
+            if ( index === -1 ) {
+                selected.push( id );
+            } else {
+                selected.splice( index, 1 );
+            }
+            $("#delete-record-field").val(selected);
+
+            $(this).toggleClass('selected');
+        });
+        // edit record
+        $(element+' tbody').on('click', 'td.details-control', function () {
+            var tr = this.closest('tr');
+            var id = tr.id;
+            window.location.href = current_ctrl+'detail/'+id;
+        });
+        // delete record
+        $(document).on('click', '#delete-record', function () {
+            if (selected.valueOf() != '') {
+                var conf = confirm('Are You sure want to delete this record(s)?');
+                if (conf) {
+                    $.ajax({
+                        url:current_ctrl+'delete',
+                        type:'post',
+                        data:'ids='+selected,
+                        dataType:'json'
+                    }).
+                    done(function(data) {
+                        if (data['success']) {
+                            $(".flash_message").html(data['success']);
+                            $(element+' tbody tr.selected').remove();
+                            DTTable.draw();
+                        }
+                        if (data['error']) {
+                            $(".flash_message").html(data['error']);
+                        }
+                    })
+                    ;
+                }
+            }
+        });
     });
 }

@@ -46,6 +46,10 @@
         <script src="<?=VENDOR_URL?>datatables/media/js/jquery.dataTables.min.js"></script>
         <script src="<?=VENDOR_URL?>datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
         <script type="text/javascript">
+            var base_url = '<?= base_url() ?>';
+            var current_ctrl = '<?= current_controller() ?>';
+            var current_url = '<?= current_url() ?>';
+            var assets_url = '<?= ASSETS_URL ?>';
             var token_name = '<?=$this->security->get_csrf_token_name()?>';
             var token_key = '<?=$this->security->get_csrf_hash()?>';
         </script>

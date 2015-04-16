@@ -23,7 +23,7 @@ class Admin_model extends CI_Model
      * get all admin data
      * @return array data
      */
-    function GetAllAdmin($search,$start,$perpage) {
+    function GetAllAdminData($search,$start,$perpage) {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
@@ -126,6 +126,15 @@ class Admin_model extends CI_Model
     function UpdateRecord($id,$param) {
         $this->db->where('id_auth_user',$id);
         $this->db->update('auth_user',$param);
+    }
+    
+    /**
+     * delete record
+     * @param int $id
+     */
+    function DeleteRecord($id) {
+        $this->db->where('id_auth_user',$id);
+        $this->db->delete('auth_user');
     }
     
     /**
