@@ -17,7 +17,7 @@
 
         <!-- Timeline CSS -->
         <link href="<?=CSS_URL?>timeline.css" rel="stylesheet"/>
-
+        
         <!-- DataTables CSS -->
         <link href="<?=VENDOR_URL?>datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 
@@ -27,6 +27,7 @@
         <!-- Custom CSS -->
         <link href="<?=CSS_URL?>sb-admin-2.css" rel="stylesheet"/>
         <link href="<?=CSS_URL?>animate.css" rel="stylesheet"/>
+        <link href="<?=VENDOR_URL?>jasny-bootstrap/css/jasny-bootstrap.min.css" rel="stylesheet"/>
         <link href="<?=CSS_URL?>custom.css" rel="stylesheet"/>
 
         <!-- Custom Fonts -->
@@ -42,8 +43,10 @@
         <!-- jQuery -->
         <script src="<?=JS_URL?>jquery.min.js"></script>
         
-        <!-- DataTables JavaScript -->
-        <script src="<?=VENDOR_URL?>datatables/media/js/jquery.dataTables.min.js"></script>
+        <!-- DataTables JavaScript --
+        <script src="<?=VENDOR_URL?>datatables/media/js/jquery.dataTables.min.js"></script>-->
+        
+        <script type="text/javascript" charset="utf8" src="<?=VENDOR_URL?>datatables/media/js/jquery.dataTables.min.js"></script>
         <script src="<?=VENDOR_URL?>datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
         <script type="text/javascript">
             var base_url = '<?= base_url() ?>';
@@ -53,6 +56,7 @@
             var token_name = '<?=$this->security->get_csrf_token_name()?>';
             var token_key = '<?=$this->security->get_csrf_hash()?>';
         </script>
+        <script src="<?=VENDOR_URL?>jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
         <script src="<?=JS_URL?>custom.js"></script>
 
     </head>
@@ -128,6 +132,14 @@
                     </ol>
                     <!-- /.row -->
                     
+                    <!-- /.flash-message -->
+                    <div class="flash-message">
+                        <?php if (isset($flash_message)) {
+                            echo $flash_message;
+                        }
+                        ?>
+                    </div><!-- /.flash-message -->
+                    
                     <?=$content?>
                     
                 </div>
@@ -137,6 +149,11 @@
 
         </div>
         <!-- /#wrapper -->
+        
+        <!-- /#modal -->
+        <div class="modal fade" id="dynamic-modal" tabindex="-1" role="dialog" aria-labelledby="dynamicModalLabel" aria-hidden="true">
+            
+        </div><!-- /#modal -->
 
         <!-- Bootstrap Core JavaScript -->
         <script src="<?=JS_URL?>bootstrap.min.js"></script>
@@ -146,6 +163,14 @@
 
         <!-- Custom Theme JavaScript -->
         <script src="<?=JS_URL?>sb-admin-2.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $("#dynamic-modal").on('hidden.bs.modal', function(e) {
+                    e.preventDefault();
+                    $("#dynamic-modal").html('');
+                });
+            });
+        </script>
 
     </body>
 

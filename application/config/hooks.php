@@ -19,7 +19,7 @@ $hook['post_controller_constructor'] = array(
 );
 $hook['post_controller_constructor'] = array(
     'class'    => 'FAT_Hooks',
-    'function' => 'autentication',
+    'function' => 'authentication',
     'filename' => 'FAT_Hooks.php',
     'filepath' => 'hooks'
 );

@@ -1,5 +1,12 @@
 <div class="row">
     <div class="col-lg-12">
+        <div class="form-message">
+            <?php 
+            if (isset($form_message)) {
+                echo $form_message;
+            }
+            ?>
+        </div>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <?=$page_title?> Form
@@ -46,8 +53,8 @@
                                 <input class="form-control" name="email" id="name" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
                             </div>
                             <div class="form-group">
-                                <label for="address">Address</label>
-                                <textarea class="form-control" rows="3" id="address" name="address"><?=(isset($post['address'])) ? $post['address'] : ''?></textarea>
+                                <label for="alamat">Address</label>
+                                <textarea class="form-control" rows="3" id="alamat" name="alamat"><?=(isset($post['alamat'])) ? $post['alamat'] : ''?></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
@@ -73,6 +80,25 @@
                                 </div>
                             </div>
                             <?php endif; ?>
+                            <div class="form-group">
+                                <label for="image">Image</label>
+                                <div class="fileinput fileinput-new" data-provides="fileinput">
+                                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$post['image'])): ?>
+                                            <img src="<?=RELATIVE_UPLOAD_DIR.'admin/'.$post['image']?>" id="post-image" />
+                                            <span class="btn btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">Delete</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                    <div>
+                                        <span class="btn btn-default btn-file">
+                                            <span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span>
+                                            <input type="file" name="image">
+                                        </span>
+                                        <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -90,3 +116,34 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
+
+<script type="text/javascript">
+    $(function() {
+        <?php if (isset($post['id_auth_user'])): ?>
+        $("#delete-picture").click(function() {
+            var self = $(this);
+            var id = self.attr('data-id');
+            $.ajax({
+                url:'<?=$delete_picture_url?>',
+                type:'post',
+                data:'id='+id,
+                dataType:'json',
+                beforeSend: function() {
+                    self.attr('disabled',true);
+                }
+            }).always(function() {
+                self.removeAttr('disabled');
+            }).done(function(data) {
+                if (data['error'])  {
+                    alert(data['error']);
+                }
+                if (data['success']) {
+                    alert(data['success']);
+                    $("#post-image").remove();
+                    self.remove();
+                }
+            });
+        });
+        <?php endif; ?>
+    });
+</script>

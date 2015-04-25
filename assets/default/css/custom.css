@@ -23,3 +23,10 @@ table#dataTables-list tbody tr td.details-control {
 .panel-body form .checkbox, .radio {
     margin-top: 0;
 }
+.error {
+    color: red;
+}
+/* overide class input file image */
+.fileinput {
+    display: block ;
+}

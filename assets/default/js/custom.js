@@ -3,126 +3,27 @@
  * this library is required jquery and other library
  * 
  */
-function list_data_table(element,url,perpage,columns) {
-    //
-    // Pipelining function for DataTables. To be used to the `ajax` option of DataTables
-    //
-    $.fn.dataTable.pipeline = function (opts) {
-        // Configuration options
-        var conf = $.extend({
-            pages: perpage, // number of pages to cache
-            url: url, // script url
-            data: null, // function or object with parameters to send to the server
-            // matching how `ajax.data` works in DataTables
-            method: 'POST' // Ajax HTTP method
-        }, opts);
-
-        // Private variables for storing the cache
-        var cacheLower = -1;
-        var cacheUpper = null;
-        var cacheLastRequest = null;
-        var cacheLastJson = null;
-
-        return function (request, drawCallback, settings) {
-            var ajax = false;
-            var requestStart = request.start;
-            var drawStart = request.start;
-            var requestLength = request.length;
-            var requestEnd = requestStart + requestLength;
-
-            if (settings.clearCache) {
-                // API requested that the cache be cleared
-                ajax = true;
-                settings.clearCache = false;
-            }
-            else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
-                // outside cached data - need to make a request
-                ajax = true;
-            }
-            else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order) ||
-                    JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns) ||
-                    JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)
-                    ) {
-                // properties changed (ordering, columns, searching)
-                ajax = true;
-            }
-
-            // Store the request for checking next time around
-            cacheLastRequest = $.extend(true, {}, request);
-
-            if (ajax) {
-                // Need data from the server
-                if (requestStart < cacheLower) {
-                    requestStart = requestStart - (requestLength * (conf.pages - 1));
-
-                    if (requestStart < 0) {
-                        requestStart = 0;
-                    }
-                }
-
-                cacheLower = requestStart;
-                cacheUpper = requestStart + (requestLength * conf.pages);
-
-                request.start = requestStart;
-                request.length = requestLength * conf.pages;
-
-                // Provide the same `data` options as DataTables.
-                if ($.isFunction(conf.data)) {
-                    // As a function it is executed with the data object as an arg
-                    // for manipulation. If an object is returned, it is used as the
-                    // data object to submit
-                    var d = conf.data(request);
-                    if (d) {
-                        $.extend(request, d);
-                    }
-                }
-                else if ($.isPlainObject(conf.data)) {
-                    // As an object, the data given extends the default
-                    $.extend(request, conf.data);
-                }
-
-                settings.jqXHR = $.ajax({
-                    "type": conf.method,
-                    "url": conf.url,
-                    "data": request,
-                    "dataType": "json",
-                    "cache": false,
-                    "success": function (json) {
-                        cacheLastJson = $.extend(true, {}, json);
-
-                        if (cacheLower != drawStart) {
-                            json.data.splice(0, drawStart - cacheLower);
-                        }
-                        json.data.splice(requestLength, json.data.length);
-
-                        drawCallback(json);
-                    }
-                });
-            }
-            else {
-                json = $.extend(true, {}, cacheLastJson);
-                json.draw = request.draw; // Update the echo for each response
-                json.data.splice(0, requestStart - cacheLower);
-                json.data.splice(requestLength, json.data.length);
-
-                drawCallback(json);
-            }
-        };
-    };
-
-    // Register an API method that will empty the pipelined data, forcing an Ajax
-    // fetch on the next draw (i.e. `table.clearPipeline().draw()`)
-    $.fn.dataTable.Api.register('clearPipeline()', function () {
-        return this.iterator('table', function (settings) {
-            settings.clearCache = true;
-        });
-    });
-    
-    //
-    // DataTables initialisation
-    //
+function list_dataTables(element,url) {
     $(document).ready(function () {
-        var table = $(element).DataTable({
+        var selected = [];
+        var sort_field = ($(element+' thead th.default_sort').index(element+' thead th') > 0 ) ? $(element+' thead th.default_sort').index(element+' thead th') : 1;
+        var sort_by = ($(element+' thead th.default_sort').index(element+' thead th') > 0 ) ? "desc" : "asc";
+        var colom = [];
+        var i=0;
+        $(element+' thead th').each(function() {
+            var edit = $(this).data('edit');
+            var view = $(this).data('view');
+            colom[i] = {
+                'data':(typeof $(this).data('name') === 'undefined') ? null : $(this).data('name'),
+                'name':(typeof $(this).data('name') === 'undefined') ? null : $(this).data('name'),
+                'searchable':(typeof $(this).data('searchable') === 'undefined') ? true : $(this).data('searchable'),
+                'sortable':(typeof $(this).data('searchable') === 'undefined') ? true : $(this).data('searchable'),
+                'className':(typeof $(this).data('classname') === 'undefined') ? null : $(this).data('classname')
+            };
+            i++;
+        });
+        //console.log(colom);
+        var DTTable = $(element).DataTable({
             "processing": true,
             "serverSide": true,
             /*"ajax": $.fn.dataTable.pipeline({
@@ -133,44 +34,25 @@ function list_data_table(element,url,perpage,columns) {
                 "url": url,
                 "type": "POST"
             },
-            "columns":columns
-        });
-        $(element+' tbody').on( 'click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-
-        $('#button').click( function () {
-            alert( table.rows('.selected').data().length +' row(s) selected' );
-        });
-    });
-}
-
-function list_dataTables(element,url,columns,sort) {
-    $(document).ready(function () {
-        var selected = [];
-        var default_sort = (sort) ? sort : $(element+' thead th.default_sort').index(element+' thead th');
-        var DTTable = $(element).DataTable({
-            "processing": true,
-            "serverSide": true,
-            /*"ajax": $.fn.dataTable.pipeline({
-                url: url,
-                pages: perpage // number of pages to cache
-            })*/
-            "ajax": {
-                "url": url,
-                "type": "POST",
-                "beforeSend": function(before) {
-                    before.setRequestHeader(token_name, token_key);
-                }
-            },
             "rowCallback": function( row, data ) {
                 if ( $.inArray(data.DT_RowId, selected) !== - 1) {
                     $(row).addClass('selected');
                 }
             },
-            "columns":columns,
-            "order":[[default_sort,"desc"]]
+            "columns":colom,
+            "order":[[sort_field,sort_by]]
         });
+        /*
+        // edit record
+        //$(element+' tbody').on('click', 'td.details-control', function () {
+        $(element+' tbody').on('click', 'td.details-control span', function () {
+            var selfspan = $(this);
+            var selfurl = selfspan.data('url');
+            var tr = this.closest('tr');
+            var id = tr.id;
+            window.location.href = current_ctrl+selfurl+'/'+id;
+        });
+        */
         // selected row
         $(element+' tbody').on('click', 'tr', function () {
             var id = this.id;
@@ -185,12 +67,6 @@ function list_dataTables(element,url,columns,sort) {
 
             $(this).toggleClass('selected');
         });
-        // edit record
-        $(element+' tbody').on('click', 'td.details-control', function () {
-            var tr = this.closest('tr');
-            var id = tr.id;
-            window.location.href = current_ctrl+'detail/'+id;
-        });
         // delete record
         $(document).on('click', '#delete-record', function () {
             if (selected.valueOf() != '') {
@@ -204,12 +80,12 @@ function list_dataTables(element,url,columns,sort) {
                     }).
                     done(function(data) {
                         if (data['success']) {
-                            $(".flash_message").html(data['success']);
+                            $(".flash-message").html(data['success']);
                             $(element+' tbody tr.selected').remove();
                             DTTable.draw();
                         }
                         if (data['error']) {
-                            $(".flash_message").html(data['error']);
+                            $(".flash-message").html(data['error']);
                         }
                     })
                     ;

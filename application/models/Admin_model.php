@@ -20,49 +20,88 @@ class Admin_model extends CI_Model
     }
     
     /**
-     * get all admin data
+     * get group data
      * @return array data
      */
-    function GetAllAdminData($search,$start,$perpage) {
+    function GetGroups() {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
-        if ($search != '') {
-            $this->db
-                ->group_start()
-                    ->like('LCASE(username)', strtolower($search))
-                    ->or_like('LCASE(name)', strtolower($search))
-                    ->or_like('LCASE(email)', strtolower($search))
-                    ->or_like('LCASE(auth_group)', strtolower($search))
-                ->group_end();
+        $data = $this->db
+                ->order_by('auth_group','asc')
+                ->get('auth_group')
+                ->result_array();
+        
+        return $data;
+    }
+    
+    /**
+     * get all admin data
+     * @param string $param
+     * @return array data
+     */
+    function GetAllAdminData($param=array()) {
+        if (!is_superadmin()) {
+            $this->db->where('is_superadmin',0);
+        }
+        if (isset($param['search_value'])) {
+            $this->db->group_start();
+            $i=0;
+            foreach ($param['search_field'] as $row => $val) {
+                if ($val['searchable'] == 'true') {
+                    if ($i==0) {
+                        $this->db->like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                    } else {
+                        $this->db->or_like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                    }
+                    $i++;
+                }
+            }
+            $this->db->group_end();
+        }
+        if (isset($param['row_from']) && isset($param['length'])) {
+            $this->db->limit($param['length'],$param['row_from']);
+        }
+        if (isset($param['order_field'])) {
+            if (isset($param['order_sort'])) {
+                $this->db->order_by($param['order_field'],$param['order_sort']);
+            } else {
+                $this->db->order_by($param['order_field'],'desc');
+            }
+        } else {
+            $this->db->order_by('id','desc');
         }
         $data = $this->db
-                ->select('*,id_auth_user as id')
-                ->from('auth_user')
+                ->select('auth_user.*,auth_group.auth_group,id_auth_user as id')
                 ->join('auth_group','auth_group.id_auth_group=auth_user.id_auth_group','left')
-                ->order_by('id','desc')
-                ->limit($perpage,$start)
-                ->get()
+                ->get('auth_user')
                 ->result_array();
         return $data;
     }
     
     /**
      * count records
-     * @param string $search
+     * @param string $param
      * @return int total records
      */
-    function CountAllAdmin($search='') {
+    function CountAllAdmin($param=array()) {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
-        if ($search != '') {
-            $this->db->group_start()
-                    ->like('LCASE(username)', strtolower($search))
-                    ->or_like('LCASE(name)', strtolower($search))
-                    ->or_like('LCASE(email)', strtolower($search))
-                    ->or_like('LCASE(auth_group)', strtolower($search))
-                ->group_end();
+        if (is_array($param) && isset($param['search_value'])) {
+            $this->db->group_start();
+            $i=0;
+            foreach ($param['search_field'] as $row => $val) {
+                if ($val['searchable'] == 'true') {
+                    if ($i==0) {
+                        $this->db->like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                    } else {
+                        $this->db->or_like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                    }
+                    $i++;
+                }
+            }
+            $this->db->group_end();
         }
         $total_records = $this->db
                 ->from('auth_user')
@@ -80,29 +119,8 @@ class Admin_model extends CI_Model
         $data = $this->db
                 ->where('id_auth_user',$id)
                 ->limit(1)
-                ->Get('auth_user')
+                ->get('auth_user')
                 ->row_array();
-        
-        return $data;
-    }
-    
-    /**
-     * Get all admin group
-     * @return array data
-     */
-    function GetAdminGroup() {
-        if (is_superadmin()) {
-            $data = $this->db
-                    ->order_by('auth_group','asc')
-                    ->Get('auth_group')
-                    ->result_array();
-        } else {
-            $data = $this->db
-                    ->where('is_superadmin',0)
-                    ->order_by('auth_group','asc')
-                    ->Get('auth_group')
-                    ->result_array();
-        }
         
         return $data;
     }
@@ -147,9 +165,11 @@ class Admin_model extends CI_Model
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=',$id);
         }
-        $this->db->where('LCASE(email)',strtolower($email));
-        $query = $this->db->Get('auth_user');
-        if ($query->num_rows()>0) {
+        $count_records = $this->db
+                ->from('auth_user')
+                ->where('LCASE(email)',strtolower($email))
+                ->count_all_results();
+        if ($count_records>0) {
             return FALSE;
         } else {
             return TRUE;
@@ -166,9 +186,11 @@ class Admin_model extends CI_Model
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=',$id);
         }
-        $this->db->where('username',$username);
-        $query = $this->db->Get('auth_user');
-        if ($query->num_rows()>0) {
+        $count_records = $this->db
+                ->from('auth_user')
+                ->where('username',$username)
+                ->count_all_results();
+        if ($count_records>0) {
             return FALSE;
         } else {
             return TRUE;

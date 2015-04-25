@@ -1,24 +1,26 @@
+
 <table class="table table-striped table-bordered table-hover" id="dataTables-list">
     <thead>
         <tr>
-            <th></th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Group</th>
-            <th class="default_sort">Create Date</th>
+            <th data-searchable="false" data-orderable="false" data-name="actions" data-classname="text-center"></th>
+            <th data-name="username">Username</th>
+            <th data-name="name">Name</th>
+            <th data-name="email">Email</th>
+            <th data-name="auth_group">Group</th>
+            <th class="default_sort" data-name="create_date" data-searchable="false">Create Date</th>
         </tr>
     </thead>
 </table>
 
+<br/><br/>
 <input type="hidden" id="delete-record-field"/>
 <div class="row">
-    <div class="col-md-2 col-md-offset-10">
-        <button type="button" class="btn btn-danger btn-block" id="delete-record">Delete</button>
+    <div class="col-md-4 col-md-offset-8 text-right">
+        <a href="<?=$add_url?>" class="btn btn-success">Add</a>
+        <button type="button" class="btn btn-danger" id="delete-record">Delete</button>
     </div>
 </div>
 <br/><br/>
 <script type="text/javascript">
-    var columns = <?=json_encode($data_field)?>;
-    list_dataTables('#dataTables-list','<?= $url_data ?>',columns);
+    list_dataTables('#dataTables-list','<?= $url_data ?>');
 </script>

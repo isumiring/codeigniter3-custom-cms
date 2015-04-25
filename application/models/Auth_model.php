@@ -38,6 +38,7 @@ class Auth_model extends CI_Model
                 } else {
                     redirect();
                 }
+                return;
             }
             // end of testing dev
             $user_data = $this->db->query("SELECT * FROM " . $this->db->dbprefix('auth_user') . " WHERE LCASE(username) = ?", array($username))->row_array();
@@ -48,7 +49,6 @@ class Auth_model extends CI_Model
                         'admin_id_auth_group' => $user_data['id_auth_group'],
                         'admin_id_auth_user' => md5plus($user_data['id_auth_user']),
                         'admin_email' => $user_data['email'],
-                        'admin_type' => ($user_data['is_superadmin']) ? 'superadmin' : 'admin',
                         'admin_ip' => $_SERVER['REMOTE_ADDR'],
                         'admin_url' => base_url(),
                         'admin_token'=>$this->security->get_csrf_hash(),
@@ -64,8 +64,8 @@ class Auth_model extends CI_Model
                         'desc' => 'Login:succeed; IP:' . $_SERVER['REMOTE_ADDR'] . '; username:' . $username . ';',
                     );
                     insert_to_log($data);
-                    if ($this->session->userdata('tmp_login_redirect') != '') {
-                        redirect($this->session->userdata('tmp_login_redirect'));
+                    if (isset($_SESSION['tmp_login_redirect'])) {
+                        redirect($_SESSION['tmp_login_redirect']);
                     } else {
                         redirect('dashboard');
                     }
