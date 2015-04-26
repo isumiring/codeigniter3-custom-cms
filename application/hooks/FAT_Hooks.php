@@ -1,5 +1,14 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * HOOKS Class
+ * @author ivan lubis <ivan.z.lubis@gmail.com>
+ * @version 3.0
+ * @category Hook
+ * @desc hook class that load before and after the controller
+ * 
+ */
 class FAT_Hooks {
     
     function post_construct() {
@@ -38,7 +47,7 @@ class FAT_Hooks {
                 }
             } else {
                 $sess = $_SESSION['ADM_SESS'];
-                if (base_url() != $sess['admin_url'] || /*$sess['admin_token'] != $CI->security->get_csrf_hash() || */$_SERVER['REMOTE_ADDR'] != $sess['admin_ip']) {
+                if (base_url() != $sess['admin_url'] || $sess['admin_token'] != $CI->security->get_csrf_hash() || $_SERVER['REMOTE_ADDR'] != $sess['admin_ip']) {
                     session_destroy();
                     if ($CI->input->is_ajax_request()) {
                         $CI->session->set_userdata('tmp_login_redirect','dashboard');
@@ -192,7 +201,7 @@ class FAT_Hooks {
      */
     private function MenusData($id_parent=0) {
         $i=0;
-        $id_group = 1;
+        $id_group = id_auth_group();
         $CI =& get_instance();
         $CI->load->database();
         $data = $CI->db

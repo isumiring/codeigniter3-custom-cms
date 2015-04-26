@@ -6,10 +6,14 @@
 function list_dataTables(element,url) {
     $(document).ready(function () {
         var selected = [];
-        var sort_field = ($(element+' thead th.default_sort').index(element+' thead th') > 0 ) ? $(element+' thead th.default_sort').index(element+' thead th') : 1;
-        var sort_by = ($(element+' thead th.default_sort').index(element+' thead th') > 0 ) ? "desc" : "asc";
+        var sort = [];
+        if ($(element+' thead th.default_sort').index(element+' thead th') > 0) {
+            sort.push([$(element+' thead th.default_sort').index(element+' thead th'),"desc"]);
+        }
         var colom = [];
         var i=0;
+        var objToken = {};
+        objToken[token_name] = token_key
         $(element+' thead th').each(function() {
             var edit = $(this).data('edit');
             var view = $(this).data('view');
@@ -17,7 +21,7 @@ function list_dataTables(element,url) {
                 'data':(typeof $(this).data('name') === 'undefined') ? null : $(this).data('name'),
                 'name':(typeof $(this).data('name') === 'undefined') ? null : $(this).data('name'),
                 'searchable':(typeof $(this).data('searchable') === 'undefined') ? true : $(this).data('searchable'),
-                'sortable':(typeof $(this).data('searchable') === 'undefined') ? true : $(this).data('searchable'),
+                'sortable':(typeof $(this).data('orderable') === 'undefined') ? true : $(this).data('orderable'),
                 'className':(typeof $(this).data('classname') === 'undefined') ? null : $(this).data('classname')
             };
             i++;
@@ -32,7 +36,8 @@ function list_dataTables(element,url) {
             })*/
             "ajax": {
                 "url": url,
-                "type": "POST"
+                "type": "POST",
+                "data": objToken
             },
             "rowCallback": function( row, data ) {
                 if ( $.inArray(data.DT_RowId, selected) !== - 1) {
@@ -40,7 +45,7 @@ function list_dataTables(element,url) {
                 }
             },
             "columns":colom,
-            "order":[[sort_field,sort_by]]
+            "order":sort
         });
         /*
         // edit record
@@ -70,12 +75,15 @@ function list_dataTables(element,url) {
         // delete record
         $(document).on('click', '#delete-record', function () {
             if (selected.valueOf() != '') {
+                console.log(objToken);
+                var post_delete = [{name:"ids",value:selected}];
+                post_delete.push({name:token_name,value:token_key});
                 var conf = confirm('Are You sure want to delete this record(s)?');
                 if (conf) {
                     $.ajax({
                         url:current_ctrl+'delete',
                         type:'post',
-                        data:'ids='+selected,
+                        data:post_delete,
                         dataType:'json'
                     }).
                     done(function(data) {

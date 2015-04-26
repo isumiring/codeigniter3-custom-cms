@@ -37,8 +37,10 @@ class Admin extends CI_Controller {
             $post = $this->input->post();
             $param['search_value'] = $post['search']['value'];
             $param['search_field'] = $post['columns'];
-            $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-            $param['order_sort'] = $post['order'][0]['dir'];
+            if (isset($post['order'])) {
+                $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
+                $param['order_sort'] = $post['order'][0]['dir'];
+            }
             $param['row_from'] = $post['start'];
             $param['length'] = $post['length'];
             $count_all_records = $this->Admin_model->CountAllAdmin();
@@ -223,6 +225,11 @@ class Admin extends CI_Controller {
                                 break;
                             } else {
                                 if (is_superadmin()) {
+                                    if ($record['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$record['image'])) {
+                                        unlink(UPLOAD_DIR.'admin/'.$record['image']);
+                                        @unlink(UPLOAD_DIR.'admin/tmb_'.$record['image']);
+                                        @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
+                                    }
                                     $this->Admin_model->DeleteRecord($id);
                                     // insert to log
                                     $data_log = array(
@@ -247,7 +254,6 @@ class Admin extends CI_Controller {
                     }
                 }
             }
-            $json['success'] = true;
             header('Content-type: application/json');
             exit (
                 json_encode($json)
@@ -319,15 +325,17 @@ class Admin extends CI_Controller {
                     }
                 }
             }
-            if (!empty($post_image['image']['tmp_name'])) {
-                $check_picture = validatePicture('image');
-                if (!empty($check_picture)) {
-                    $this->error = $check_picture.'<br/>';
-                }
-            }
             if (!$this->error) {
+                if (!empty($post_image['image']['tmp_name'])) {
+                    $check_picture = validatePicture('image');
+                    if (!empty($check_picture)) {
+                        $this->error = alert_box($check_picture,'danger');
+                        return FALSE;
+                    }
+                }
                 return TRUE;
             } else {
+                $this->error = alert_box($this->error,'danger');
                 return FALSE;
             }
         }

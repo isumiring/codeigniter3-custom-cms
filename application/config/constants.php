@@ -103,7 +103,15 @@ define('IMG_MED_WIDTH',208);
 define('IMG_MED_HEIGHT',208);
 define('IMG_SMALL_WIDTH',90);
 define('IMG_SMALL_HEIGHT',90);
-define('TEMPLATE_DIR','default');
+// global assets
+define('GLOBAL_ASSETS_URL',PATH_CMS.'assets/default/');
+define('GLOBAL_IMG_URL', GLOBAL_ASSETS_URL.'img/');
+define('GLOBAL_CSS_URL', GLOBAL_ASSETS_URL.'css/');
+define('GLOBAL_JS_URL', GLOBAL_ASSETS_URL.'js/');
+define('GLOBAL_VENDOR_URL', GLOBAL_ASSETS_URL.'vendor/');
+define('GLOBAL_LIBS_URL', GLOBAL_ASSETS_URL.'libs/');
+// template assets
+define('TEMPLATE_DIR','sbadmin2');
 define('ASSETS_URL', PATH_CMS.'assets/'.TEMPLATE_DIR.'/');
 define('IMG_URL', ASSETS_URL.'img/');
 define('CSS_URL', ASSETS_URL.'css/');

@@ -9,28 +9,27 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> Form
+                <?=$page_title?>
             </div>
             <div class="panel-body">
-                <form role="form" action="<?=$form_action?>" method="post">
+                <?php echo form_open($form_action,'role="form"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="auth_group">Group Name</label>
-                                <input class="form-control" name="auth_group" id="auth_group" value="<?=(isset($post['auth_group'])) ? $post['auth_group'] : ''?>"/>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-lg-offset-2">
-                            <?php if (is_superadmin()) : ?>
-                            <div class="form-group">
-                                <label for="is_superadmin">Super Administrator</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?=(isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''?>/>Yes
+                                        <input type="checkbox" value="1" id="select-all"/> <label for="select-all">Select All</label>
                                     </label>
                                 </div>
                             </div>
-                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <?=$auth_menu_html?>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -40,7 +39,7 @@
                         </div>
                     </div>
                     <!-- /.row (nested) -->
-                </form>
+                <?php echo form_close(); ?>
             </div>
             <!-- /.panel-body -->
         </div>
@@ -48,3 +47,21 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
+
+<script type="text/javascript">
+    $(function() {
+        $('#select-all').on('click', function () {
+            $(this).closest('form').find(':checkbox').prop('checked', this.checked);
+        });
+        $(".checkauth").on('click', function() {
+            if ($('.checkauth:checked').length == $('.checkauth').length) {
+                $("#select-all").prop('checked', true);
+            } else {
+                $("#select-all").prop('checked', false);
+            }
+        });
+        if ($('.checkauth:checked').length == $('.checkauth').length) {
+            $("#select-all").attr('checked', 'checked');
+        }
+    });
+</script>

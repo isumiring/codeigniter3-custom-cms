@@ -21,25 +21,34 @@ class Logs_model extends CI_Model
     
     /**
      * get all data and filter
+     * @param array $param
      * @return array data
      */
-    function GetAllLogs($search,$order_by=array(),$start=0,$perpage=0) {
-        if ($search != '') {
-            $this->db
-                ->group_start()
-                    ->like('LCASE(username)', strtolower($search))
-                    ->or_like('LCASE(name)', strtolower($search))
-                    ->or_like('LCASE(email)', strtolower($search))
-                    ->or_like('LCASE(auth_group)', strtolower($search))
-                    ->or_like('LCASE(action)', strtolower($search))
-                    ->or_like('LCASE(desc)', strtolower($search))
-                ->group_end();
+    function GetAllLogsData($param=array()) {
+        if (isset($param['search_value']) && $param['search_value'] != '') {
+            $this->db->group_start();
+            $i=0;
+            foreach ($param['search_field'] as $row => $val) {
+                if ($val['searchable'] == 'true') {
+                    if ($i==0) {
+                        $this->db->like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
+                    } else {
+                        $this->db->or_like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
+                    }
+                    $i++;
+                }
+            }
+            $this->db->group_end();
         }
-        if ($perpage) {
-            $this->db->limit($perpage,$start);
+        if (isset($param['row_from']) && isset($param['length'])) {
+            $this->db->limit($param['length'],$param['row_from']);
         }
-        if (is_array($order_by)) {
-            $this->db->order_by($order_by['by'],$order_by['sort']);
+        if (isset($param['order_field'])) {
+            if (isset($param['order_sort'])) {
+                $this->db->order_by($param['order_field'],$param['order_sort']);
+            } else {
+                $this->db->order_by($param['order_field'],'desc');
+            }
         } else {
             $this->db->order_by('id','desc');
         }
@@ -54,19 +63,24 @@ class Logs_model extends CI_Model
     
     /**
      * count records
-     * @param string $search
+     * @param array $param
      * @return int total records
      */
-    function CountAllLogs($search='') {
-        if ($search != '') {
-            $this->db->group_start()
-                    ->like('LCASE(username)', strtolower($search))
-                    ->or_like('LCASE(name)', strtolower($search))
-                    ->or_like('LCASE(email)', strtolower($search))
-                    ->or_like('LCASE(auth_group)', strtolower($search))
-                    ->or_like('LCASE(action)', strtolower($search))
-                    ->or_like('LCASE(desc)', strtolower($search))
-                ->group_end();
+    function CountAllLogs($param=array()) {
+        if (isset($param['search_value']) && $param['search_value'] != '') {
+            $this->db->group_start();
+            $i=0;
+            foreach ($param['search_field'] as $row => $val) {
+                if ($val['searchable'] == 'true') {
+                    if ($i==0) {
+                        $this->db->like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
+                    } else {
+                        $this->db->or_like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
+                    }
+                    $i++;
+                }
+            }
+            $this->db->group_end();
         }
         $total_records = $this->db
                 ->from('logs')

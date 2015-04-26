@@ -2,14 +2,14 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Group Model Class
+ * Menu Model Class
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  * @version 3.0
  * @category Model
- * @desc Group model
+ * @desc Menu model
  * 
  */
-class Group_model extends CI_Model
+class Menu_model extends CI_Model
 {
     /**
      * constructor
@@ -24,7 +24,7 @@ class Group_model extends CI_Model
      * @param string $param
      * @return array data
      */
-    function GetAllGroupData($param=array()) {
+    function GetAllMenuData($param=array()) {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
@@ -56,8 +56,9 @@ class Group_model extends CI_Model
             $this->db->order_by('id','desc');
         }
         $data = $this->db
-                ->select('*,id_auth_group as id')
-                ->get('auth_group')
+                ->select('auth_menu.*,auth_menu.id_auth_menu as id, parent_auth_menu.menu as parent_menu')
+                ->join('auth_menu as parent_auth_menu','parent_auth_menu.id_auth_menu=auth_menu.parent_auth_menu','left')
+                ->get('auth_menu')
                 ->result_array();
         return $data;
     }
@@ -67,7 +68,7 @@ class Group_model extends CI_Model
      * @param string $param
      * @return int total records
      */
-    function CountAllGroup($param=array()) {
+    function CountAllMenu($param=array()) {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
@@ -87,7 +88,7 @@ class Group_model extends CI_Model
             $this->db->group_end();
         }
         $total_records = $this->db
-                ->from('auth_group')
+                ->from('auth_menu')
                 ->count_all_results();
         return $total_records;
     }
@@ -97,11 +98,11 @@ class Group_model extends CI_Model
      * @param int $id
      * @return array data
      */
-    function GetGroup($id) {
+    function GetMenu($id) {
         $data = $this->db
-                ->where('id_auth_group',$id)
+                ->where('id_auth_menu',$id)
                 ->limit(1)
-                ->get('auth_group')
+                ->get('auth_menu')
                 ->row_array();
         
         return $data;
@@ -113,7 +114,7 @@ class Group_model extends CI_Model
      * @return int last inserted id
      */
     function InsertRecord($param) {
-        $this->db->insert('auth_group',$param);
+        $this->db->insert('auth_menu',$param);
         $last_id = $this->db->insert_id();
         return $last_id;
     }
@@ -124,8 +125,8 @@ class Group_model extends CI_Model
      * @param array $param
      */
     function UpdateRecord($id,$param) {
-        $this->db->where('id_auth_group',$id);
-        $this->db->update('auth_group',$param);
+        $this->db->where('id_auth_menu',$id);
+        $this->db->update('auth_menu',$param);
     }
     
     /**
@@ -133,8 +134,8 @@ class Group_model extends CI_Model
      * @param int $id
      */
     function DeleteRecord($id) {
-        $this->db->where('id_auth_group',$id);
-        $this->db->delete('auth_group');
+        $this->db->where('id_auth_menu',$id);
+        $this->db->delete('auth_menu');
     }
     
     /**
@@ -142,14 +143,14 @@ class Group_model extends CI_Model
      * @param int $id_parent
      * @return array data
      */
-    function MenusData($id_group=0,$id_parent=0) {
+    function MenusData($id_parent=0) {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
         $data = $this->db
                 ->join(
                     "
-                        (select id_auth_menu as id_auth,id_auth_group from {$this->db->dbprefix('auth_menu_group')} where id_auth_group={$id_group}) {$this->db->dbprefix('auth_menu_group')}
+                        (select id_auth_menu as id_auth,id_auth_menu from {$this->db->dbprefix('auth_menu_group')} where id_auth_menu={$id_group}) {$this->db->dbprefix('auth_menu_group')}
                     ",
                     'auth_menu_group.id_auth=auth_menu.id_auth_menu',
                     'left'
@@ -160,7 +161,7 @@ class Group_model extends CI_Model
                 ->get('auth_menu')
                 ->result_array();
         foreach ($data as $row => $val) {
-            if ($val['id_auth_group'] == $id_group) {
+            if ($val['id_auth_menu'] == $id_group) {
                 $data[$row]['checked'] = true;
             } else {
                 $data[$row]['checked'] = false;
@@ -176,12 +177,12 @@ class Group_model extends CI_Model
      * @param array $data
      */
     function UpdateAuth($id_group,$data=array()) {
-        $this->db->where('id_auth_group',$id_group);
+        $this->db->where('id_auth_menu',$id_group);
         $this->db->delete('auth_menu_group');
         if (count($data)>0) {
             $insert=array();
             foreach ($data as $row => $val) {
-                $insert[$row]['id_auth_group'] = $id_group;
+                $insert[$row]['id_auth_menu'] = $id_group;
                 $insert[$row]['id_auth_menu'] = $val;
             }
             $this->db->insert_batch('auth_menu_group',$insert);
@@ -229,7 +230,7 @@ class Group_model extends CI_Model
      * @param string $prefix
      * @return string return
      */
-    function printAuthMenuGroup($id_group,$id_parent=0, $prefix='')
+    function printAuthMenuMenu($id_group,$id_parent=0, $prefix='')
     {
         $tmp_menu = '';
         $menus = $this->getMenus($id_parent);
@@ -238,7 +239,7 @@ class Group_model extends CI_Model
             $checked = '';
             $tree = '';
             $divider = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-            $id_auth_menu_group = $this->getAuthMenuGroup($id_group,$menu["id_auth_menu"]);
+            $id_auth_menu_group = $this->getAuthMenuMenu($id_group,$menu["id_auth_menu"]);
             if ($id_auth_menu_group)
             {
                 $checked = 'checked="checked"';
@@ -250,11 +251,53 @@ class Group_model extends CI_Model
                                 <input type="checkbox" value="'.$menu["id_auth_menu"].'" '.$checked.'" id="menu-group-'.$menu["id_auth_menu"].'" name="auth_menu_group[]" class="checkauth">
                         '.$prefix.' '.$tree.' &nbsp;&nbsp;'.$menu["menu"].'</label>';
 
-           $tmp_menu .=  $this->printAuthMenuGroup($id_group,$menu["id_auth_menu"], $prefix.$divider);
+           $tmp_menu .=  $this->printAuthMenuMenu($id_group,$menu["id_auth_menu"], $prefix.$divider);
         }
         return $tmp_menu;
     }
     
+    /**
+     * check exist email
+     * @param string $email
+     * @param int $id
+     * @return boolean true/false 
+     */
+    function checkExistsEmail($email,$id=0) {
+        if ($id != '' && $id != 0) {
+            $this->db->where('id_auth_user !=',$id);
+        }
+        $count_records = $this->db
+                ->from('auth_user')
+                ->where('LCASE(email)',strtolower($email))
+                ->count_all_results();
+        if ($count_records>0) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+    
+    /**
+     * check exist username
+     * @param string $username
+     * @param int $id
+     * @return boolean true/false 
+     */
+    function checkExistsUsername($username,$id=0) {
+        if ($id != '' && $id != 0) {
+            $this->db->where('id_auth_user !=',$id);
+        }
+        $count_records = $this->db
+                ->from('auth_user')
+                ->where('username',$username)
+                ->count_all_results();
+        if ($count_records>0) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+    
 }
-/* End of file Group_model.php */
-/* Location: ./application/models/Group_model.php */
+/* End of file Menu_model.php */
+/* Location: ./application/models/Menu_model.php */

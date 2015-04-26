@@ -270,7 +270,7 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 | application/views/errors/ directory.  Use a full server path with trailing slash.
 |
 */
-$config['error_views_path'] = '';
+$config['error_views_path'] = 'application/views/default/errors/';
 
 /*
 |--------------------------------------------------------------------------
@@ -426,7 +426,7 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = FALSE;
+$config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'cmsfatoken';
 $config['csrf_cookie_name'] = 'cmsfatcookie';
 $config['csrf_expire'] = 7200;

@@ -12,12 +12,12 @@
                 <?=$page_title?> Form
             </div>
             <div class="panel-body">
-                <form role="form" action="<?=$form_action?>" method="post" enctype="multipart/form-data">
+                <?php echo form_open($form_action,'role="form" enctype="multipart/form-data"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="username">Username</label>
-                                <input class="form-control" name="username" id="username" value="<?=(isset($post['username'])) ? $post['username'] : ''?>"/>
+                                <input type="text" class="form-control" name="username" id="username" value="<?=(isset($post['username'])) ? $post['username'] : ''?>"/>
                             </div>
                             <div class="form-group">
                                 <label for="id_auth_group">Group</label>
@@ -46,11 +46,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input class="form-control" name="name" id="name" value="<?=(isset($post['name'])) ? $post['name'] : ''?>"/>
+                                <input type="text" class="form-control" name="name" id="name" value="<?=(isset($post['name'])) ? $post['name'] : ''?>"/>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input class="form-control" name="email" id="name" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
+                                <input type="email" class="form-control" name="email" id="name" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
                             </div>
                             <div class="form-group">
                                 <label for="alamat">Address</label>
@@ -58,7 +58,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
-                                <input class="form-control" name="phone" id="phone" value="<?=(isset($post['phone'])) ? $post['phone'] : ''?>"/>
+                                <input type="text" class="form-control" name="phone" id="phone" value="<?=(isset($post['phone'])) ? $post['phone'] : ''?>"/>
                             </div>
                         </div>
                         <div class="col-lg-4 col-lg-offset-2">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <!-- /.row (nested) -->
-                </form>
+                <?php echo form_close(); ?>
             </div>
             <!-- /.panel-body -->
         </div>

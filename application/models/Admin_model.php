@@ -44,15 +44,15 @@ class Admin_model extends CI_Model
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
-        if (isset($param['search_value'])) {
+        if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
             $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
                     if ($i==0) {
-                        $this->db->like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                        $this->db->like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
                     } else {
-                        $this->db->or_like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                        $this->db->or_like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
                     }
                     $i++;
                 }
@@ -88,15 +88,15 @@ class Admin_model extends CI_Model
         if (!is_superadmin()) {
             $this->db->where('is_superadmin',0);
         }
-        if (is_array($param) && isset($param['search_value'])) {
+        if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
             $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
                     if ($i==0) {
-                        $this->db->like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                        $this->db->like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
                     } else {
-                        $this->db->or_like('LCASE('.$val['data'].')',strtolower($param['search_value']));
+                        $this->db->or_like('LCASE(`'.$val['data'].'`)',strtolower($param['search_value']));
                     }
                     $i++;
                 }

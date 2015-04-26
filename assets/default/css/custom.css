@@ -30,3 +30,6 @@ table#dataTables-list tbody tr td.details-control {
 .fileinput {
     display: block ;
 }
+.checkbox label.auth-menu {
+    padding-left: 0;
+}

@@ -3,8 +3,11 @@
     <thead>
         <tr>
             <th data-searchable="false" data-orderable="false" data-name="actions" data-classname="text-center"></th>
-            <th data-name="auth_group">Group Name</th>
-            <th data-name="authorization" data-searchable="false" data-orderable="false">Auth</th>
+            <th data-name="username">Username</th>
+            <th data-name="name">Name</th>
+            <th data-name="email">Email</th>
+            <th data-name="auth_group">Group</th>
+            <th data-name="create_date" data-searchable="false">Create Date</th>
         </tr>
     </thead>
 </table>
