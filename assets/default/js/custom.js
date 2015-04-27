@@ -12,8 +12,6 @@ function list_dataTables(element,url) {
         }
         var colom = [];
         var i=0;
-        var objToken = {};
-        objToken[token_name] = token_key
         $(element+' thead th').each(function() {
             var edit = $(this).data('edit');
             var view = $(this).data('view');
@@ -75,7 +73,7 @@ function list_dataTables(element,url) {
         // delete record
         $(document).on('click', '#delete-record', function () {
             if (selected.valueOf() != '') {
-                console.log(objToken);
+                //console.log(objToken);
                 var post_delete = [{name:"ids",value:selected}];
                 post_delete.push({name:token_name,value:token_key});
                 var conf = confirm('Are You sure want to delete this record(s)?');

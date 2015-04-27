@@ -134,8 +134,43 @@ class Menu_model extends CI_Model
      * @param int $id
      */
     function DeleteRecord($id) {
-        $this->db->where('id_auth_menu',$id);
-        $this->db->delete('auth_menu');
+        $this->db->delete(array('auth_menu','auth_menu_group'),array('id_auth_menu'=>$id));
+    }
+    
+    /**
+     * get max position in table
+     * @return string max
+     */
+    function MaxPosition() {
+        $data = $this->db
+                ->select('max(position) as max_position')
+                ->get('auth_menu')
+                ->row_array();
+        if ($data) {
+            return $data['max_position'];
+        } else {
+            return '0';
+        }
+    }
+    
+    /**
+     * get menu children id by id menu
+     * @param type $id_menu
+     * @return type
+     */
+    function MenusIdChildrenTaxonomy($id_menu=0) {
+        $return = array();
+        $data = $this->db
+                ->select('id_auth_menu')
+                ->where('parent_auth_menu',$id_menu)
+                ->get('auth_menu')
+                ->result_array();
+        foreach ($data as $row) {
+            $return[] = $row['id_auth_menu'];
+            $children = $this->MenusIdChildrenTaxonomy($row['id_auth_menu']);
+            $return = array_merge($return,$children);
+        }
+        return $return;
     }
     
     /**
@@ -148,27 +183,44 @@ class Menu_model extends CI_Model
             $this->db->where('is_superadmin',0);
         }
         $data = $this->db
-                ->join(
-                    "
-                        (select id_auth_menu as id_auth,id_auth_menu from {$this->db->dbprefix('auth_menu_group')} where id_auth_menu={$id_group}) {$this->db->dbprefix('auth_menu_group')}
-                    ",
-                    'auth_menu_group.id_auth=auth_menu.id_auth_menu',
-                    'left'
-                )
                 ->where('parent_auth_menu',$id_parent)
                 ->order_by('position','asc')
                 ->order_by('auth_menu.id_auth_menu','asc')
                 ->get('auth_menu')
                 ->result_array();
         foreach ($data as $row => $val) {
-            if ($val['id_auth_menu'] == $id_group) {
-                $data[$row]['checked'] = true;
-            } else {
-                $data[$row]['checked'] = false;
-            }
-            $data[$row]['children'] = $this->MenusData($id_group,$val['id_auth_menu']);
+            $data[$row]['children'] = $this->MenusData($val['id_auth_menu']);
         }
         return $data;
+    }
+    
+    /**
+     * print auth menu to html
+     * @param array $menus
+     * @param string $prefix
+     * @return string $return
+     */
+    function PrintAuthMenu($menus=array(),$prefix='',$selected='',$disabled=array()) {
+        $return = '';
+        if ($menus) {
+            foreach ($menus as $row => $menu) {
+                if ($disabled && in_array($menu['id_auth_menu'], $disabled)) {
+                    $return .= '';
+                } elseif ($disabled && $selected == $menu['parent_auth_menu'] && $selected != '') { 
+                    $return .= '';
+                } else {
+                    if ($menu['id_auth_menu'] == $selected && $selected != '') {
+                        $return .= '<option value="'.$menu['id_auth_menu'].'" selected="selected">'.$prefix.'&nbsp;'.$menu['menu'].'</option>';
+                    } else {
+                        $return .= '<option value="'.$menu['id_auth_menu'].'">'.$prefix.'&nbsp;'.$menu['menu'].'</option>';
+                    }
+                    if (isset($menu['children']) && count($menu['children'])>0) {
+                        $return .= $this->PrintAuthMenu($menu['children'],$prefix."--",$selected,$disabled);
+                    }
+                }
+            }
+        }
+        return $return;
     }
     
     /**
@@ -187,40 +239,6 @@ class Menu_model extends CI_Model
             }
             $this->db->insert_batch('auth_menu_group',$insert);
         }
-    }
-    
-    /**
-     * print auth menu to html
-     * @param array $menus
-     * @param string $prefix
-     * @return string $return
-     */
-    function PrintAuthMenu($menus=array(),$prefix='') {
-        $return = '';
-        if ($menus) {
-            foreach ($menus as $row => $menu) {
-                $return .= '<div class="checkbox">';
-                if ($menu['parent_auth_menu'] != 0) {
-                    $return .= $prefix;
-                    $return .= '<img src="'.GLOBAL_IMG_URL.'tree-taxo.png"/>&nbsp;&nbsp;';
-                } else {
-                    $prefix = '';
-                }
-                $checked = '';
-                $return .= '<label>';
-                if ($menu['checked'] == true) {
-                    $checked = 'checked="checked"';
-                }
-                $return .= '<input type="checkbox" value="'.$menu['id_auth_menu'].'" name="auth_menu_group[]" id="auth-'.$menu['id_auth_menu'].'" class="auth-menu checkauth" '.$checked.'/><label for="auth-'.$menu['id_auth_menu'].'" class="auth-menu">'.$menu['menu'].'</label>';
-                $return .= '</label>';
-                $return .= '</div>';
-                if (isset($menu['children']) && count($menu['children'])>0) {
-                    $prefix .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-                    $return .= $this->PrintAuthMenu($menu['children'],$prefix);
-                }
-            }
-        }
-        return $return;
     }
     
     /**
@@ -257,18 +275,18 @@ class Menu_model extends CI_Model
     }
     
     /**
-     * check exist email
-     * @param string $email
+     * check exist file/path
+     * @param string $file
      * @param int $id
      * @return boolean true/false 
      */
-    function checkExistsEmail($email,$id=0) {
+    function checkExistsFilepath($file,$id=0) {
         if ($id != '' && $id != 0) {
-            $this->db->where('id_auth_user !=',$id);
+            $this->db->where('id_auth_menu !=',$id);
         }
         $count_records = $this->db
-                ->from('auth_user')
-                ->where('LCASE(email)',strtolower($email))
+                ->from('auth_menu')
+                ->where('LCASE(file)',strtolower($file))
                 ->count_all_results();
         if ($count_records>0) {
             return FALSE;
@@ -278,26 +296,23 @@ class Menu_model extends CI_Model
     }
     
     /**
-     * check exist username
-     * @param string $username
-     * @param int $id
-     * @return boolean true/false 
+     * check if user/group have access rights to menu
+     * @param int $id_group
+     * @param int $id_menu
+     * @return boolean true/false
      */
-    function checkExistsUsername($username,$id=0) {
-        if ($id != '' && $id != 0) {
-            $this->db->where('id_auth_user !=',$id);
-        }
-        $count_records = $this->db
-                ->from('auth_user')
-                ->where('username',$username)
+    function checkUserHaveRightsMenu($id_group,$id_menu) {
+        $count = $this->db
+                ->from('auth_menu_group')
+                ->where('id_auth_group',$id_group)
+                ->where('id_auth_menu',$id_menu)
                 ->count_all_results();
-        if ($count_records>0) {
-            return FALSE;
-        } else {
+        if ($count>0) {
             return TRUE;
+        } else {
+            return FALSE;
         }
     }
-    
 }
 /* End of file Menu_model.php */
 /* Location: ./application/models/Menu_model.php */

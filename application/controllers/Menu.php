@@ -74,20 +74,22 @@ class Menu extends CI_Controller {
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
         $this->data['cancel_url'] = site_url($this->class_path_name);
         $menu_data = $this->Menu_model->MenusData();
-        $this->data['auth_menu_html'] = $this->Menu_model->PrintMenu($menu_data);
+        $selected = '';
+        $this->data['max_position'] = $this->Menu_model->MaxPosition()+1;
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
+                $post['file'] = strtolower($post['file']);
                 
-                // update data
-                $id = $this->Admin_model->InsertRecord($post);
+                // insert data
+                $id = $this->Menu_model->InsertRecord($post);
                 // insert to log
                 $data_log = array(
                     'id_user' => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'Group Admin',
-                    'desc' => 'Add Group Admin; ID: '.$id.'; Data: '.json_encode($post),
+                    'action' => 'Menu Admin',
+                    'desc' => 'Add Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
                 );
                 insert_to_log($data_log);
                 // end insert to log
@@ -95,8 +97,10 @@ class Menu extends CI_Controller {
                 
                 redirect($this->class_path_name);
             }
+            $selected = $post['parent_auth_menu'];
             $this->data['post'] = $post;
         }
+        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data,'',$selected);
         $this->data['template'] = $this->class_path_name.'/form';
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
@@ -119,62 +123,27 @@ class Menu extends CI_Controller {
             $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Menuistrator','danger'));
             redirect($this->class_path_name);
         }
-        $this->data['groups'] = $this->Menu_model->GetGroups();
         $this->data['page_title'] = 'Edit';
         $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
         $this->data['cancel_url'] = site_url($this->class_path_name);
+        $this->data['post'] = $record;
+        $disabled_menu = $this->Menu_model->MenusIdChildrenTaxonomy($id);
+        $menu_data = $this->Menu_model->MenusData();
+        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data,'',$record['parent_auth_menu'],$disabled_menu);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
-                $post['modify_date'] = date('Y-m-d H:i:s');
-                $post['status'] = (isset($post['status'])) ? 1 : 0;
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
-                $post['email'] = strtolower($post['email']);
-
-                if ($post['password'] != '') {
-                    $post['userpass'] = password_hash($post['password'],PASSWORD_DEFAULT);
-                }
-                unset($post['password']);
-                unset($post['conf_password']);
+                $post['file'] = strtolower($post['file']);
                 
                 // update data
                 $this->Menu_model->UpdateRecord($id,$post);
-                unset($post['userpass']);
-                // now change session if user is edit themselve
-                if (id_auth_user() == $id) {
-                    $user_session = array($_SESSION['ADM_SESS']);
-                    $user_sess = array();
-                    foreach ($user_session as $key => $val) {
-                        $user_session[$key]['admin_name'] = $post['name'];
-                        $user_session[$key]['admin_id_auth_group'] = $post['id_auth_group'];
-                        $user_session[$key]['admin_email'] = strtolower($post['email']);
-                    }
-                    foreach ($user_session as $key => $val) {
-                        $user_sess[$val] = $key[$val];
-                    }
-                    $new_session = $val;
-                    $this->session->set_userdata('ADM_SESS', $new_session);
-                }
-                $post_image = $_FILES;
-                if ($post_image['image']['tmp_name']) {
-                    if ($record['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$record['image'])) {
-                        unlink(UPLOAD_DIR.'admin/'.$record['image']);
-                        @unlink(UPLOAD_DIR.'admin/tmb_'.$record['image']);
-                        @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
-                    }
-                    $filename = 'adm_'.url_title($post['name'],'_',true).md5plus($id);
-                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR.'admin/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
-
-                    $this->Menu_model->UpdateRecord($id,array('image'=>$picture_db));
-                }
                 // insert to log
                 $data_log = array(
                     'id_user' => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'User Menu',
-                    'desc' => 'Edit User Menu; ID: '.$id.'; Data: '.json_encode($post),
+                    'action' => 'Menu Admin',
+                    'desc' => 'Edit Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
                 );
                 insert_to_log($data_log);
                 // end insert to log
@@ -204,27 +173,27 @@ class Menu extends CI_Controller {
                     foreach ($array_id as $row => $id) {
                         $record = $this->Menu_model->GetMenu($id);
                         if ($record) {
-                            if ($id == id_auth_user()) {
-                                $json['error'] = alert_box('You can\'t delete Your own account.','danger');
+                            if ($record['is_superadmin'] && !is_superadmin()) {
+                                $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Menuistrator.','danger');
                                 break;
                             } else {
-                                if (is_superadmin()) {
+                                /*if (!$this->Menu_model->checkUserHaveRightsMenu(id_auth_group(),$id)) {
+                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Menuistrator.','danger');
+                                    break;
+                                } else {*/
                                     $this->Menu_model->DeleteRecord($id);
                                     // insert to log
                                     $data_log = array(
                                         'id_user' => id_auth_user(),
                                         'id_group' => id_auth_group(),
-                                        'action' => 'Delete User Menu',
-                                        'desc' => 'Delete User Menu; ID: '.$id.';',
+                                        'action' => 'Delete Admin Menu',
+                                        'desc' => 'Delete Admin Menu; ID: '.$id.';',
                                     );
                                     insert_to_log($data_log);
                                     // end insert to log
                                     $json['success'] = alert_box('Data has been deleted','success');
                                     $this->session->set_flashdata('flash_message',$json['success']);
-                                } else {
-                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Menuistrator.','danger');
-                                    break;
-                                }
+                                //}
                             }
                         } else {
                             $json['error'] = alert_box('Failed. Please refresh the page.','danger');
@@ -247,32 +216,26 @@ class Menu extends CI_Controller {
      * @return boolean
      */
     private function validateForm($id=0) {
-        $post = $this->input->post();
         $config = array(
             array(
-                'field' => 'username',
-                'label' => 'Username',
-                'rules' => 'required|min_length[3]|max_length[32]|alpha_dash|callback_check_username_exists['.$id.']'
+                'field' => 'parent_auth_menu',
+                'label' => 'Parent',
+                'rules' => 'required'
             ),
             array(
-                'field' => 'id_auth_group',
-                'label' => 'Group',
-                'rules' => 'required|is_natural_no_zero'
+                'field' => 'menu',
+                'label' => 'Menu',
+                'rules' => 'required'
             ),
             array(
-                'field' => 'name',
-                'label' => 'Name',
-                'rules' => 'required|alpha_numeric_spaces'
+                'field' => 'file',
+                'label' => 'File Path',
+                'rules' => 'required|callback_check_menu_file['.$id.']'
             ),
             array(
-                'field' => 'email',
-                'label' => 'Email',
-                'rules' => 'required|valid_email|callback_check_email_exists['.$id.']'
-            ),
-            array(
-                'field' => 'id_auth_group',
-                'label' => 'Group',
-                'rules' => 'required|is_natural_no_zero'
+                'field' => 'position',
+                'label' => 'Position',
+                'rules' => 'numeric'
             ),
         );
         $this->form_validation->set_rules($config);
@@ -280,40 +243,25 @@ class Menu extends CI_Controller {
             $this->error = alert_box(validation_errors(),'danger');
             return FALSE;
         } else {
-            $post_image = $_FILES;
-            if (!$id) {
-                if ($post['password'] == '') {
-                    $this->error = 'Please insert Password.<br/>';
-                } else {
-                    if (strlen($post['password']) <= 6) {
-                        $this->error = 'Please input Password more than 6 characters.<br/>';
-                    } else {
-                        if ($post['conf_password'] != $post['password']) {
-                            $this->error = 'Your Confirmation Password is not same with Your Password.<br/>';
-                        }
-                    }
-                }
-            } else {
-                if (strlen($post['password']) > 0) {
-                    if (strlen($post['password']) <= 6) {
-                        $this->error = 'Please input Password more than 6 characters.<br/>';
-                    } else {
-                        if ($post['conf_password'] != $post['password']) {
-                            $this->error = 'Your Confirmation Password is not same with Your Password.<br/>';
-                        }
-                    }
-                }
-            }
-            if (!empty($post_image['image']['tmp_name'])) {
-                $check_picture = validatePicture('image');
-                if (!empty($check_picture)) {
-                    $this->error = $check_picture.'<br/>';
-                }
-            }
-            if (!$this->error) {
-                return TRUE;
-            } else {
+            return TRUE;
+        }
+    }
+    
+    /**
+     * check if file is exists
+     * @param string $string
+     * @param int $id
+     * @return boolean true/false
+     */
+    public function check_menu_file($string,$id=0) {
+        if ($string == '#') {
+            return TRUE;
+        } else {
+            if (!$this->Menu_model->checkExistsFilepath($string, $id)) {
+                $this->form_validation->set_message('check_menu_file', '{field} is already exists. Please use different {field}');
                 return FALSE;
+            } else {
+                return TRUE;
             }
         }
     }

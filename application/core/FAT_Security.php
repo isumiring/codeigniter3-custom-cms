@@ -24,11 +24,8 @@ class FAT_Security extends CI_Security {
      */
     public function csrf_show_error() {
         // show_error('The action you have requested is not allowed.');  // default code
-
-        $flash_message = alert_box('Session cookie automatically reset due to expired browser session.&nbsp; Please Re-Login.','danger');
-        session_destroy();
-        $this->session->set_flashdata('message', $flash_message);
-        redirect('login', 'location');
+        $redirect_url = PATH_CMS.'error/csrf_redirect';
+        header('Location: '.$redirect_url.'', TRUE, 302);
     }
 
 }

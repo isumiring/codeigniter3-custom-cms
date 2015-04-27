@@ -2,20 +2,20 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Admin Class
+ * Site Class
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  * @version 3.0
  * @category Controller
- * @desc Admin Controller
+ * @desc Site Controller
  * 
  */
-class Admin extends CI_Controller {
+class Site extends CI_Controller {
     
     private $class_path_name;
     
     function __construct() {
         parent::__construct();
-        $this->load->model('Admin_model');
+        $this->load->model('Site_model');
         $this->class_path_name = $this->router->fetch_class();
     }
     
@@ -23,7 +23,6 @@ class Admin extends CI_Controller {
      * index page
      */
     public function index() {
-        $this->data['add_url'] = site_url($this->class_path_name.'/add');
         $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
@@ -43,9 +42,9 @@ class Admin extends CI_Controller {
             }
             $param['row_from'] = $post['start'];
             $param['length'] = $post['length'];
-            $count_all_records = $this->Admin_model->CountAllAdmin();
-            $count_filtered_records = $this->Admin_model->CountAllAdmin($param);
-            $records = $this->Admin_model->GetAllAdminData($param);
+            $count_all_records = $this->Site_model->CountAllSite();
+            $count_filtered_records = $this->Site_model->CountAllSite($param);
+            $records = $this->Site_model->GetAllSiteData($param);
             $return = array();
             $return['draw'] = $post['draw'];
             $return['recordsTotal'] = $count_all_records;
@@ -53,12 +52,10 @@ class Admin extends CI_Controller {
             $return['data'] = array();
             foreach ($records as $row => $record) {
                 $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                $return['data'][$row]['username'] = $record['username'];
-                $return['data'][$row]['name'] = $record['name'];
-                $return['data'][$row]['email'] = $record['email'];
-                $return['data'][$row]['auth_group'] = $record['auth_group'];
-                $return['data'][$row]['create_date'] = custDateFormat($record['create_date'],'d M Y H:i:s');
+                $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/detail/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                $return['data'][$row]['site_name'] = $record['site_name'];
+                $return['data'][$row]['site_url'] = $record['site_url'];
+                $return['data'][$row]['is_default'] = ($record['is_default'] == 1) ? 'Default' : '';
             }
             header('Content-type: application/json');
             exit (
@@ -69,76 +66,19 @@ class Admin extends CI_Controller {
     }
     
     /**
-     * add page
-     */
-    public function add() {
-        $this->data['groups'] = $this->Admin_model->GetGroups();
-        $this->data['page_title'] = 'Add';
-        $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        if ($this->input->post()) {
-            $post = $this->input->post();
-            if ($this->validateForm()) {
-                $post['status'] = (isset($post['status'])) ? 1 : 0;
-                $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
-                $post['email'] = strtolower($post['email']);
-                $post['userpass'] = password_hash($post['password'],PASSWORD_DEFAULT);
-                unset($post['password']);
-                unset($post['conf_password']);
-                
-                // update data
-                $id = $this->Admin_model->InsertRecord($post);
-                unset($post['userpass']);
-                $post_image = $_FILES;
-                if ($post_image['image']['tmp_name']) {
-                    $filename = 'adm_'.url_title($post['name'],'_',true).md5plus($id);
-                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR.'admin/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
-
-                    $this->Admin_model->UpdateRecord($id,array('image'=>$picture_db));
-                }
-                // insert to log
-                $data_log = array(
-                    'id_user' => id_auth_user(),
-                    'id_group' => id_auth_group(),
-                    'action' => 'User Admin',
-                    'desc' => 'Add User Admin; ID: '.$id.'; Data: '.json_encode($post),
-                );
-                insert_to_log($data_log);
-                // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
-                
-                redirect($this->class_path_name);
-            }
-            $this->data['post'] = $post;
-        }
-        $this->data['template'] = $this->class_path_name.'/form';
-        if (isset($this->error)) {
-            $this->data['form_message'] = $this->error;
-        }
-    }
-    
-    /**
      * detail page
      * @param int $id
      */
-    public function edit($id=0) {
+    public function detail($id=0) {
         if (!$id) {
             redirect($this->class_path_name);
         }
-        $record = $this->Admin_model->GetAdmin($id);
+        $record = $this->Site_model->GetSite($id);
         if (!$record) {
             redirect($this->class_path_name);
         }
-        if ($record['is_superadmin'] == 1 && !is_superadmin()) {
-            $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Administrator','danger'));
-            redirect($this->class_path_name);
-        }
-        $this->data['groups'] = $this->Admin_model->GetGroups();
-        $this->data['page_title'] = 'Edit';
-        $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
-        $this->data['delete_picture_url'] = site_url($this->class_path_name.'/delete_picture/'.$id);
+        $this->data['page_title'] = 'Detail: '.$record['site_name'];
+        $this->data['form_action'] = site_url($this->class_path_name.'/detail/'.$id);
         $this->data['cancel_url'] = site_url($this->class_path_name);
         if ($this->input->post()) {
             $post = $this->input->post();
@@ -155,7 +95,7 @@ class Admin extends CI_Controller {
                 unset($post['conf_password']);
                 
                 // update data
-                $this->Admin_model->UpdateRecord($id,$post);
+                $this->Site_model->UpdateRecord($id,$post);
                 unset($post['userpass']);
                 // now change session if user is edit themselve
                 if (id_auth_user() == $id) {
@@ -184,14 +124,14 @@ class Admin extends CI_Controller {
                     copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
                     copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
 
-                    $this->Admin_model->UpdateRecord($id,array('image'=>$picture_db));
+                    $this->Site_model->UpdateRecord($id,array('image'=>$picture_db));
                 }
                 // insert to log
                 $data_log = array(
                     'id_user' => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'User Admin',
-                    'desc' => 'Edit User Admin; ID: '.$id.'; Data: '.json_encode($post),
+                    'action' => 'User Site',
+                    'desc' => 'Edit User Site; ID: '.$id.'; Data: '.json_encode($post),
                 );
                 insert_to_log($data_log);
                 // end insert to log
@@ -219,7 +159,7 @@ class Admin extends CI_Controller {
                 $array_id = array_map('trim', explode(',', $post['ids']));
                 if (count($array_id)>0) {
                     foreach ($array_id as $row => $id) {
-                        $record = $this->Admin_model->GetAdmin($id);
+                        $record = $this->Site_model->GetSite($id);
                         if ($record) {
                             if ($id == id_auth_user()) {
                                 $json['error'] = alert_box('You can\'t delete Your own account.','danger');
@@ -231,20 +171,20 @@ class Admin extends CI_Controller {
                                         @unlink(UPLOAD_DIR.'admin/tmb_'.$record['image']);
                                         @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
                                     }
-                                    $this->Admin_model->DeleteRecord($id);
+                                    $this->Site_model->DeleteRecord($id);
                                     // insert to log
                                     $data_log = array(
                                         'id_user' => id_auth_user(),
                                         'id_group' => id_auth_group(),
-                                        'action' => 'Delete User Admin',
-                                        'desc' => 'Delete User Admin; ID: '.$id.';',
+                                        'action' => 'Delete User Site',
+                                        'desc' => 'Delete User Site; ID: '.$id.';',
                                     );
                                     insert_to_log($data_log);
                                     // end insert to log
                                     $json['success'] = alert_box('Data has been deleted','success');
                                     $this->session->set_flashdata('flash_message',$json['success']);
                                 } else {
-                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Administrator.','danger');
+                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Siteistrator.','danger');
                                     break;
                                 }
                             }
@@ -253,42 +193,6 @@ class Admin extends CI_Controller {
                             break;
                         }
                     }
-                }
-            }
-            header('Content-type: application/json');
-            exit (
-                json_encode($json)
-            );
-        }
-        redirect($this->class_path_name);
-    }
-    
-    public function delete_picture() {
-        $this->layout = 'none';
-        if ($this->input->post() && $this->input->is_ajax_request()) {
-            $json = array();
-            $post = $this->input->post();
-            if (isset($post['id']) && $post['id'] > 0 && ctype_digit($post['id'])) {
-                $detail = $this->Admin_model->GetAdmin($post['id']);
-                if ($detail && ($detail['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$detail['image']))) {
-                    $id = $post['id'];
-                    unlink(UPLOAD_DIR.'admin/'.$detail['image']);
-                    @unlink(UPLOAD_DIR.'admin/tmb_'.$detail['image']);
-                    @unlink(UPLOAD_DIR.'admin/sml_'.$detail['image']);
-                    $data_update = array('image' =>'');
-                    $this->Admin_model->UpdateRecord($post['id'],$data_update);
-                    $json['success'] = alert_box('File hase been deleted.','success');
-                    // insert to log
-                    $data_log = array(
-                        'id_user' => id_auth_user(),
-                        'id_group' => id_auth_group(),
-                        'action' => 'User Admin',
-                        'desc' => 'Delete Picture User Admin; ID: '.$id.';',
-                    );
-                    insert_to_log($data_log);
-                    // end insert to log
-                } else {
-                    $json['error'] = alert_box('Failed to remove File. Please try again.','danger');
                 }
             }
             header('Content-type: application/json');
@@ -385,7 +289,7 @@ class Admin extends CI_Controller {
      * @return boolean
      */
     public function check_email_exists($string,$id=0) {
-        if (!$this->Admin_model->checkExistsEmail($string, $id)) {
+        if (!$this->Site_model->checkExistsEmail($string, $id)) {
             $this->form_validation->set_message('check_email_exists', '{field} is already exists. Please use different {field}');
             return FALSE;
         } else {
@@ -400,7 +304,7 @@ class Admin extends CI_Controller {
      * @return boolean
      */
     public function check_username_exists($string,$id=0) {
-        if (!$this->Admin_model->checkExistsUsername($string, $id)) {
+        if (!$this->Site_model->checkExistsUsername($string, $id)) {
             $this->form_validation->set_message('check_username_exists', '{field} is already exists. Please use different {field}');
             return FALSE;
         } else {
@@ -408,5 +312,5 @@ class Admin extends CI_Controller {
         }
     }
 }
-/* End of file Admin.php */
-/* Location: ./application/controllers/Admin.php */
+/* End of file Site.php */
+/* Location: ./application/controllers/Site.php */

@@ -33,3 +33,12 @@ table#dataTables-list tbody tr td.details-control {
 .checkbox label.auth-menu {
     padding-left: 0;
 }
+.fileinput .fileinput-upload {
+    position: relative;
+}
+.fileinput .fileinput-upload #delete-picture {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    right: 0;
+}

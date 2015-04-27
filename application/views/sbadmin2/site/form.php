@@ -83,10 +83,10 @@
                             <div class="form-group">
                                 <label for="image">Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
+                                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
                                         <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$post['image'])): ?>
                                             <img src="<?=RELATIVE_UPLOAD_DIR.'admin/'.$post['image']?>" id="post-image" />
-                                            <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">x</span>
+                                            <span class="btn btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">Delete</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
@@ -123,12 +123,10 @@
         $("#delete-picture").click(function() {
             var self = $(this);
             var id = self.attr('data-id');
-            var post_delete = [{name:"id",value:id}];
-            post_delete.push({name:token_name,value:token_key});
             $.ajax({
                 url:'<?=$delete_picture_url?>',
                 type:'post',
-                data:post_delete,
+                data:'id='+id,
                 dataType:'json',
                 beforeSend: function() {
                     self.attr('disabled',true);
@@ -137,10 +135,10 @@
                 self.removeAttr('disabled');
             }).done(function(data) {
                 if (data['error'])  {
-                    $(".flash-message").html(data['error']);
+                    alert(data['error']);
                 }
                 if (data['success']) {
-                    $(".flash-message").html(data['success']);
+                    alert(data['success']);
                     $("#post-image").remove();
                     self.remove();
                 }

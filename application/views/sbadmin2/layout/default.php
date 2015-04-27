@@ -55,6 +55,8 @@
             var assets_url = '<?= ASSETS_URL ?>';
             var token_name = '<?=$this->security->get_csrf_token_name()?>';
             var token_key = '<?=$this->security->get_csrf_hash()?>';
+            var objToken = {};
+            objToken[token_name] = token_key;
         </script>
         <script src="<?=VENDOR_URL?>jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
         <script src="<?=GLOBAL_JS_URL?>custom.js"></script>
@@ -169,6 +171,12 @@
                     e.preventDefault();
                     $("#dynamic-modal").html('');
                 });
+            });
+            $(document).ajaxSuccess(function( event, request, settings, data) {
+                if (data['redirect_auth']) {
+                    window.location = data['redirect_auth'];
+                    return;
+                }
             });
         </script>
 

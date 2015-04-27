@@ -19,6 +19,7 @@
                                 <label for="parent_auth_menu">Parent</label>
                                 <select class="form-control" name="parent_auth_menu" id="parent_auth_menu">
                                     <option value="0">ROOT</option>
+                                    <?=$auth_menu_html?>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -31,7 +32,7 @@
                             </div>
                             <div class="form-group form-group-sm">
                                 <label for="position">Position</label>
-                                    <input type="text" class="form-control" name="position" id="position" value="<?=(isset($post['position'])) ? $post['position'] : ''?>"/>
+                                    <input type="text" class="form-control" name="position" id="position" value="<?=(isset($post['position'])) ? $post['position'] : $max_position?>"/>
                             </div>
                         </div>
                         <div class="col-lg-4 col-lg-offset-2">

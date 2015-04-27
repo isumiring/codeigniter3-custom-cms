@@ -21,7 +21,7 @@
         <!-- Custom CSS -->
         <link href="<?=CSS_URL?>sb-admin-2.css" rel="stylesheet"/>
         <link href="<?=CSS_URL?>animate.css" rel="stylesheet"/>
-        <link href="<?=CSS_URL?>custom.css" rel="stylesheet"/>
+        <link href="<?=GLOBAL_CSS_URL?>custom.css" rel="stylesheet"/>
 
         <!-- Custom Fonts -->
         <link href="<?=VENDOR_URL?>font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- jQuery -->
-        <script src="<?=JS_URL?>jquery.min.js"></script>
+        <script src="<?=GLOBAL_JS_URL?>jquery.min.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="<?=JS_URL?>bootstrap.min.js"></script>

@@ -34,7 +34,7 @@ class FAT_Hooks {
                 return;
             }
         } else {
-            if ($segment_1 == 'logout') {
+            if ($segment_1 == 'logout' || $segment_1 == 'auth') {
                 return;
             }
             if(!isset($_SESSION['ADM_SESS'])) {
@@ -140,7 +140,7 @@ class FAT_Hooks {
         $data['page_title'] = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
         
         $menus = $this->MenusData();
-        $data['left_menu'] = $this->PrintLeftMenu($menus);
+        $data['left_menu'] = $this->PrintLeftMenu($menus,$class);
 
         $data['save_button_text'] = 'Save';
         $data['cancel_button_text'] = 'Cancel';
@@ -224,16 +224,19 @@ class FAT_Hooks {
      * @param array $menus
      * @return string $return left menu html
      */
-    private function PrintLeftMenu($menus=array()) {
+    private function PrintLeftMenu($menus=array(),$active_menu='') {
         $return = '';
         if ($menus) {
             foreach ($menus as $row => $menu) {
                 $return .= '<li>';
-                $style = '';
+                $style = $set_active = '';
                 if (strlen($menu['menu'])>25) {
                     $style = 'style="font-size:12px;"';
                 }
-                $return .= '<a href="'.site_url($menu['file']).'" '.$style.'>';
+                if ($active_menu != '' && ($menu['file'] != '#' || $menu['file'] != '') && strtolower($active_menu) == strtolower($menu['file'])) {
+                    $set_active = 'class="active"';
+                }
+                $return .= '<a href="'.(($menu['file'] == '#' || $menu['file'] == '') ? '#' : site_url($menu['file'])).'" '.$style.' '.$set_active.'>';
                 $return .= $menu['menu'];
                 if (isset($menu['children']) && count($menu['children'])>0) {
                     $return .= '<span class="fa arrow"></span>';
