@@ -76,7 +76,9 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<?=base_url()?>">CONTENT MANAGEMENT SYSTEM - <?=$site_info['site_name']?></a>
+                    <a class="navbar-brand" href="<?=base_url()?>">
+                        CONTENT MANAGEMENT SYSTEM - <?=$site_info['site_name']?>
+                    </a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -165,8 +167,16 @@
 
         <!-- Custom Theme JavaScript -->
         <script src="<?=JS_URL?>sb-admin-2.js"></script>
+        
+        <!-- Editor -->
+        <script src="<?=VENDOR_URL?>ckeditor/ckeditor.js"></script>
+        
         <script type="text/javascript">
             $(function() {
+                $('#tabster a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
                 $("#dynamic-modal").on('hidden.bs.modal', function(e) {
                     e.preventDefault();
                     $("#dynamic-modal").html('');

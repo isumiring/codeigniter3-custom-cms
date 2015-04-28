@@ -9,105 +9,92 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> Form
+                <?=$page_title?> 
             </div>
             <div class="panel-body">
                 <?php echo form_open($form_action,'role="form" enctype="multipart/form-data"'); ?>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" id="username" value="<?=(isset($post['username'])) ? $post['username'] : ''?>"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_auth_group">Group</label>
-                                <select class="form-control" name="id_auth_group" id="id_auth_group">
-                                    <?php
-                                        foreach($groups as $group) {
-                                            if (isset($post['id_auth_group']) && $group['id_auth_group'] == $post['id_auth_group']) {
-                                                echo '<option value="'.$group['id_auth_group'].'" selected="selected">'.$group['auth_group'].'</option>';
-                                            } else {
-                                                echo '<option value="'.$group['id_auth_group'].'">'.$group['auth_group'].'</option>';
-                                            }
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password </label>
-                                <input type="password" id="password" class="form-control" name="password" value=""/>
-                                <?php if (isset($post['id_auth_user'])): ?>
-                                <p class="help-block"><small>Leave this field empty if You don't want to change Your password.</small></p>
-                                <?php endif; ?>
-                            </div>
-                            <div class="form-group">
-                                <label for="conf_password">Password Confirmation</label>
-                                <input type="password" id="conf_password" class="form-control" name="conf_password" value=""/>
-                            </div>
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" name="name" id="name" value="<?=(isset($post['name'])) ? $post['name'] : ''?>"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" name="email" id="name" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="alamat">Address</label>
-                                <textarea class="form-control" rows="3" id="alamat" name="alamat"><?=(isset($post['alamat'])) ? $post['alamat'] : ''?></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input type="text" class="form-control" name="phone" id="phone" value="<?=(isset($post['phone'])) ? $post['phone'] : ''?>"/>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-lg-offset-2">
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="1" name="status" id="status" <?=(isset($post['status']) && !empty($post['status'])) ? 'checked="checked"' : ''?>/>Active
-                                    </label>
-                                </div>
-                            </div>
-                            <?php if (is_superadmin()) : ?>
-                            <div class="form-group">
-                                <label for="is_superadmin">Super Administrator</label>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?=(isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''?>/>Yes
-                                    </label>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                            <div class="form-group">
-                                <label for="image">Image</label>
-                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$post['image'])): ?>
-                                            <img src="<?=RELATIVE_UPLOAD_DIR.'admin/'.$post['image']?>" id="post-image" />
-                                            <span class="btn btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">Delete</span>
-                                        <?php endif; ?>
+                    <div role="tabpanel" id="tabster">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Site Info</a></li>
+                            <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Site Settings</a></li>
+                        </ul><!-- Nav tabs -->
+                        <!-- /*tab content/ -->
+                        <div class="tab-content">
+                            <!-- /* info -->
+                            <div role="tabpanel" class="tab-pane fade in active" id="info">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="site_name">Site Name</label>
+                                            <input type="text" class="form-control" name="site_name" id="site_name" value="<?=(isset($post['site_name'])) ? $post['site_name'] : ''?>"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="site_url">Site URL</label>
+                                            <input type="text" class="form-control" name="site_url" id="site_url" value="<?=(isset($post['site_url'])) ? $post['site_url'] : ''?>"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="site_path">Site Path</label>
+                                            <input type="text" class="form-control" name="site_path" id="site_path" value="<?=(isset($post['site_path'])) ? $post['site_path'] : ''?>"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="site_address">Address</label>
+                                            <textarea class="form-control" name="site_address" id="site_address"><?=(isset($post['site_address'])) ? $post['site_address'] : ''?></textarea>
+                                        </div>
                                     </div>
-                                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
-                                    <div>
-                                        <span class="btn btn-default btn-file">
-                                            <span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span>
-                                            <input type="file" name="image">
-                                        </span>
-                                        <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                    <div class="col-lg-4 col-lg-offset-2">
+                                        <div class="form-group">
+                                            <label for="is_default">Default</label>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" value="1" name="is_default" id="is_default" <?=(isset($post['is_default']) && !empty($post['is_default'])) ? 'checked="checked"' : ''?>/>Default
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="image">Logo</label>
+                                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
+                                                    <?php if (isset($post['site_logo']) && $post['site_logo'] != '' && file_exists(UPLOAD_DIR.'site/'.$post['site_logo'])): ?>
+                                                        <img src="<?=RELATIVE_UPLOAD_DIR.'site/'.$post['site_logo']?>" id="post-image" />
+                                                        <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?=$post['id_site']?>">x</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                                <div>
+                                                    <span class="btn btn-default btn-file">
+                                                        <span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span>
+                                                        <input type="file" name="site_logo">
+                                                    </span>
+                                                    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div><!-- /* info -->
+                            <!-- /#settings -->
+                            <div role="tabpanel" class="tab-pane fade" id="settings">
+                                <div class="row">
+                                    <?php foreach ($post['setting'] as $row => $setting): ?>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label for="<?=$row?>"><?=ucwords(str_replace('_',' ',$row))?></label>
+                                                <textarea class="form-control" name="setting[<?=$row?>]" id="<?=$row?>" rows="1"><?=$setting?></textarea>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div><!-- /#settings -->
+                        </div><!-- /*tab content/ -->
+                        <div class="row">
+                            <div class="col-lg-4 col-lg-offset-8">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a class="btn btn-danger" href="<?=$cancel_url?>">Cancel</a>
                             </div>
                         </div>
+                        <!-- /.row (nested) -->
                     </div>
-                    <div class="row">
-                        <div class="col-lg-4 col-lg-offset-8">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <a class="btn btn-danger" href="<?=$cancel_url?>">Cancel</a>
-                        </div>
-                    </div>
-                    <!-- /.row (nested) -->
                 <?php echo form_close(); ?>
             </div>
             <!-- /.panel-body -->
@@ -119,14 +106,16 @@
 
 <script type="text/javascript">
     $(function() {
-        <?php if (isset($post['id_auth_user'])): ?>
+        <?php if (isset($post['id_site'])): ?>
         $("#delete-picture").click(function() {
             var self = $(this);
             var id = self.attr('data-id');
+            var post_delete = [{name:"id",value:id}];
+            post_delete.push({name:token_name,value:token_key});
             $.ajax({
                 url:'<?=$delete_picture_url?>',
                 type:'post',
-                data:'id='+id,
+                data:post_delete,
                 dataType:'json',
                 beforeSend: function() {
                     self.attr('disabled',true);
@@ -135,10 +124,10 @@
                 self.removeAttr('disabled');
             }).done(function(data) {
                 if (data['error'])  {
-                    alert(data['error']);
+                    $('.flash-message').html(data['error']);
                 }
                 if (data['success']) {
-                    alert(data['success']);
+                    $('.flash-message').html(data['success']);
                     $("#post-image").remove();
                     self.remove();
                 }

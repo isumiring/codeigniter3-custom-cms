@@ -1,6 +1,9 @@
 
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
+        <?php if ($site_info['site_logo'] != '' && file_exists(UPLOAD_DIR.'site/'.$site_info['site_logo'])) : ?>
+            <img src="<?=RELATIVE_UPLOAD_DIR.'site/'.$site_info['site_logo']?>" alt="Main Logo" class="img-responsive img-sitelogo"/>
+        <?php endif; ?>
         <div class="login-panel panel panel-default animated fadeInDownBig">
             <div class="panel-heading">
                 <h3 class="panel-title">Please Sign In</h3>

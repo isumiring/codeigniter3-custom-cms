@@ -263,6 +263,9 @@ class Admin extends CI_Controller {
         redirect($this->class_path_name);
     }
     
+    /**
+     * delete picture
+     */
     public function delete_picture() {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {

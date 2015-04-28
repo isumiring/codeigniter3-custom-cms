@@ -112,33 +112,36 @@ class Site_model extends CI_Model
     }
     
     /**
-     * insert new record
-     * @param array $param
-     * @return int last inserted id
-     */
-    function InsertRecord($param) {
-        $this->db->insert('auth_user',$param);
-        $last_id = $this->db->insert_id();
-        return $last_id;
-    }
-    
-    /**
-     * update record admin user
+     * update record data
      * @param int $id
      * @param array $param
      */
     function UpdateRecord($id,$param) {
-        $this->db->where('id_auth_user',$id);
-        $this->db->update('auth_user',$param);
+        $this->db->where('id_site',$id);
+        $this->db->update('sites',$param);
     }
     
     /**
-     * delete record
-     * @param int $id
+     * update setting data
+     * @param int $id_site
+     * @param array $param
      */
-    function DeleteRecord($id) {
-        $this->db->where('id_auth_user',$id);
-        $this->db->delete('auth_user');
+    function UpdateSettingData($id_site,$param) {
+        // delete setting before update
+        $this->db->where('id_site',$id_site);
+        $this->db->delete('setting');
+        $ins = array();
+        foreach ($param as $setting => $val) {
+            $ins[] = array(
+                'id_site'=>$id_site,
+                'type'=>$setting,
+                'value'=>$val
+            );
+        }
+        // now we update the setting
+        if (count($ins)>0) {
+            $this->db->insert_batch('setting',$ins);
+        }
     }
     
     /**

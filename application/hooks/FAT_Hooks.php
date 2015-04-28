@@ -40,7 +40,11 @@ class FAT_Hooks {
             if(!isset($_SESSION['ADM_SESS'])) {
                 if ($CI->input->is_ajax_request()) {
                     $CI->session->set_userdata('tmp_login_redirect','dashboard');
-                    echo '<script>window.location="'.site_url('login').'";</script>';
+                    header('Content-type: application/json');
+                    $json['redirect_auth'] = site_url('login');
+                    exit(
+                        json_encode($json)
+                    );
                 } else {
                     $CI->session->set_userdata('tmp_login_redirect',current_url());
                     redirect('login');
@@ -51,7 +55,11 @@ class FAT_Hooks {
                     session_destroy();
                     if ($CI->input->is_ajax_request()) {
                         $CI->session->set_userdata('tmp_login_redirect','dashboard');
-                        echo '<script>window.location="'.site_url('login').'";</script>';
+                        header('Content-type: application/json');
+                        $json['redirect_auth'] = site_url('login');
+                        exit(
+                            json_encode($json)
+                        );
                     } else {
                         $CI->session->set_userdata('tmp_login_redirect',current_url());
                         redirect('login');

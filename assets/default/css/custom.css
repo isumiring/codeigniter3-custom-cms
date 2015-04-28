@@ -42,3 +42,11 @@ table#dataTables-list tbody tr td.details-control {
     bottom: 0;
     right: 0;
 }
+
+.tab-content .tab-pane {
+    padding: 20px;
+}
+
+img.img-sitelogo {
+    margin: 0 auto;
+}
