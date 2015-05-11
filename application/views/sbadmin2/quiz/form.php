@@ -90,12 +90,12 @@
                                                 <label for="question_type_<?=$row?>">Type</label>
                                                 <div class="radio">
                                                     <label>
-                                                        <input type="radio" name="question[<?=$row?>][question_type]" id="question_type_<?=$row?>_1" value="1" >Input Text
+                                                        <input type="radio" name="question[<?=$row?>][question_type]" id="question_type_<?=$row?>_1" value="1" <?=((isset($question['question_type']) && $question['question_type'] == 1) ? 'checked="checked"' : '')?>/>Input Text
                                                     </label>
                                                 </div>
                                                 <div class="radio">
                                                     <label>
-                                                        <input type="radio" name="question[<?=$row?>][question_type]" id="question_type_<?=$row?>_2" value="2" >Textarea
+                                                        <input type="radio" name="question[<?=$row?>][question_type]" id="question_type_<?=$row?>_2" value="2" <?=((isset($question['question_type']) && $question['question_type'] == 2) ? 'checked="checked"' : '')?>/>Textarea
                                                     </label>
                                                 </div>
                                             </div>
@@ -172,22 +172,33 @@
             not_show = 'style="display:none;"';
         }
         html = '\
-            <div class="group-form row-form">\
-                <div class="form-group col-md-3">\
-                    <label for="name_'+row+'" '+not_show+'>Nama</label>\
-                    <input class="form-control" required="required" id="name_'+row+'" name="suggest['+row+'][name]" type="text" placeholder="Name"/>\
+            <div class="row-question">\
+                <div class="col-lg-8">\
+                    <div class="form-group">\
+                        <label for="question_'+row+'" '+not_show+'>Question</label>\
+                        <textarea class="form-control" name="question['+row+'][question]" id="question_'+row+'"></textarea>\
+                    </div>\
                 </div>\
-                <div class="form-group col-md-3">\
-                    <label for="email_'+row+'" '+not_show+'>Email</label>\
-                    <input class="form-control" required="required" id="email_'+row+'" name="suggest['+row+'][email]" type="email" placeholder="Email"/>\
+                <div class="col-lg-2">\
+                    <div class="form-group">\
+                        <label for="question_type_'+row+'" '+not_show+'>Type</label>\
+                        <div class="radio">\
+                            <label>\
+                                <input type="radio" name="question['+row+'][question_type]" id="question_type_'+row+'_1" value="1" checked="checked" />Input Text\
+                            </label>\
+                        </div>\
+                        <div class="radio">\
+                            <label>\
+                                <input type="radio" name="question['+row+'][question_type]" id="question_type_'+row+'_2" value="2" />Textarea\
+                            </label>\
+                        </div>\
+                    </div>\
                 </div>\
-                <div class="form-group col-md-2">\
-                    <label for="phone_'+row+'" '+not_show+'>Phone</label>\
-                    <input class="form-control" required="required" id="phone_'+row+'" name="suggest['+row+'][phone]" type="text" placeholder="contoh: 021-7777777"/>\
-                </div>\
-                <div class="form-group col-md-2">\
-                    <label for="phone2_'+row+'" '+not_show+'>Phone 2</label>\
-                    <input class="form-control" required="required" id="phone2_'+row+'" name="suggest['+row+'][phone2]" type="text" placeholder="contoh: 021-7777777"/>\
+                <div class="col-lg-2">\
+                    <div class="form-group">\
+                        <label for="question_position_'+row+'" '+not_show+'>Position</label>\
+                        <input type="text" class="form-control" name="question['+row+'][position]" id="question_position_'+row+'" value=""/>\
+                    </div>\
                 </div>\
             </div>';
         $(".group-form-field").append(html);

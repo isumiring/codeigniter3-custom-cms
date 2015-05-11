@@ -78,7 +78,7 @@ class Group extends CI_Controller {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
                 
                 // update data
-                $id = $this->Admin_model->InsertRecord($post);
+                $id = $this->Group_model->InsertRecord($post);
                 // insert to log
                 $data_log = array(
                     'id_user' => id_auth_user(),
