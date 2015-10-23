@@ -32,3 +32,5 @@ class FAT_Router extends CI_Router {
     }
 
 }
+/* End of file FAT_Router.php */
+/* Location: ./application/core/FAT_Router.php */

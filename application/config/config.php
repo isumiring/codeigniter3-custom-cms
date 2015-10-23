@@ -46,7 +46,7 @@ $config['index_page'] = '';
 |
 | WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
 */
-$config['uri_protocol']	= 'QUERY_STRING';
+$config['uri_protocol']	= 'REQUEST_URI';
 
 /*
 |--------------------------------------------------------------------------
@@ -153,7 +153,7 @@ $config['composer_autoload'] = FALSE;
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-=?';
 
 
 /*
@@ -305,7 +305,7 @@ $config['cache_query_string'] = FALSE;
 | http://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'bad-religion-!#_#!';
+$config['encryption_key'] = 'frontier-bad-religion-!#_#!';
 
 /*
 |--------------------------------------------------------------------------
@@ -356,12 +356,12 @@ $config['encryption_key'] = 'bad-religion-!#_#!';
 |
 */
 $config['sess_driver'] = 'database';
-$config['sess_cookie_name'] = 'codesession';
+$config['sess_cookie_name'] = 'fcodesession';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = 'sessions';
+$config['sess_save_path'] = 'front_sessions';
 $config['sess_match_ip'] = TRUE;
 $config['sess_time_to_update'] = 300;
-$config['sess_regenerate_destroy'] = FALSE;
+$config['sess_regenerate_destroy'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -427,11 +427,11 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
 $config['csrf_protection'] = TRUE;
-$config['csrf_token_name'] = 'cmsfatoken';
-$config['csrf_cookie_name'] = 'cmsfatcookie';
+$config['csrf_token_name'] = 'frfatoken';
+$config['csrf_cookie_name'] = 'frfatcookie';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = FALSE;
-$config['csrf_exclude_uris'] = array('login','logout');
+$config['csrf_exclude_uris'] = '';
 
 /*
 |--------------------------------------------------------------------------

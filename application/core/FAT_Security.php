@@ -24,8 +24,15 @@ class FAT_Security extends CI_Security {
      */
     public function csrf_show_error() {
         // show_error('The action you have requested is not allowed.');  // default code
-        $redirect_url = PATH_CMS.'error/csrf_redirect';
-        header('Location: '.$redirect_url.'', TRUE, 302);
+        $redirect_url = PATH_ROOT.'error/csrf_redirect';
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            echo json_encode(array('redirect_auth'=>$redirect_url));
+        } else {
+            header('Location: '.$redirect_url.'', TRUE, 302);
+        }
+        exit;
     }
 
 }
+/* End of file FAT_Security.php */
+/* Location: ./application/core/FAT_Security.php */
