@@ -201,7 +201,7 @@ class Group_model extends CI_Model
                 $return .= '<div class="checkbox">';
                 if ($menu['parent_auth_menu'] != 0) {
                     $return .= $prefix;
-                    $return .= '<img src="'.GLOBAL_IMG_URL.'tree-taxo.png"/>&nbsp;&nbsp;';
+                    $return .= '<img src="'.PATH_CMS.'assets/default/img/tree-tax.png"/>&nbsp;&nbsp;';
                 } else {
                     $prefix = '';
                 }
@@ -244,7 +244,7 @@ class Group_model extends CI_Model
                 $checked = 'checked="checked"';
             }
             if ($id_parent != 0) {
-                $tree = '&nbsp;&nbsp;<img src="'.IMG_URL.'tree-tax.png" class="tree-tax" alt="taxo"/>';
+                $tree = '&nbsp;&nbsp;<img src="'.PATH_CMS.'assets/'.getActiveThemes().'/img/tree-tax.png" class="tree-tax" alt="taxo"/>';
             }
             $tmp_menu .=  '<label class="checkbox" style="margin-top: 8px;">
                                 <input type="checkbox" value="'.$menu["id_auth_menu"].'" '.$checked.'" id="menu-group-'.$menu["id_auth_menu"].'" name="auth_menu_group[]" class="checkauth">
