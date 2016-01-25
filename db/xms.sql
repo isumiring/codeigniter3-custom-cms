@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.44, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.27, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: xms
 -- ------------------------------------------------------
--- Server version	5.5.44-0ubuntu0.14.04.1
+-- Server version	5.6.27-0ubuntu1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,10 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Current Database: `xms`
---
 
 --
 -- Table structure for table `article`
@@ -572,6 +568,70 @@ LOCK TABLES `pages_image_caption` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `product`
+--
+
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `product` (
+  `id_product` int(11) NOT NULL AUTO_INCREMENT,
+  `publish_date` date NOT NULL,
+  `expire_date` date DEFAULT NULL,
+  `primary_image` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `thumbnail_image` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `uri_path` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `unit` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `stock` tinyint(1) NOT NULL DEFAULT '0',
+  `id_status` int(11) NOT NULL,
+  `is_featured` tinyint(1) NOT NULL DEFAULT '0',
+  `is_delete` tinyint(1) NOT NULL DEFAULT '0',
+  `modify_date` datetime DEFAULT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_product`),
+  KEY `uri_path` (`uri_path`),
+  KEY `id_status` (`id_status`),
+  KEY `is_featured` (`is_featured`),
+  KEY `is_delete` (`is_delete`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product_detail`
+--
+
+DROP TABLE IF EXISTS `product_detail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `product_detail` (
+  `id_product_detail` int(11) NOT NULL AUTO_INCREMENT,
+  `id_product` int(11) NOT NULL,
+  `id_localization` int(11) NOT NULL,
+  `title` varchar(250) COLLATE utf8_bin NOT NULL,
+  `description` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_product_detail`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_detail`
+--
+
+LOCK TABLES `product_detail` WRITE;
+/*!40000 ALTER TABLE `product_detail` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_detail` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `setting`
 --
 
@@ -725,4 +785,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-23 13:56:22
+-- Dump completed on 2016-01-12 15:38:47
