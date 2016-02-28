@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col-sm-8 blog-main">
             <div class="blog-post">
-                <h2 class="blog-post-title"><?=$record['title']?></h2>
-                <?php if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'article/'.$record['primary_image'])): ?>
-                <img class="img-responsive" src="<?=RELATIVE_UPLOAD_DIR.'article/'.$record['primary_image']?>"/>
+                <h2 class="blog-post-title"><?=$article['title']?></h2>
+                <?php if ($article['primary_image'] != '' && file_exists(UPLOAD_DIR.'article/'.$article['primary_image'])): ?>
+                <img class="img-responsive" src="<?=RELATIVE_UPLOAD_DIR.'article/'.$article['primary_image']?>"/>
                 <?php endif; ?>
-                <?=$record['description']?>
+                <?=$article['description']?>
             </div>
         </div>
     </div>
