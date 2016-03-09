@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 $lang['registration_teaser'] = 'Please register Polytron product by filling out the form below.';
 $lang['registration_step1'] = 'Step 1 (Personal Data)';

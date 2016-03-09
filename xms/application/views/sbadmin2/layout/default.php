@@ -142,12 +142,12 @@
                     <!-- /.flash-message -->
                     <div class="flash-message">
                         <?php if (isset($flash_message)) {
-                            echo $flash_message;
-                        }
+    echo $flash_message;
+}
                         ?>
                         <?php if (isset($persistent_message)) {
-                            echo $persistent_message;
-                        }
+    echo $persistent_message;
+}
                         ?>
                     </div><!-- /.flash-message -->
                     

@@ -1,37 +1,43 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Menu Class
+ * Menu Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Controller
  * @desc Menu Controller
- * 
  */
-class Menu extends CI_Controller {
-    
+class Menu extends CI_Controller
+{
     private $class_path_name;
-    
-    function __construct() {
+
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('Menu_model');
         $this->class_path_name = $this->router->fetch_class();
     }
-    
+
     /**
-     * index page
+     * index page.
      */
-    public function index() {
+    public function index()
+    {
         $this->data['add_url'] = site_url($this->class_path_name.'/add');
         $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
-    
+
     /**
-     * list data
+     * list data.
      */
-    public function list_data() {
+    public function list_data()
+    {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
             $post = $this->input->post();
@@ -46,11 +52,11 @@ class Menu extends CI_Controller {
             $count_all_records = $this->Menu_model->CountAllMenu();
             $count_filtered_records = $this->Menu_model->CountAllMenu($param);
             $records = $this->Menu_model->GetAllMenuData($param);
-            $return = array();
+            $return = [];
             $return['draw'] = $post['draw'];
             $return['recordsTotal'] = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = array();
+            $return['data'] = [];
             foreach ($records as $row => $record) {
                 $return['data'][$row]['DT_RowId'] = $record['id'];
                 $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
@@ -59,69 +65,72 @@ class Menu extends CI_Controller {
                 $return['data'][$row]['position'] = $record['position'];
             }
             header('Content-type: application/json');
-            exit (
+            exit(
                 json_encode($return)
             );
         }
         redirect($this->class_path_name);
     }
-    
+
     /**
-     * add page
+     * add page.
      */
-    public function add() {
+    public function add()
+    {
         $this->data['page_title'] = 'Add';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
         $this->data['cancel_url'] = site_url($this->class_path_name);
         $menu_data = $this->Menu_model->MenusData();
         $selected = '';
-        $this->data['max_position'] = $this->Menu_model->MaxPosition()+1;
+        $this->data['max_position'] = $this->Menu_model->MaxPosition() + 1;
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
                 $post['file'] = strtolower($post['file']);
-                
+
                 // insert data
                 $id = $this->Menu_model->InsertRecord($post);
-                
+
                 // for development only. otherwise, disable this method
                 if (ENVIRONMENT == 'development' && is_superadmin()) {
-                    $insert_auth = array(
-                        'id_auth_group'=>id_auth_group(),
-                        'id_auth_menu'=>$id,
-                    );
+                    $insert_auth = [
+                        'id_auth_group' => id_auth_group(),
+                        'id_auth_menu'  => $id,
+                    ];
                     $this->Menu_model->InsertAuth($insert_auth);
                 }
-                
+
                 // insert to log
-                $data_log = array(
-                    'id_user' => id_auth_user(),
+                $data_log = [
+                    'id_user'  => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'Menu Admin',
-                    'desc' => 'Add Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
-                );
+                    'action'   => 'Menu Admin',
+                    'desc'     => 'Add Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
+                ];
                 insert_to_log($data_log);
                 // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
-                
+                $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
+
                 redirect($this->class_path_name);
             }
             $selected = $post['parent_auth_menu'];
             $this->data['post'] = $post;
         }
-        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data,'',$selected);
+        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data, '', $selected);
         $this->data['template'] = $this->class_path_name.'/form';
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
     }
-    
+
     /**
-     * detail page
+     * detail page.
+     *
      * @param int $id
      */
-    public function edit($id=0) {
+    public function edit($id = 0)
+    {
         if (!$id) {
             redirect($this->class_path_name);
         }
@@ -130,7 +139,7 @@ class Menu extends CI_Controller {
             redirect($this->class_path_name);
         }
         if ($record['is_superadmin'] == 1 && !is_superadmin()) {
-            $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Menuistrator','danger'));
+            $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Menuistrator', 'danger'));
             redirect($this->class_path_name);
         }
         $this->data['page_title'] = 'Edit';
@@ -139,26 +148,26 @@ class Menu extends CI_Controller {
         $this->data['post'] = $record;
         $disabled_menu = $this->Menu_model->MenusIdChildrenTaxonomy($id);
         $menu_data = $this->Menu_model->MenusData();
-        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data,'',$record['parent_auth_menu'],$disabled_menu);
+        $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data, '', $record['parent_auth_menu'], $disabled_menu);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
                 $post['file'] = strtolower($post['file']);
-                
+
                 // update data
-                $this->Menu_model->UpdateRecord($id,$post);
+                $this->Menu_model->UpdateRecord($id, $post);
                 // insert to log
-                $data_log = array(
-                    'id_user' => id_auth_user(),
+                $data_log = [
+                    'id_user'  => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'Menu Admin',
-                    'desc' => 'Edit Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
-                );
+                    'action'   => 'Menu Admin',
+                    'desc'     => 'Edit Menu Admin; ID: '.$id.'; Data: '.json_encode($post),
+                ];
                 insert_to_log($data_log);
                 // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
-                
+                $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
+
                 redirect($this->class_path_name);
             }
         }
@@ -168,23 +177,24 @@ class Menu extends CI_Controller {
             $this->data['form_message'] = $this->error;
         }
     }
-    
+
     /**
-     * delete page
+     * delete page.
      */
-    public function delete() {
+    public function delete()
+    {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
             $post = $this->input->post();
-            $json = array();
+            $json = [];
             if ($post['ids'] != '') {
                 $array_id = array_map('trim', explode(',', $post['ids']));
-                if (count($array_id)>0) {
+                if (count($array_id) > 0) {
                     foreach ($array_id as $row => $id) {
                         $record = $this->Menu_model->GetMenu($id);
                         if ($record) {
                             if ($record['is_superadmin'] && !is_superadmin()) {
-                                $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Menuistrator.','danger');
+                                $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Menuistrator.', 'danger');
                                 break;
                             } else {
                                 /*if (!$this->Menu_model->checkUserHaveRightsMenu(id_auth_group(),$id)) {
@@ -193,85 +203,93 @@ class Menu extends CI_Controller {
                                 } else {*/
                                     $this->Menu_model->DeleteRecord($id);
                                     // insert to log
-                                    $data_log = array(
-                                        'id_user' => id_auth_user(),
+                                    $data_log = [
+                                        'id_user'  => id_auth_user(),
                                         'id_group' => id_auth_group(),
-                                        'action' => 'Delete Admin Menu',
-                                        'desc' => 'Delete Admin Menu; ID: '.$id.';',
-                                    );
-                                    insert_to_log($data_log);
+                                        'action'   => 'Delete Admin Menu',
+                                        'desc'     => 'Delete Admin Menu; ID: '.$id.';',
+                                    ];
+                                insert_to_log($data_log);
                                     // end insert to log
-                                    $json['success'] = alert_box('Data has been deleted','success');
-                                    $this->session->set_flashdata('flash_message',$json['success']);
+                                    $json['success'] = alert_box('Data has been deleted', 'success');
+                                $this->session->set_flashdata('flash_message', $json['success']);
                                 //}
                             }
                         } else {
-                            $json['error'] = alert_box('Failed. Please refresh the page.','danger');
+                            $json['error'] = alert_box('Failed. Please refresh the page.', 'danger');
                             break;
                         }
                     }
                 }
             }
             header('Content-type: application/json');
-            exit (
+            exit(
                 json_encode($json)
             );
         }
         redirect($this->class_path_name);
     }
-    
+
     /**
-     * validate form
+     * validate form.
+     *
      * @param int $id
-     * @return boolean
+     *
+     * @return bool
      */
-    private function validateForm($id=0) {
-        $config = array(
-            array(
+    private function validateForm($id = 0)
+    {
+        $config = [
+            [
                 'field' => 'parent_auth_menu',
                 'label' => 'Parent',
-                'rules' => 'required'
-            ),
-            array(
+                'rules' => 'required',
+            ],
+            [
                 'field' => 'menu',
                 'label' => 'Menu',
-                'rules' => 'required'
-            ),
-            array(
+                'rules' => 'required',
+            ],
+            [
                 'field' => 'file',
                 'label' => 'File Path',
-                'rules' => 'required|callback_check_menu_file['.$id.']'
-            ),
-            array(
+                'rules' => 'required|callback_check_menu_file['.$id.']',
+            ],
+            [
                 'field' => 'position',
                 'label' => 'Position',
-                'rules' => 'numeric'
-            ),
-        );
+                'rules' => 'numeric',
+            ],
+        ];
         $this->form_validation->set_rules($config);
-        if ($this->form_validation->run() === FALSE) {
-            $this->error = alert_box(validation_errors(),'danger');
-            return FALSE;
+        if ($this->form_validation->run() === false) {
+            $this->error = alert_box(validation_errors(), 'danger');
+
+            return false;
         } else {
-            return TRUE;
+            return true;
         }
     }
-    
+
     /**
-     * check if file is exists
+     * check if file is exists.
+     *
      * @param string $string
-     * @param int $id
-     * @return boolean true/false
+     * @param int    $id
+     *
+     * @return bool true/false
      */
-    public function check_menu_file($string,$id=0) {
+    public function check_menu_file($string, $id = 0)
+    {
         if ($string == '#') {
-            return TRUE;
+            return true;
         } else {
             if (!$this->Menu_model->checkExistsFilepath($string, $id)) {
                 $this->form_validation->set_message('check_menu_file', '{field} is already exists. Please use different {field}');
-                return FALSE;
+
+                return false;
             } else {
-                return TRUE;
+                return true;
             }
         }
     }

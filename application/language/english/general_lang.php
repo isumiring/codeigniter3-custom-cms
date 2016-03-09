@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 $lang['general_empty_record'] = 'There\'s no record in our database';
 $lang['general_form_full_name'] = 'Full Name';

@@ -1,20 +1,24 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Login Class
+ * Login Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Controller
  * @desc Login Controller
- * 
  */
-class Login extends CI_Controller {
-    
+class Login extends CI_Controller
+{
     /**
-     * login page
+     * login page.
      */
-    public function index() {
+    public function index()
+    {
         $this->load->model('Auth_model');
         $this->layout = 'login';
         $this->data['page_title'] = 'Login';
@@ -22,9 +26,9 @@ class Login extends CI_Controller {
         if ($this->input->post()) {
             $post = $this->input->post();
             if (isset($post['username']) && isset($post['password']) && $post['username'] != '' && $post['password'] != '') {
-                $this->Auth_model->CheckAuth($post['username'],$post['password']);
+                $this->Auth_model->CheckAuth($post['username'], $post['password']);
             } else {
-                $error_login = alert_box('Username/Password isn\'t valid. Please try again.','danger');
+                $error_login = alert_box('Username/Password isn\'t valid. Please try again.', 'danger');
             }
         }
         if (isset($error_login)) {
@@ -34,11 +38,12 @@ class Login extends CI_Controller {
             $this->data['error_login'] = $this->session->flashdata('flash_message');
         }
     }
-    
+
     /**
-     * lougout page
+     * lougout page.
      */
-    public function logout() {
+    public function logout()
+    {
         session_destroy();
         redirect('login');
         exit;

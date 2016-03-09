@@ -12,7 +12,7 @@
                 <?=$page_title?> Form
             </div>
             <div class="panel-body">
-                <?php echo form_open($form_action,'role="form"'); ?>
+                <?php echo form_open($form_action, 'role="form"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">

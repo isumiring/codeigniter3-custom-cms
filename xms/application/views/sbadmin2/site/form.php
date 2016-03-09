@@ -12,7 +12,7 @@
                 <?=$page_title?> 
             </div>
             <div class="panel-body">
-                <?php echo form_open($form_action,'role="form" enctype="multipart/form-data"'); ?>
+                <?php echo form_open($form_action, 'role="form" enctype="multipart/form-data"'); ?>
                     <div role="tabpanel" id="tabster">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
@@ -79,7 +79,7 @@
                                     <?php  foreach ($post['setting'] as $row => $setting): ?>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label for="<?=$row?>"><?=ucwords(str_replace('_',' ',$row))?></label>
+                                                <label for="<?=$row?>"><?=ucwords(str_replace('_', ' ', $row))?></label>
                                                 <textarea class="form-control" name="setting[<?=$row?>]" id="<?=$row?>" rows="1"><?=$setting?></textarea>
                                             </div>
                                         </div>
