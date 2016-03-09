@@ -12,17 +12,17 @@
                 <?=$page_title?> Form
             </div>
             <div class="panel-body">
-                <?php echo form_open($form_action,'role="form"'); ?>
+                <?php echo form_open($form_action, 'role="form"'); ?>
                     <div class="row">
                         <div class="col-lg-8">
                             <?php if ($locales): ?>
                             <div class="localization" role="tabpanel" id="tabster">
                                 <ul class="nav nav-tabs" role="tablist">
                                     <?php foreach ($locales as $row => $local): ?>
-                                    <li role="presentation" <?=($row==0) ? 'class="active"' : ''?>>
+                                    <li role="presentation" <?=($row == 0) ? 'class="active"' : ''?>>
                                         <a href="#<?=$local['iso_2'].'-'.$local['id_localization']?>" aria-controls="<?=$local['iso_2'].'-'.$local['id_localization']?>" role="tab" data-toggle="tab">
                                             <?=ucfirst($local['locale'])?>
-                                            <?=($local['locale_status']==1)?' (Default)':''?>
+                                            <?=($local['locale_status'] == 1) ? ' (Default)' : ''?>
                                         </a>
                                     </li>
                                     <?php endforeach; ?>
@@ -30,10 +30,10 @@
                                 <!-- /.tab content -->
                                 <div class="tab-content">
                                     <?php foreach ($locales as $row => $local): ?>
-                                    <div role="tabpanel" class="tab-pane fade <?=($row==0) ? 'in active' : ''?>" id="<?=$local['iso_2'].'-'.$local['id_localization']?>">
+                                    <div role="tabpanel" class="tab-pane fade <?=($row == 0) ? 'in active' : ''?>" id="<?=$local['iso_2'].'-'.$local['id_localization']?>">
                                         <div class="form-group">
                                             <label for="title_<?=$local['iso_1']?>">Title (<?=ucfirst($local['locale'])?>)</label>
-                                            <input type="text" class="form-control <?=($row==0)?'seodef':''?>" name="locales[<?=$local['id_localization']?>][title]" id="title_<?=$local['iso_1']?>" value="<?= (isset($post['locales'][$local['id_localization']]['title'])) ? $post['locales'][$local['id_localization']]['title'] : '' ?>"/>
+                                            <input type="text" class="form-control <?=($row == 0) ? 'seodef' : ''?>" name="locales[<?=$local['id_localization']?>][title]" id="title_<?=$local['iso_1']?>" value="<?= (isset($post['locales'][$local['id_localization']]['title'])) ? $post['locales'][$local['id_localization']]['title'] : '' ?>"/>
                                         </div>
                                     </div>
                                     <?php endforeach; ?>

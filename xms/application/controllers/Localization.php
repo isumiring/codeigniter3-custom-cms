@@ -1,37 +1,43 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Localization Class
+ * Localization Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Controller
  * @desc Localization Controller
- * 
  */
-class Localization extends CI_Controller {
-    
+class Localization extends CI_Controller
+{
     private $class_path_name;
-    
-    function __construct() {
+
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('Localization_model');
         $this->class_path_name = $this->router->fetch_class();
     }
-    
+
     /**
-     * index page
+     * index page.
      */
-    public function index() {
+    public function index()
+    {
         $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['add_url'] = site_url($this->class_path_name.'/add');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
-    
+
     /**
-     * list data
+     * list data.
      */
-    public function list_data() {
+    public function list_data()
+    {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
             $post = $this->input->post();
@@ -46,11 +52,11 @@ class Localization extends CI_Controller {
             $count_all_records = $this->Localization_model->CountAllData();
             $count_filtered_records = $this->Localization_model->CountAllData($param);
             $records = $this->Localization_model->GetAllData($param);
-            $return = array();
+            $return = [];
             $return['draw'] = $post['draw'];
             $return['recordsTotal'] = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = array();
+            $return['data'] = [];
             foreach ($records as $row => $record) {
                 $return['data'][$row]['DT_RowId'] = $record['id'];
                 $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/detail/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
@@ -61,17 +67,18 @@ class Localization extends CI_Controller {
                 $return['data'][$row]['locale_status'] = ($record['locale_status'] == 1) ? 'Default' : '';
             }
             header('Content-type: application/json');
-            exit (
+            exit(
                 json_encode($return)
             );
         }
         redirect($this->class_path_name);
     }
-    
+
     /**
-     * add new site
+     * add new site.
      */
-    public function add() {
+    public function add()
+    {
         $this->data['page_title'] = 'Add Localization';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
         $this->data['cancel_url'] = site_url($this->class_path_name);
@@ -80,19 +87,19 @@ class Localization extends CI_Controller {
             if ($this->validateForm()) {
                 $post['locale_status'] = (isset($post['locale_status'])) ? 1 : 0;
                 $post['locale_path'] = ($post['locale_path'] != '') ? url_title($post['locale_path'], '-', true) : url_title($post['locale'], '-', true);
-                
+
                 $id = $this->Localization_model->InsertRecord($post);
                 // insert to log
-                $data_log = array(
-                    'id_user' => id_auth_user(),
+                $data_log = [
+                    'id_user'  => id_auth_user(),
                     'id_group' => id_auth_group(),
-                    'action' => 'Localization',
-                    'desc' => 'Add Localization; ID: '.$id.'; Data: '.json_encode($post),
-                );
+                    'action'   => 'Localization',
+                    'desc'     => 'Add Localization; ID: '.$id.'; Data: '.json_encode($post),
+                ];
                 insert_to_log($data_log);
                 // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
-                
+                $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
+
                 redirect($this->class_path_name);
             }
             $this->data['post'] = $post;
@@ -102,87 +109,92 @@ class Localization extends CI_Controller {
             $this->data['form_message'] = $this->error;
         }
     }
-    
+
     /**
-    * delete page
-    */
-    public function delete() {
+     * delete page.
+     */
+    public function delete()
+    {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
             $post = $this->input->post();
-            $json = array();
+            $json = [];
             if ($post['ids'] != '') {
                 $array_id = array_map('trim', explode(',', $post['ids']));
-                if (count($array_id)>0) {
+                if (count($array_id) > 0) {
                     foreach ($array_id as $row => $id) {
                         $record = $this->Localization_model->GetLocalization($id);
                         if ($record) {
                             $this->Localization_model->DeleteRecord($id);
                             // insert to log
-                            $data_log = array(
-                                'id_user' => id_auth_user(),
+                            $data_log = [
+                                'id_user'  => id_auth_user(),
                                 'id_group' => id_auth_group(),
-                                'action' => 'Delete Localization',
-                                'desc' => 'Delete Localization; ID: '.$id.';',
-                            );
+                                'action'   => 'Delete Localization',
+                                'desc'     => 'Delete Localization; ID: '.$id.';',
+                            ];
                             insert_to_log($data_log);
                             // end insert to log
-                            $json['success'] = alert_box('Data has been deleted','success');
-                            $this->session->set_flashdata('flash_message',$json['success']);
+                            $json['success'] = alert_box('Data has been deleted', 'success');
+                            $this->session->set_flashdata('flash_message', $json['success']);
                         } else {
-                            $json['error'] = alert_box('Failed. Please refresh the page.','danger');
+                            $json['error'] = alert_box('Failed. Please refresh the page.', 'danger');
                             break;
                         }
                     }
                 }
             }
             header('Content-type: application/json');
-            exit (
+            exit(
                 json_encode($json)
             );
         }
         redirect($this->class_path_name);
     }
-    
+
     /**
-     * validate form
+     * validate form.
+     *
      * @param int $id
-     * @return boolean
+     *
+     * @return bool
      */
-    private function validateForm($id=0) {
+    private function validateForm($id = 0)
+    {
         $post = $this->input->post();
-        $config = array(
-            array(
+        $config = [
+            [
                 'field' => 'locale',
                 'label' => 'Locale/Language',
-                'rules' => 'required'
-            ),
-            array(
+                'rules' => 'required',
+            ],
+            [
                 'field' => 'iso_1',
                 'label' => 'ISO 2',
-                'rules' => 'required'
-            ),
-            array(
+                'rules' => 'required',
+            ],
+            [
                 'field' => 'iso_2',
                 'label' => 'ISO 3',
-                'rules' => 'required'
-            ),
-        );
+                'rules' => 'required',
+            ],
+        ];
         $this->form_validation->set_rules($config);
-        if ($this->form_validation->run() === FALSE) {
-            $this->error = alert_box(validation_errors(),'danger');
-            return FALSE;
+        if ($this->form_validation->run() === false) {
+            $this->error = alert_box(validation_errors(), 'danger');
+
+            return false;
         } else {
-            if (!$this->Localization_model->CheckExistsPath($post['locale_path'],$id)) {
+            if (!$this->Localization_model->CheckExistsPath($post['locale_path'], $id)) {
                 $this->error = 'Path already used.';
             }
             if (!$this->Localization_model->CheckDefault($id)) {
                 $this->error = 'Only 1 can set to Default.';
             }
             if ($this->error) {
-                $this->error = alert_box($this->error,'danger');
+                $this->error = alert_box($this->error, 'danger');
             } else {
-                return TRUE;
+                return true;
             }
         }
     }

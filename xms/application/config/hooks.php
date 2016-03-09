@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -17,27 +18,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     'filename' => 'FAT_Error.php',
     'filepath' => 'hooks'
 );*/
-$hook['post_controller_constructor'][] = array(
+$hook['post_controller_constructor'][] = [
     'class'    => 'FAT_Hooks',
     'function' => 'set_cache',
     'filename' => 'FAT_Hooks.php',
-    'filepath' => 'hooks'
-);
-$hook['post_controller_constructor'][] = array(
+    'filepath' => 'hooks',
+];
+$hook['post_controller_constructor'][] = [
     'class'    => 'FAT_Hooks',
     'function' => 'set_profiler',
     'filename' => 'FAT_Hooks.php',
-    'filepath' => 'hooks'
-);
-$hook['post_controller_constructor'][] = array(
+    'filepath' => 'hooks',
+];
+$hook['post_controller_constructor'][] = [
     'class'    => 'FAT_Authentication',
     'function' => 'authentication',
     'filename' => 'FAT_Authentication.php',
-    'filepath' => 'hooks'
-);
-$hook['post_controller'][] = array(
+    'filepath' => 'hooks',
+];
+$hook['post_controller'][] = [
     'class'    => 'FAT_Layout',
     'function' => 'layout',
     'filename' => 'FAT_Layout.php',
-    'filepath' => 'hooks'
-);
+    'filepath' => 'hooks',
+];

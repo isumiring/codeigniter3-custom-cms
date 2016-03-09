@@ -145,10 +145,10 @@
                         }
                     });
             } else {
-                $("#print-msg").html('<?=alert_box('Please input Your New Password or Confirmation is not correct.','danger')?>');
+                $("#print-msg").html('<?=alert_box('Please input Your New Password or Confirmation is not correct.', 'danger')?>');
             }
         } else {
-            $("#print-msg").html('<?=alert_box('Please input Your old password.','danger')?>');
+            $("#print-msg").html('<?=alert_box('Please input Your old password.', 'danger')?>');
         }
     });
 </script>

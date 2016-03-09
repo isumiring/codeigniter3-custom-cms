@@ -1,34 +1,38 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Article Class
+ * Article Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Controller
  * @desc Article Controller
- * 
  */
-class Article extends CI_Controller {
-
+class Article extends CI_Controller
+{
     private $class_path_name;
-    
+
     /**
-     * load the parent constructor
+     * load the parent constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
-        $this->load->model("Article_model");
+        $this->load->model('Article_model');
         $this->class_path_name = $this->router->fetch_class();
     }
-    
+
     /**
      * Index Page for this controller.
-     * @access public
      */
-    public function index($category='') {
-        $param = array();
-        $json = array();
+    public function index($category = '')
+    {
+        $param = [];
+        $json = [];
         $this->data['categories'] = $this->Article_model->GetCategories();
         $category_info = '';
         if ($category != '') {
@@ -40,7 +44,7 @@ class Article extends CI_Controller {
             $param['conditions']['id_article_category'] = $category_info['id_article_category'];
         }
         if ($this->input->get_post('perpage')) {
-            $param['limit']['from'] = (int)$this->input->get_post('perpage');
+            $param['limit']['from'] = (int) $this->input->get_post('perpage');
             $param['base_url'] = current_url();
         }
         if ($this->input->is_ajax_request()) {
@@ -52,12 +56,14 @@ class Article extends CI_Controller {
         }
         $this->data['list_data'] = $this->list_data($param);
     }
-    
+
     /**
-     * detail page
+     * detail page.
+     *
      * @param string $uri_path
      */
-    public function detail($uri_path='') {
+    public function detail($uri_path = '')
+    {
         $record = $this->Article_model->GetArticleByURI($uri_path);
         if (!$record) {
             show_404();
@@ -69,10 +75,10 @@ class Article extends CI_Controller {
     }
 
     /**
-     * list article with template
-     * @access private
+     * list article with template.
      */
-    private function list_data($param=array()) {
+    private function list_data($param = [])
+    {
         $total_records = $this->Article_model->CountArticles($param);
         $records = $this->Article_model->GetArticles($param);
         if (isset($param['base_url'])) {
@@ -82,12 +88,12 @@ class Article extends CI_Controller {
         }
         $paging['per_page'] = SHOW_RECORDS_DEFAULT;
         $paging['total_rows'] = $total_records;
-        $paging['is_ajax'] = TRUE;
+        $paging['is_ajax'] = true;
         $data['records'] = $records;
         $data['pagination'] = custom_pagination($paging);
-        return $this->load->view(TEMPLATE_DIR.'/'.$this->class_path_name.'/list_data',$data,TRUE);
-    }
 
+        return $this->load->view(TEMPLATE_DIR.'/'.$this->class_path_name.'/list_data', $data, true);
+    }
 }
 
 /* End of file Article.php */

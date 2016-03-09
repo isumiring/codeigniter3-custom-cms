@@ -1,44 +1,48 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Error Class
+ * Error Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Hook
  * @desc hook class that using for error handler
- * 
  */
-class FAT_Error {
-    
+class FAT_Error
+{
     protected $CI;
-    
+
     /**
-     * error catcher
+     * error catcher.
      */
-    public function error_catcher() {
-        set_error_handler(array($this, 'handle_errors'));
-        set_exception_handler(array($this, 'handle_exceptions'));
-        register_shutdown_function(array($this, 'handle_fatal_errors'));
+    public function error_catcher()
+    {
+        set_error_handler([$this, 'handle_errors']);
+        set_exception_handler([$this, 'handle_exceptions']);
+        register_shutdown_function([$this, 'handle_fatal_errors']);
     }
-    
+
     /**
-     * Fatal Error Handler
+     * Fatal Error Handler.
      *
      * Accesses output buffers on shutdown, formats the error message and redirects
      *
-     * @access	public
-     * @return	void
+     * @return void
      */
-    public function handle_fatal_errors() {
+    public function handle_fatal_errors()
+    {
         if (($error = error_get_last())) {
             $buffer = ob_get_contents();
             ob_clean();
-            $message = "\nError Type: [" . $error['type'] . "] " . $this->_friendly_error_type($error['type']) . "\n";
-            $message .= "Error Message: " . $error['message'] . "\n";
-            $message .= "In File: " . $error['file'] . "\n";
-            $message .= "At Line: " . $error['line'] . "\n";
-            $message .= "Platform: " . PHP_VERSION . " (" . PHP_OS . ")\n";
+            $message = "\nError Type: [".$error['type'].'] '.$this->_friendly_error_type($error['type'])."\n";
+            $message .= 'Error Message: '.$error['message']."\n";
+            $message .= 'In File: '.$error['file']."\n";
+            $message .= 'At Line: '.$error['line']."\n";
+            $message .= 'Platform: '.PHP_VERSION.' ('.PHP_OS.")\n";
             $message .= "\nBACKTRACE\n";
             $message .= $buffer;
             $message .= "\nEND\n";
@@ -47,19 +51,19 @@ class FAT_Error {
     }
 
     /**
-     * Exception Handler
+     * Exception Handler.
      *
      * Accesses exception class on shutdown, formats the error message and redirects
      *
-     * @access	public
-     * @return	void
+     * @return void
      */
-    public function handle_exceptions($exception) {
-        $message = "\nError Type: " . get_class($exception) . "\n";
-        $message .= "Error Message: " . $exception->getMessage() . "\n";
-        $message .= "In File: " . $exception->getFile() . "\n";
-        $message .= "At Line: " . $exception->getLine() . "\n";
-        $message .= "Platform: " . PHP_VERSION . " (" . PHP_OS . ")\n";
+    public function handle_exceptions($exception)
+    {
+        $message = "\nError Type: ".get_class($exception)."\n";
+        $message .= 'Error Message: '.$exception->getMessage()."\n";
+        $message .= 'In File: '.$exception->getFile()."\n";
+        $message .= 'At Line: '.$exception->getLine()."\n";
+        $message .= 'Platform: '.PHP_VERSION.' ('.PHP_OS.")\n";
         $message .= "\nBACKTRACE\n";
         $message .= $exception->getTraceAsString();
         $message .= "\nEND\n";
@@ -67,41 +71,43 @@ class FAT_Error {
     }
 
     /**
-     * Parse Error Handler
+     * Parse Error Handler.
      *
      * Accesses parse errors, formats the error message and redirects
      *
-     * @access	public
      * @param 	int
      * @param 	string
      * @param 	string
      * @param 	int
-     * @return 	void
+     *
+     * @return void
      */
-    public function handle_errors($errno, $errstr, $errfile, $errline) {
+    public function handle_errors($errno, $errstr, $errfile, $errline)
+    {
         if (!(error_reporting() & $errno)) {
             return;
         }
-        $message = "\nError Type: [" . $errno . "] " . $this->_friendly_error_type($errno) . "\n";
-        $message .= "Error Message: " . $errstr . "\n";
-        $message .= "In File: " . $errfile . "\n";
-        $message .= "At Line: " . $errline . "\n";
-        $message .= "Platform: " . PHP_VERSION . " (" . PHP_OS . ")\n";
+        $message = "\nError Type: [".$errno.'] '.$this->_friendly_error_type($errno)."\n";
+        $message .= 'Error Message: '.$errstr."\n";
+        $message .= 'In File: '.$errfile."\n";
+        $message .= 'At Line: '.$errline."\n";
+        $message .= 'Platform: '.PHP_VERSION.' ('.PHP_OS.")\n";
         $message .= "\nEND\n";
         $this->_forward_error($message);
     }
 
     /**
-     * Redirection
+     * Redirection.
      *
      * Stores the error message in session and redirects to inhibitor hanlder
      *
-     * @access	private
      * @param	string
-     * @return	void
+     *
+     * @return void
      */
-    private function _forward_error($message) {
-        $this->CI =& get_instance();
+    private function _forward_error($message)
+    {
+        $this->CI = &get_instance();
         $this->CI->load->helper('url');
         $this->CI->load->library('session');
         $this->CI->session->set_flashdata('error_exception', $message);
@@ -109,15 +115,16 @@ class FAT_Error {
     }
 
     /**
-     * Error Type Helper
+     * Error Type Helper.
      *
      * Translates error codes to something more human
      *
-     * @access	private
      * @param	string
-     * @return	string
+     *
+     * @return string
      */
-    private function _friendly_error_type($type) {
+    private function _friendly_error_type($type)
+    {
         switch ($type) {
             case E_ERROR: // 1
                 return 'Fatal error';
@@ -150,9 +157,9 @@ class FAT_Error {
             case E_USER_DEPRECATED: // 16384
                 return 'E_USER_DEPRECATED';
         }
+
         return $type;
     }
-
 }
 
 /* End of file FAT_Error.php */

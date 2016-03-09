@@ -7,7 +7,7 @@
             <?php endif; ?>
             <h2><?=$article['title']?></h2>
             <p><?=$article['teaser']?></p>
-            <p><a class="btn btn-default" href="<?=site_url('article/detail/'.$article['uri_path'])?>" role="button"><?=get_lang_text('general','general_text_more')?> &raquo;</a></p>
+            <p><a class="btn btn-default" href="<?=site_url('article/detail/'.$article['uri_path'])?>" role="button"><?=get_lang_text('general', 'general_text_more')?> &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <?php endforeach; ?>
     </div>
@@ -18,6 +18,6 @@
     </div>
 <?php else: ?>
     <div class="empty-error">
-        <?=get_lang_text('general','general_empty_record')?>
+        <?=get_lang_text('general', 'general_empty_record')?>
     </div>
 <?php endif; ?>

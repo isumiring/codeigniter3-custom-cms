@@ -14,7 +14,7 @@
                     echo $error_login;
                 }
                 ?>
-                <?php echo form_open($form_action,'role="form"'); ?>
+                <?php echo form_open($form_action, 'role="form"'); ?>
                     <fieldset>
                         <div class="form-group animated fadeInLeftBig">
                             <input class="form-control" placeholder="Username" name="username" type="text" autofocus>

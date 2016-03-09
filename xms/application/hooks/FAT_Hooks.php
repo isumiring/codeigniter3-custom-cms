@@ -1,33 +1,37 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * HOOKS Class
+ * HOOKS Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
+ *
  * @version 3.0
+ *
  * @category Hook
  * @desc hook class that load before and after the controller
- * 
  */
-class FAT_Hooks {
-    
+class FAT_Hooks
+{
     protected $CI;
-    
+
     /**
-     * this function is running on post constructor
+     * this function is running on post constructor.
      */
-    public function set_profiler() {
-        $this->CI=& get_instance();
+    public function set_profiler()
+    {
+        $this->CI = &get_instance();
         //$this->CI->output->enable_profiler(TRUE);
     }
-    
-    public function set_cache() {
-        $this->CI=& get_instance();
+
+    public function set_cache()
+    {
+        $this->CI = &get_instance();
         $this->CI->load->driver('cache',
-            array('adapter' => 'file', 'backup' => 'file', 'key_prefix' => CACHE_PREFIX)
+            ['adapter' => 'file', 'backup' => 'file', 'key_prefix' => CACHE_PREFIX]
         );
     }
-
 }
 
 /* End of file FAT_Hooks.php */
