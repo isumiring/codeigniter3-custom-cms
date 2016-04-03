@@ -3,50 +3,20 @@
     Author     : ivan lubis <ivan.z.lubis@gmail.com>
 */
 
-.login-panel {
-    margin-top: 50% ;
-}
-
-table#dataTables-list thead {
-    font-size: 12px;
-}
-table#dataTables-list tbody {
-    font-size: 11px;
-}
-table#dataTables-list tbody tr.selected {
-    background-color: #ccc;
-}
-table#dataTables-list tbody tr td.details-control {
-    cursor: pointer;
-    text-align: center;
-}
-.panel-body form .checkbox, .radio {
-    margin-top: 0;
-}
 .error {
     color: red;
 }
-/* overide class input file image */
-.fileinput {
-    display: block ;
+.no-padding {
+    padding: 0;
 }
-.checkbox label.auth-menu {
-    padding-left: 0;
+.no-margin {
+    margin: 0;
 }
-.fileinput .fileinput-upload {
-    position: relative;
-}
-.fileinput .fileinput-upload #delete-picture {
-    position: absolute;
-    display: block;
-    bottom: 0;
-    right: 0;
-}
-
-.tab-content .tab-pane {
-    padding: 20px;
-}
-
-img.img-sitelogo {
+#home-slider.carousel {
+    width: 80%;
     margin: 0 auto;
+}
+.footer {
+    margin-top: 20px;
+    margin-bottom: 40px;
 }

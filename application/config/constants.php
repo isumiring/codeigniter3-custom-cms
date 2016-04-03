@@ -1,5 +1,18 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
+
+/*
+|--------------------------------------------------------------------------
+| Display Debug backtrace
+|--------------------------------------------------------------------------
+|
+| If set to TRUE, a backtrace will be displayed along with php errors. If
+| error_reporting is disabled, the backtrace will not display, regardless
+| of this setting
+|
+*/
+defined('SHOW_DEBUG_BACKTRACE') or define('SHOW_DEBUG_BACKTRACE', true);
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +27,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | always be used to set the mode correctly.
 |
 */
-define('FILE_READ_MODE', 0644);
-define('FILE_WRITE_MODE', 0666);
-define('DIR_READ_MODE', 0755);
-define('DIR_WRITE_MODE', 0755);
+defined('FILE_READ_MODE')  or define('FILE_READ_MODE', 0644);
+defined('FILE_WRITE_MODE') or define('FILE_WRITE_MODE', 0666);
+defined('DIR_READ_MODE')   or define('DIR_READ_MODE', 0755);
+defined('DIR_WRITE_MODE')  or define('DIR_WRITE_MODE', 0755);
 
 /*
 |--------------------------------------------------------------------------
@@ -27,27 +40,14 @@ define('DIR_WRITE_MODE', 0755);
 | These modes are used when working with fopen()/popen()
 |
 */
-
-define('FOPEN_READ', 'rb');
-define('FOPEN_READ_WRITE', 'r+b');
-define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 'wb'); // truncates existing file data, use with care
-define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
-define('FOPEN_WRITE_CREATE', 'ab');
-define('FOPEN_READ_WRITE_CREATE', 'a+b');
-define('FOPEN_WRITE_CREATE_STRICT', 'xb');
-define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
-
-/*
-|--------------------------------------------------------------------------
-| Display Debug backtrace
-|--------------------------------------------------------------------------
-|
-| If set to TRUE, a backtrace will be displayed along with php errors. If
-| error_reporting is disabled, the backtrace will not display, regardless
-| of this setting
-|
-*/
-define('SHOW_DEBUG_BACKTRACE', TRUE);
+defined('FOPEN_READ')                           or define('FOPEN_READ', 'rb');
+defined('FOPEN_READ_WRITE')                     or define('FOPEN_READ_WRITE', 'r+b');
+defined('FOPEN_WRITE_CREATE_DESTRUCTIVE')       or define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 'wb'); // truncates existing file data, use with care
+defined('FOPEN_READ_WRITE_CREATE_DESCTRUCTIVE') or define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
+defined('FOPEN_WRITE_CREATE')                   or define('FOPEN_WRITE_CREATE', 'ab');
+defined('FOPEN_READ_WRITE_CREATE')              or define('FOPEN_READ_WRITE_CREATE', 'a+b');
+defined('FOPEN_WRITE_CREATE_STRICT')            or define('FOPEN_WRITE_CREATE_STRICT', 'xb');
+defined('FOPEN_READ_WRITE_CREATE_STRICT')       or define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
 
 /*
 |--------------------------------------------------------------------------
@@ -74,48 +74,53 @@ define('SHOW_DEBUG_BACKTRACE', TRUE);
 |       http://tldp.org/LDP/abs/html/exitcodes.html
 |
 */
-define('EXIT_SUCCESS', 0); // no errors
-define('EXIT_ERROR', 1); // generic error
-define('EXIT_CONFIG', 3); // configuration error
-define('EXIT_UNKNOWN_FILE', 4); // file not found
-define('EXIT_UNKNOWN_CLASS', 5); // unknown class
-define('EXIT_UNKNOWN_METHOD', 6); // unknown class member
-define('EXIT_USER_INPUT', 7); // invalid user input
-define('EXIT_DATABASE', 8); // database error
-define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
-define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+defined('EXIT_SUCCESS')        or define('EXIT_SUCCESS', 0); // no errors
+defined('EXIT_ERROR')          or define('EXIT_ERROR', 1); // generic error
+defined('EXIT_CONFIG')         or define('EXIT_CONFIG', 3); // configuration error
+defined('EXIT_UNKNOWN_FILE')   or define('EXIT_UNKNOWN_FILE', 4); // file not found
+defined('EXIT_UNKNOWN_CLASS')  or define('EXIT_UNKNOWN_CLASS', 5); // unknown class
+defined('EXIT_UNKNOWN_METHOD') or define('EXIT_UNKNOWN_METHOD', 6); // unknown class member
+defined('EXIT_USER_INPUT')     or define('EXIT_USER_INPUT', 7); // invalid user input
+defined('EXIT_DATABASE')       or define('EXIT_DATABASE', 8); // database error
+defined('EXIT__AUTO_MIN')      or define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
+defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
-/**
+/*
  * Customize definition
  */
-define('PATH_ROOT', rtrim(str_replace('system', '', str_replace($_SERVER['DOCUMENT_ROOT'], '', BASEPATH)),'/').'/');
-define('PATH_CMS', str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace("\\", "/", FCPATH)));
-define('IMG_UPLOAD_MAX_SIZE', 20480000);
-define('FILE_UPLOAD_MAX_SIZE', 20480000);
+// path
+define('PATH_ROOT', rtrim(str_replace('system', '', str_replace($_SERVER['DOCUMENT_ROOT'], '', BASEPATH)), '/').'/');
+define('PATH_ROOT_DOCUMENT', rtrim(str_replace('system', '', BASEPATH), '/').'/');
 define('DOC_ROOT', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'/');
 define('UPLOAD_DIR', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'uploads/');
 define('RELATIVE_UPLOAD_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', UPLOAD_DIR));
-define('IMG_MAX_WIDTH',800);
-define('IMG_MAX_HEIGHT',600);
-define('IMG_THUMB_WIDTH',400);
-define('IMG_THUMB_HEIGHT',400);
-define('IMG_MED_WIDTH',208);
-define('IMG_MED_HEIGHT',208);
-define('IMG_SMALL_WIDTH',90);
-define('IMG_SMALL_HEIGHT',90);
-// global assets
-define('GLOBAL_ASSETS_URL',PATH_CMS.'assets/default/');
-define('GLOBAL_IMG_URL', GLOBAL_ASSETS_URL.'img/');
-define('GLOBAL_CSS_URL', GLOBAL_ASSETS_URL.'css/');
-define('GLOBAL_JS_URL', GLOBAL_ASSETS_URL.'js/');
-define('GLOBAL_VENDOR_URL', GLOBAL_ASSETS_URL.'vendor/');
-define('GLOBAL_LIBS_URL', GLOBAL_ASSETS_URL.'libs/');
-// template assets
-define('TEMPLATE_DIR','sbadmin2');
-define('ASSETS_URL', PATH_CMS.'assets/'.TEMPLATE_DIR.'/');
+define('TEMPLATE_DIR','default');
+define('ASSETS_URL', PATH_ROOT.'assets/'.TEMPLATE_DIR.'/');
 define('IMG_URL', ASSETS_URL.'img/');
+define('VIDEO_URL', ASSETS_URL.'video/');
 define('CSS_URL', ASSETS_URL.'css/');
 define('JS_URL', ASSETS_URL.'js/');
 define('VENDOR_URL', ASSETS_URL.'vendor/');
 define('LIBS_URL', ASSETS_URL.'libs/');
-define('SHOW_RECORDS_DEFAULT',10);
+define('SHOW_RECORDS_DEFAULT',12);
+
+// image sizing
+define('IMG_MAX_WIDTH', 800);
+define('IMG_MAX_HEIGHT', 600);
+define('IMG_THUMB_WIDTH', 400);
+define('IMG_THUMB_HEIGHT', 400);
+define('IMG_MED_WIDTH', 208);
+define('IMG_MED_HEIGHT', 208);
+define('IMG_SMALL_WIDTH', 90);
+define('IMG_SMALL_HEIGHT', 90);
+define('IMG_ARTICLE_THUMB_WIDTH', 540);
+define('IMG_ARTICLE_THUMB_HEIGHT', 346);
+define('IMG_SLIDESHOW_WIDTH', 960);
+define('IMG_SLIDESHOW_HEIGHT', 350);
+
+// default
+define('CACHE_PREFIX', 'fRont_');
+define('IMG_UPLOAD_MAX_SIZE', 20480000);
+define('FILE_UPLOAD_MAX_SIZE', 20480000);
+
