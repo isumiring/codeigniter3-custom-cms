@@ -87,8 +87,8 @@
                                 <label for="image">Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class() . '/'.$post['image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['image']; ?>" id="post-image" />
+                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['image']; ?>" id="post-image" />
                                             <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?php echo $post['id_auth_user']; ?>">x</span>
                                         <?php endif; ?>
                                     </div>

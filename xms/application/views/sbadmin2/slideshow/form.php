@@ -12,7 +12,7 @@
                 <?php echo $page_title; ?> Form
             </div>
             <div class="panel-body">
-                <?php echo form_open($form_action,'role="form" enctype="multipart/form-data"'); ?>
+                <?php echo form_open($form_action, 'role="form" enctype="multipart/form-data"'); ?>
                     <div class="row">
                         <div class="col-lg-8">
                             <?php if ($locales): ?>
@@ -68,8 +68,8 @@
                                 <label for="primary_image">Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR . 'slideshow/' . $post['primary_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR . 'slideshow/' . $post['primary_image']; ?>" id="post-image" />
+                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$post['primary_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.'slideshow/'.$post['primary_image']; ?>" id="post-image" />
                                         <?php endif; ?>
                                     </div>
                                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>

@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 $lang['error_text_compare_max'] = 'Maksimum Komparasi produk %s';
 $lang['error_text_compare_min'] = 'Minimal Komparasi produk lebih dari 1';

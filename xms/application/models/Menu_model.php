@@ -16,7 +16,7 @@ class Menu_model extends CI_Model
     /**
      * Class constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -28,9 +28,9 @@ class Menu_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetAllMenuData($param = [])
+    public function GetAllMenuData($param = [])
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         if (isset($param['search_value']) && $param['search_value'] != '') {
@@ -83,9 +83,9 @@ class Menu_model extends CI_Model
      *
      * @return int $total_records total records
      */
-    function CountAllMenu($param = [])
+    public function CountAllMenu($param = [])
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
@@ -117,7 +117,7 @@ class Menu_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetMenu($id)
+    public function GetMenu($id)
     {
         $data = $this->db
                 ->where('id_auth_menu', $id)
@@ -135,7 +135,7 @@ class Menu_model extends CI_Model
      *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param)
+    public function InsertRecord($param)
     {
         $this->db->insert('auth_menu', $param);
         $last_id = $this->db->insert_id();
@@ -149,7 +149,7 @@ class Menu_model extends CI_Model
      * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param)
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_auth_menu', $id)
@@ -161,7 +161,7 @@ class Menu_model extends CI_Model
      *
      * @param int $id
      */
-    function DeleteRecord($id)
+    public function DeleteRecord($id)
     {
         $this->db->delete(['auth_menu', 'auth_menu_group'], ['id_auth_menu' => $id]);
     }
@@ -171,7 +171,7 @@ class Menu_model extends CI_Model
      *
      * @return int maximum value
      */
-    function MaxPosition()
+    public function MaxPosition()
     {
         $data = $this->db
                 ->select('max(position) as max_position')
@@ -191,7 +191,7 @@ class Menu_model extends CI_Model
      *
      * @return array $return
      */
-    function MenusIdChildrenTaxonomy($id_menu)
+    public function MenusIdChildrenTaxonomy($id_menu)
     {
         $return = [];
         $data = $this->db
@@ -202,7 +202,7 @@ class Menu_model extends CI_Model
         foreach ($data as $row) {
             $return[] = $row['id_auth_menu'];
             $children = $this->MenusIdChildrenTaxonomy($row['id_auth_menu']);
-            $return   = array_merge($return, $children);
+            $return = array_merge($return, $children);
         }
         $return[] = $id_menu;
 
@@ -216,7 +216,7 @@ class Menu_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function MenusData($id_parent = 0)
+    public function MenusData($id_parent = 0)
     {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
@@ -245,7 +245,7 @@ class Menu_model extends CI_Model
      *
      * @return string $return
      */
-    function PrintAuthMenu($menus = [], $prefix = '', $selected = '', $disabled = [])
+    public function PrintAuthMenu($menus = [], $prefix = '', $selected = '', $disabled = [])
     {
         $return = '';
         if ($menus) {
@@ -278,7 +278,7 @@ class Menu_model extends CI_Model
      *
      * @return bool true/false
      */
-    function checkExistsFilePath($file, $id = 0)
+    public function checkExistsFilePath($file, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_menu !=', $id);
@@ -302,7 +302,7 @@ class Menu_model extends CI_Model
      *
      * @return bool true/false
      */
-    function checkUserHaveRightsMenu($id_group, $id_menu)
+    public function checkUserHaveRightsMenu($id_group, $id_menu)
     {
         $count = $this->db
                 ->from('auth_menu_group')
@@ -323,7 +323,7 @@ class Menu_model extends CI_Model
      *
      * @return int $last_id last inserted id
      */
-    function InsertAuth($data)
+    public function InsertAuth($data)
     {
         $this->db->insert('auth_menu_group', $data);
         $last_id = $this->db->insert_id();

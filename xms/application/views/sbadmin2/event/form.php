@@ -81,7 +81,7 @@
                             <div class="form-group">
                                 <label for="start_date">Start</label>
                                 <div class="input-group datetime datetimepicker" id="start_date_time">
-                                    <input type="text" class="form-control" name="start_date" id="start_date" value="<?php echo (isset($post['start_date'])) ? $post['start_date'] : '' ; ?>" readonly="readonly" />
+                                    <input type="text" class="form-control" name="start_date" id="start_date" value="<?php echo (isset($post['start_date'])) ? $post['start_date'] : ''; ?>" readonly="readonly" />
                                     <span class="input-group-addon start_date"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                             </div>
@@ -92,15 +92,15 @@
                                     <span class="input-group-addon end_date"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                                 <label>
-                                    <input type="checkbox" value="1" name="one_day" id="one_day" <?php echo  ( (isset($post['one_day']) && ! empty($post['one_day'])) || ( (empty($post['end_date']) || $post['end_date'] == '0000-00-00' || $post['end_date'] == '1970-01-01')) ) ? 'checked="checked"' : ''; ?>/> One Day
+                                    <input type="checkbox" value="1" name="one_day" id="one_day" <?php echo  ((isset($post['one_day']) && !empty($post['one_day'])) || ((empty($post['end_date']) || $post['end_date'] == '0000-00-00' || $post['end_date'] == '1970-01-01'))) ? 'checked="checked"' : ''; ?>/> One Day
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label for="thumbnail_image">Thumbnail Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['thumbnail_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
+                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['thumbnail_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_event']; ?>" data-type="thumbnail">x</span>
                                         <?php endif; ?> 
                                     </div>
@@ -118,8 +118,8 @@
                                 <label for="primary_image">Primary Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['primary_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
+                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['primary_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_event']; ?>" data-type="primary">x</span>
                                         <?php endif; ?>
                                     </div>

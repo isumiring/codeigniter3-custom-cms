@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Authentication Class.
- *     hook class that check the authentication
+ *     hook class that check the authentication.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
@@ -15,8 +15,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class FAT_Authentication
 {
     /**
-     * Load Codeigniter Super Object
-     * 
+     * Load Codeigniter Super Object.
+     *
      * @var object
      */
     protected $CI;
@@ -30,11 +30,11 @@ class FAT_Authentication
      */
     public function authentication()
     {
-        $this->CI =& get_instance();
+        $this->CI = &get_instance();
         // make exception auth for login
-        $segment_1    = $this->CI->uri->segment(1);
-        $segment_2    = $this->CI->uri->segment(2);
-        $fetch_class  = $this->CI->router->fetch_class();
+        $segment_1 = $this->CI->uri->segment(1);
+        $segment_2 = $this->CI->uri->segment(2);
+        $fetch_class = $this->CI->router->fetch_class();
         $fetch_method = $this->CI->router->fetch_method();
         if ($fetch_class == 'error') {
             // allow to access error page
@@ -46,12 +46,13 @@ class FAT_Authentication
                     redirect();
                 }
             }
+
             return;
         } else {
-            if ( ! isset($_SESSION['ADM_SESS'])) {
+            if (!isset($_SESSION['ADM_SESS'])) {
                 if ($this->CI->input->is_ajax_request()) {
                     $_SESSION['tmp_login_redirect'] = 'dashboard';
-                    $json['redirect_auth']          = site_url('login');
+                    $json['redirect_auth'] = site_url('login');
                     json_exit($json);
                 } else {
                     $_SESSION['tmp_login_redirect'] = uri_string();
@@ -63,7 +64,7 @@ class FAT_Authentication
                     session_destroy();
                     if ($this->CI->input->is_ajax_request()) {
                         $_SESSION['tmp_login_redirect'] = 'dashboard';
-                        $json['redirect_auth']          = site_url('login');
+                        $json['redirect_auth'] = site_url('login');
                         json_exit($json);
                     } else {
                         $_SESSION['tmp_login_redirect'] = uri_string();
@@ -73,7 +74,7 @@ class FAT_Authentication
 
                 // check auth
                 $id_group = $sess['admin_id_auth_group'];
-                if ( ! $this->checkAuth($fetch_class, $id_group)) {
+                if (!$this->checkAuth($fetch_class, $id_group)) {
                     show_404();
                     // $this->CI->session->sess_destroy();
                     // redirect('login');
@@ -96,7 +97,7 @@ class FAT_Authentication
         $this->CI->load->database();
         // exclude this uri/menu
         // this menu does not require acl
-        if ( ! $menu || $menu == 'home' || $menu == 'dashboard' || $menu == '' || $menu == 'profile') {
+        if (!$menu || $menu == 'home' || $menu == 'dashboard' || $menu == '' || $menu == 'profile') {
             return true;
         }
 
@@ -115,7 +116,6 @@ class FAT_Authentication
                     ->where('is_superadmin', 0)
                     ->join('auth_menu_group', 'auth_menu_group.id_auth_menu = auth_menu.id_auth_menu', 'left')
                     ->count_all_results();
-
         }
 
         if ($count > 0) {

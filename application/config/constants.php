@@ -95,7 +95,7 @@ define('PATH_ROOT_DOCUMENT', rtrim(str_replace('system', '', BASEPATH), '/').'/'
 define('DOC_ROOT', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'/');
 define('UPLOAD_DIR', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'uploads/');
 define('RELATIVE_UPLOAD_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', UPLOAD_DIR));
-define('TEMPLATE_DIR','default');
+define('TEMPLATE_DIR', 'default');
 define('ASSETS_URL', PATH_ROOT.'assets/'.TEMPLATE_DIR.'/');
 define('IMG_URL', ASSETS_URL.'img/');
 define('VIDEO_URL', ASSETS_URL.'video/');
@@ -103,7 +103,7 @@ define('CSS_URL', ASSETS_URL.'css/');
 define('JS_URL', ASSETS_URL.'js/');
 define('VENDOR_URL', ASSETS_URL.'vendor/');
 define('LIBS_URL', ASSETS_URL.'libs/');
-define('SHOW_RECORDS_DEFAULT',12);
+define('SHOW_RECORDS_DEFAULT', 12);
 
 // image sizing
 define('IMG_MAX_WIDTH', 800);
@@ -123,4 +123,3 @@ define('IMG_SLIDESHOW_HEIGHT', 350);
 define('CACHE_PREFIX', 'fRont_');
 define('IMG_UPLOAD_MAX_SIZE', 20480000);
 define('FILE_UPLOAD_MAX_SIZE', 20480000);
-

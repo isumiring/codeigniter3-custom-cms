@@ -42,8 +42,8 @@ class Menu extends CI_Controller
      */
     public function index()
     {
-        $this->data['add_url']        = site_url($this->class_path_name.'/add');
-        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url'] = site_url($this->class_path_name.'/add');
+        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
 
@@ -59,24 +59,24 @@ class Menu extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort']  = $post['order'][0]['dir'];
+                $param['order_sort'] = $post['order'][0]['dir'];
             }
-            $param['row_from']         = $post['start'];
-            $param['length']           = $post['length'];
-            $count_all_records         = $this->Menu_model->CountAllMenu();
-            $count_filtered_records    = $this->Menu_model->CountAllMenu($param);
-            $records                   = $this->Menu_model->GetAllMenuData($param);
-            $return                    = [];
-            $return['draw']            = $post['draw'];
-            $return['recordsTotal']    = $count_all_records;
+            $param['row_from'] = $post['start'];
+            $param['length'] = $post['length'];
+            $count_all_records = $this->Menu_model->CountAllMenu();
+            $count_filtered_records = $this->Menu_model->CountAllMenu($param);
+            $records = $this->Menu_model->GetAllMenuData($param);
+            $return = [];
+            $return['draw'] = $post['draw'];
+            $return['recordsTotal'] = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data']            = [];
+            $return['data'] = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId']    = $record['id'];
-                $return['data'][$row]['actions']     = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
-                $return['data'][$row]['menu']        = $record['menu'];
+                $return['data'][$row]['DT_RowId'] = $record['id'];
+                $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['menu'] = $record['menu'];
                 $return['data'][$row]['parent_menu'] = ($record['parent_menu'] != '') ? $record['parent_menu'] : 'ROOT';
-                $return['data'][$row]['position']    = $record['position'];
+                $return['data'][$row]['position'] = $record['position'];
             }
             json_exit($return);
         }
@@ -88,17 +88,17 @@ class Menu extends CI_Controller
      */
     public function add()
     {
-        $this->data['page_title']   = 'Add';
-        $this->data['form_action']  = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url']   = site_url($this->class_path_name);
-        $menu_data                  = $this->Menu_model->MenusData();
-        $selected                   = '';
+        $this->data['page_title'] = 'Add';
+        $this->data['form_action'] = site_url($this->class_path_name.'/add');
+        $this->data['cancel_url'] = site_url($this->class_path_name);
+        $menu_data = $this->Menu_model->MenusData();
+        $selected = '';
         $this->data['max_position'] = $this->Menu_model->MaxPosition() + 1;
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ?: 0;
-                $post['file']          = strtolower($post['file']);
+                $post['file'] = strtolower($post['file']);
 
                 // insert data
                 $id = $this->Menu_model->InsertRecord($post);
@@ -125,11 +125,11 @@ class Menu extends CI_Controller
 
                 redirect($this->class_path_name);
             }
-            $selected           = $post['parent_auth_menu'];
+            $selected = $post['parent_auth_menu'];
             $this->data['post'] = $post;
         }
         $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data, '', $selected);
-        $this->data['template']       = $this->class_path_name.'/form';
+        $this->data['template'] = $this->class_path_name.'/form';
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
@@ -142,29 +142,29 @@ class Menu extends CI_Controller
      */
     public function edit($id = 0)
     {
-        if ( ! $id) {
+        if (!$id) {
             redirect($this->class_path_name);
         }
         $record = $this->Menu_model->GetMenu($id);
-        if ( ! $record) {
+        if (!$record) {
             redirect($this->class_path_name);
         }
-        if ($record['is_superadmin'] == 1 && ! is_superadmin()) {
+        if ($record['is_superadmin'] == 1 && !is_superadmin()) {
             $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Administrator', 'danger'));
             redirect($this->class_path_name);
         }
-        $this->data['page_title']     = 'Edit';
-        $this->data['form_action']    = site_url($this->class_path_name.'/edit/'.$id);
-        $this->data['cancel_url']     = site_url($this->class_path_name);
-        $this->data['post']           = $record;
-        $disabled_menu                = $this->Menu_model->MenusIdChildrenTaxonomy($id);
-        $menu_data                    = $this->Menu_model->MenusData();
+        $this->data['page_title'] = 'Edit';
+        $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
+        $this->data['cancel_url'] = site_url($this->class_path_name);
+        $this->data['post'] = $record;
+        $disabled_menu = $this->Menu_model->MenusIdChildrenTaxonomy($id);
+        $menu_data = $this->Menu_model->MenusData();
         $this->data['auth_menu_html'] = $this->Menu_model->PrintAuthMenu($menu_data, '', $record['parent_auth_menu'], $disabled_menu);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
                 $post['is_superadmin'] = (isset($post['is_superadmin'])) ?: 0;
-                $post['file']          = strtolower($post['file']);
+                $post['file'] = strtolower($post['file']);
 
                 // update data
                 $this->Menu_model->UpdateRecord($id, $post);
@@ -177,14 +177,14 @@ class Menu extends CI_Controller
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                
+
                 $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
 
                 redirect($this->class_path_name);
             }
         }
         $this->data['template'] = $this->class_path_name.'/form';
-        $this->data['post']     = $record;
+        $this->data['post'] = $record;
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
@@ -205,12 +205,12 @@ class Menu extends CI_Controller
                     foreach ($array_id as $row => $id) {
                         $record = $this->Menu_model->GetMenu($id);
                         if ($record) {
-                            if ($record['is_superadmin'] && ! is_superadmin()) {
+                            if ($record['is_superadmin'] && !is_superadmin()) {
                                 $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Administrator.', 'danger');
                                 break;
                             } else {
-                                if ( ! $this->Menu_model->checkUserHaveRightsMenu(id_auth_group(),$id)) {
-                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Administrator.','danger');
+                                if (!$this->Menu_model->checkUserHaveRightsMenu(id_auth_group(), $id)) {
+                                    $json['error'] = alert_box('You don\'t have permission to delete this record(s). Please contact the Administrator.', 'danger');
                                     break;
                                 } else {
                                     $this->Menu_model->DeleteRecord($id);
@@ -293,12 +293,12 @@ class Menu extends CI_Controller
         if ($string == '#') {
             return true;
         } else {
-            if ( ! $this->Menu_model->checkExistsFilePath($string, $id)) {
+            if (!$this->Menu_model->checkExistsFilePath($string, $id)) {
                 $this->form_validation->set_message('check_menu_file', '{field} is already exists. Please use different {field}');
 
                 return false;
             }
-            
+
             return true;
         }
     }

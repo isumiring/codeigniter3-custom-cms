@@ -19,7 +19,7 @@ class Auth_model extends CI_Model
      * @param string $username
      * @param string $password
      */
-    function CheckAuth($username, $password)
+    public function CheckAuth($username, $password)
     {
         if ($username != '' && $password != '') {
             $username = strtolower($username);
