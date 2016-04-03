@@ -4,18 +4,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Security Class Extension.
+ *     extension of security class
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
  * @category Core
- * @desc extension of security class
  */
 class FAT_Security extends CI_Security
 {
     /**
-     * load the constructor.
+     * Class Constructor.
      */
     public function __construct()
     {
@@ -32,3 +32,5 @@ class FAT_Security extends CI_Security
         header('Location: '.$redirect_url.'', true, 302);
     }
 }
+/* End of file FAT_Security.php */
+/* Location: ./application/core/FAT_Security.php */

@@ -10,13 +10,27 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Controller
- * @desc Pages Controller
  */
 class Pages extends CI_Controller
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
+
+    /**
+     * Error message/system.
+     *
+     * @var string
+     */
     private $error;
 
+    /**
+     * Class contructor.
+     * 
+     */
     public function __construct()
     {
         parent::__construct();
@@ -25,17 +39,18 @@ class Pages extends CI_Controller
     }
 
     /**
-     * index page.
+     * Index page.
+     * 
      */
     public function index()
     {
-        $this->data['add_url'] = site_url($this->class_path_name.'/add');
-        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url']        = site_url($this->class_path_name.'/add');
+        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
 
     /**
-     * list data.
+     * List data.
      */
     public function list_data()
     {
@@ -46,54 +61,52 @@ class Pages extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort'] = $post['order'][0]['dir'];
+                $param['order_sort']  = $post['order'][0]['dir'];
             }
-            $param['row_from'] = $post['start'];
-            $param['length'] = $post['length'];
-            $count_all_records = $this->Pages_model->CountAllData();
-            $count_filtered_records = $this->Pages_model->CountAllData($param);
-            $records = $this->Pages_model->GetAllData($param);
-            $return = [];
-            $return['draw'] = $post['draw'];
-            $return['recordsTotal'] = $count_all_records;
+            $param['row_from']         = $post['start'];
+            $param['length']           = $post['length'];
+            $count_all_records         = $this->Pages_model->CountAllData();
+            $count_filtered_records    = $this->Pages_model->CountAllData($param);
+            $records                   = $this->Pages_model->GetAllData($param);
+            $return                    = [];
+            $return['draw']            = $post['draw'];
+            $return['recordsTotal']    = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = [];
+            $return['data']            = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['actions'] = '
-                    <a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                ';
-                $return['data'][$row]['page_name'] = $record['page_name'];
+                $return['data'][$row]['DT_RowId']         = $record['id'];
+                $return['data'][$row]['actions']          = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['page_name']        = $record['page_name'];
                 $return['data'][$row]['parent_page_name'] = ($record['parent_page_name'] != '') ? $record['parent_page_name'] : 'ROOT';
-                $return['data'][$row]['url_link'] = ($record['page_type'] == 1) ? $record['uri_path'] : (($record['page_type'] == 2) ? $record['module'] : $record['ext_link']);
-                $return['data'][$row]['status_text'] = ucfirst($record['status_text']);
-                $return['data'][$row]['position'] = $record['position'];
-                $return['data'][$row]['create_date'] = custDateFormat($record['create_date'], 'd M Y H:i:s');
+                $return['data'][$row]['url_link']         = ($record['page_type'] == 1) ? $record['uri_path'] : (($record['page_type'] == 2) ? $record['module'] : $record['ext_link']);
+                $return['data'][$row]['status_text']      = ucfirst($record['status_text']);
+                $return['data'][$row]['position']         = $record['position'];
+                $return['data'][$row]['create_date']      = custDateFormat($record['create_date'], 'd M Y H:i:s');
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($return)
-            );
+            json_exit($return);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * add page.
+     * Add page.
      */
     public function add()
     {
-        $this->data['page_title'] = 'Add';
-        $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Pages_model->GetLocalization();
-        $this->data['statuses'] = $this->Pages_model->GetStatus();
-        $menu_data = $this->Pages_model->MenusData();
-        $selected = '';
+        $this->data['page_title']   = 'Add';
+        $this->data['form_action']  = site_url($this->class_path_name.'/add');
+        $this->data['cancel_url']   = site_url($this->class_path_name);
+        $this->data['locales']      = $this->Pages_model->GetLocalization();
+        $this->data['statuses']     = $this->Pages_model->GetStatus();
+        $menu_data                  = $this->Pages_model->MenusData();
         $this->data['max_position'] = $this->Pages_model->GetMaxPosition();
+        $selected                   = '';
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
+                $post['is_featured'] = (isset($post['is_featured'])) ?: 0;
+                $post['is_header']   = (isset($post['is_header'])) ?: 0;
+                $post['is_footer']   = (isset($post['is_footer'])) ?: 0;
                 if (isset($post['locales'])) {
                     $post_locales = $post['locales'];
                     unset($post['locales']);
@@ -119,16 +132,18 @@ class Pages extends CI_Controller
                 }
                 // insert data
                 $id = $this->Pages_model->InsertRecord($post);
+
+                // insert localization
                 if ($id && isset($post_locales)) {
-                    $insert_locales = [];
+                    $insert_locales = array();
                     foreach ($post_locales as $id_localization => $post_local) {
-                        $insert_locales[] = [
+                        $insert_locales[] = array(
                             'id_page'         => $id,
                             'title'           => $post_local['title'],
                             'teaser'          => $post_local['teaser'],
                             'description'     => $post_local['description'],
                             'id_localization' => $id_localization,
-                        ];
+                        );
                     }
                     $post['locales'] = $insert_locales;
                     $this->Pages_model->InsertDetailRecord($insert_locales);
@@ -136,40 +151,28 @@ class Pages extends CI_Controller
 
                 $post_image = $_FILES;
                 if ($post_image['thumbnail_image']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-thumb', '_', true);
-                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($post['page_name'].'-thumb', '_', true);
+                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['thumbnail_image' => $picture_db]);
                 }
                 if ($post_image['primary_image']['tmp_name']) {
-                    $filename = url_title($post['page_name'], '_', true);
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($post['page_name'], '_', true);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['primary_image' => $picture_db]);
                 }
                 if ($post_image['background_image']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-bg', '_', true);
-                    $picture_db = file_copy_to_folder($post_image['background_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename = url_title($post['page_name'].'-bg','_', true);
+                    $picture_db = file_copy_to_folder($post_image['background_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['background_image' => $picture_db]);
-                }
-                if ($post_image['video']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-vidz', '_', true);
-                    $picture_db = file_copy_to_folder($post_image['video'], UPLOAD_DIR.'pages/', $filename);
-                    // update data
-                    $this->Pages_model->UpdateRecord($id, ['video' => $picture_db]);
-                }
-                if ($post_image['video_mobile']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-mvidz', '_', true);
-                    $picture_db = file_copy_to_folder($post_image['video_mobile'], UPLOAD_DIR.'pages/', $filename);
-                    // update data
-                    $this->Pages_model->UpdateRecord($id, ['video_mobile' => $picture_db]);
                 }
                 // insert to log
                 $data_log = [
@@ -184,18 +187,18 @@ class Pages extends CI_Controller
 
                 redirect($this->class_path_name);
             }
-            $selected = $post['parent_page'];
+            $selected           = $post['parent_page'];
             $this->data['post'] = $post;
         }
         $this->data['parent_html'] = $this->Pages_model->PrintMenu($menu_data, '', $selected);
-        $this->data['template'] = $this->class_path_name.'/form';
+        $this->data['template']    = $this->class_path_name.'/form';
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
     }
 
     /**
-     * detail page.
+     * Detail page.
      *
      * @param int $id
      */
@@ -208,19 +211,22 @@ class Pages extends CI_Controller
         if (!$record) {
             redirect($this->class_path_name);
         }
-        $this->data['page_title'] = 'Edit';
-        $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
+        $this->data['page_title']         = 'Edit';
+        $this->data['form_action']        = site_url($this->class_path_name.'/edit/'.$id);
         $this->data['delete_picture_url'] = site_url($this->class_path_name.'/delete_picture/'.$id);
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Pages_model->GetLocalization();
-        $this->data['statuses'] = $this->Pages_model->GetStatus();
-        $disabled_menu = $this->Pages_model->MenusIdChildrenTaxonomy($id);
-        $menu_data = $this->Pages_model->MenusData();
-        $this->data['parent_html'] = $this->Pages_model->PrintMenu($menu_data, '', $record['parent_page'], $disabled_menu);
+        $this->data['cancel_url']         = site_url($this->class_path_name);
+        $this->data['locales']            = $this->Pages_model->GetLocalization();
+        $this->data['statuses']           = $this->Pages_model->GetStatus();
+        $disabled_menu                    = $this->Pages_model->MenusIdChildrenTaxonomy($id);
+        $menu_data                        = $this->Pages_model->MenusData();
+        $this->data['parent_html']        = $this->Pages_model->PrintMenu($menu_data,'',$record['parent_page'],$disabled_menu);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
                 $post['modify_date'] = date('Y-m-d H:i:s');
+                $post['is_featured'] = (isset($post['is_featured'])) ?: 0;
+                $post['is_header']   = (isset($post['is_header'])) ?: 0;
+                $post['is_footer']   = (isset($post['is_footer'])) ?: 0;
                 if (isset($post['locales'])) {
                     $post_locales = $post['locales'];
                     unset($post['locales']);
@@ -246,19 +252,19 @@ class Pages extends CI_Controller
                 }
                 // update data
                 $this->Pages_model->UpdateRecord($id, $post);
-
+                
                 // delete/purge detail content before new insert
                 $this->Pages_model->DeleteDetailRecordByID($id);
                 if (isset($post_locales)) {
-                    $insert_locales = [];
+                    $insert_locales = array();
                     foreach ($post_locales as $id_localization => $post_local) {
-                        $insert_locales[] = [
+                        $insert_locales[] = array(
                             'id_page'         => $id,
                             'title'           => $post_local['title'],
                             'teaser'          => $post_local['teaser'],
                             'description'     => $post_local['description'],
                             'id_localization' => $id_localization,
-                        ];
+                        );
                     }
                     $post['locales'] = $insert_locales;
                     $this->Pages_model->InsertDetailRecord($insert_locales);
@@ -267,60 +273,42 @@ class Pages extends CI_Controller
                 $post_image = $_FILES;
                 if ($post_image['thumbnail_image']['tmp_name']) {
                     $filename = url_title($post['page_name'].'-thumb', '_', true);
-                    if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['thumbnail_image'])) {
-                        unlink(UPLOAD_DIR.'pages/'.$record['thumbnail_image']);
-                        @unlink(UPLOAD_DIR.'pages/tmb_'.$record['thumbnail_image']);
-                        @unlink(UPLOAD_DIR.'pages/sml_'.$record['thumbnail_image']);
+                    if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['thumbnail_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['thumbnail_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['thumbnail_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['thumbnail_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['thumbnail_image' => $picture_db]);
                 }
                 if ($post_image['primary_image']['tmp_name']) {
                     $filename = url_title($post['page_name'], '_', true);
-                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['primary_image'])) {
-                        unlink(UPLOAD_DIR.'pages/'.$record['primary_image']);
-                        @unlink(UPLOAD_DIR.'pages/tmb_'.$record['primary_image']);
-                        @unlink(UPLOAD_DIR.'pages/sml_'.$record['primary_image']);
+                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['primary_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['primary_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['primary_image' => $picture_db]);
                 }
                 if ($post_image['background_image']['tmp_name']) {
                     $filename = url_title($post['page_name'].'-bg', '_', true);
-                    if ($record['background_image'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['background_image'])) {
-                        unlink(UPLOAD_DIR.'pages/'.$record['background_image']);
-                        @unlink(UPLOAD_DIR.'pages/tmb_'.$record['background_image']);
-                        @unlink(UPLOAD_DIR.'pages/sml_'.$record['background_image']);
+                    if ($record['background_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['background_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['background_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['background_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['background_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['background_image'], UPLOAD_DIR.'pages/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'pages/'.$picture_db, UPLOAD_DIR.'pages/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $picture_db = file_copy_to_folder($post_image['background_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Pages_model->UpdateRecord($id, ['background_image' => $picture_db]);
-                }
-                if ($post_image['video']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-vidz', '_', true);
-                    if ($record['video'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['video'])) {
-                        unlink(UPLOAD_DIR.'pages/'.$record['video']);
-                    }
-                    $picture_db = file_copy_to_folder($post_image['video'], UPLOAD_DIR.'pages/', $filename);
-                    // update data
-                    $this->Pages_model->UpdateRecord($id, ['video' => $picture_db]);
-                }
-                if ($post_image['video_mobile']['tmp_name']) {
-                    $filename = url_title($post['page_name'].'-mvidz', '_', true);
-                    if ($record['video_mobile'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['video_mobile'])) {
-                        unlink(UPLOAD_DIR.'pages/'.$record['video_mobile']);
-                    }
-                    $picture_db = file_copy_to_folder($post_image['video_mobile'], UPLOAD_DIR.'pages/', $filename);
-                    // update data
-                    $this->Pages_model->UpdateRecord($id, ['video_mobile' => $picture_db]);
                 }
                 // insert to log
                 $data_log = [
@@ -344,7 +332,7 @@ class Pages extends CI_Controller
     }
 
     /**
-     * delete page.
+     * Delete page.
      */
     public function delete()
     {
@@ -358,12 +346,6 @@ class Pages extends CI_Controller
                     foreach ($array_id as $row => $id) {
                         $record = $this->Pages_model->GetPages($id);
                         if ($record) {
-                            /*if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['thumbnail_image'])) {
-                                unlink(UPLOAD_DIR.'pages/'.$record['thumbnail_image']);
-                            }
-                            if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'pages/'.$record['primary_image'])) {
-                                unlink(UPLOAD_DIR.'pages/'.$record['primary_image']);
-                            }*/
                             $this->Pages_model->DeleteRecord($id);
                             // insert to log
                             $data_log = [
@@ -383,16 +365,13 @@ class Pages extends CI_Controller
                     }
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * delete picture.
+     * Delete picture.
      */
     public function delete_picture()
     {
@@ -405,9 +384,9 @@ class Pages extends CI_Controller
                 $type = (isset($post['type'])) ? $post['type'] : 'primary';
                 if ($detail && ($detail[$type.'_image'] != '')) {
                     $id = $post['id'];
-                    unlink(UPLOAD_DIR.'pages/'.$detail[$type.'_image']);
-                    @unlink(UPLOAD_DIR.'pages/tmb_'.$detail[$type.'_image']);
-                    @unlink(UPLOAD_DIR.'pages/sml_'.$detail[$type.'_image']);
+                    unlink(UPLOAD_DIR. $this->class_path_name. '/'.$detail[$type.'_image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$detail[$type.'_image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$detail[$type.'_image']);
                     // update data
                     $this->Pages_model->UpdateRecord($id, [$type.'_image' => '']);
                     $json['success'] = alert_box('File hase been deleted.', 'success');
@@ -424,16 +403,13 @@ class Pages extends CI_Controller
                     $json['error'] = alert_box('Failed to remove File. Please try again.', 'danger');
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * validate form.
+     * Validate form.
      *
      * @param int $id
      *
@@ -442,8 +418,7 @@ class Pages extends CI_Controller
     private function validateForm($id = 0)
     {
         $post = $this->input->post();
-        $default_locale = $this->Pages_model->GetDefaultLocalization();
-        $config = [
+        $rules = [
             [
                 'field' => 'parent_page',
                 'label' => 'Parent',
@@ -465,7 +440,20 @@ class Pages extends CI_Controller
                 'rules' => 'required',
             ],
         ];
-        $this->form_validation->set_rules($config);
+        if ($post['page_type'] == 2) {
+            array_push($rules, [
+                    'field' => 'module',
+                    'label' => 'Module',
+                    'rules' => 'required',
+            ]);
+        } elseif ($post['page_type'] == 3) {
+            array_push($rules, [
+                    'field' => 'ext_link',
+                    'label' => 'External URL',
+                    'rules' => 'required',
+            ]);
+        }
+        $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() === false) {
             $this->error = alert_box(validation_errors(), 'danger');
 
@@ -476,28 +464,13 @@ class Pages extends CI_Controller
                 if ($post['uri_path'] == '') {
                     $this->error = 'Please Input SEO URL';
                 } else {
-                    if (!check_exist_uri('pages', $post['uri_path'], $id)) {
+                    if ( ! check_exist_uri('pages', $post['uri_path'], $id)) {
                         $this->error = 'SEO URL is already used.';
-                    } else {
-                        foreach ($post['locales'] as $row => $local) {
-                            if ($row == $default_locale['id_localization'] && $local['title'] == '') {
-                                $this->error = 'Please insert Title.';
-                                break;
-                            }
-                        }
                     }
-                }
-            } elseif ($post['page_type'] == 2) {
-                if ($post['module'] == '') {
-                    $this->error = 'Please Input Module';
-                }
-            } elseif ($post['page_type'] == 3) {
-                if ($post['ext_link'] == '') {
-                    $this->error = 'Please Input External URL';
                 }
             }
             $post_image = $_FILES;
-            if (!$this->error) {
+            if ( ! $this->error) {
                 if (!empty($post_image['thumbnail_image']['tmp_name'])) {
                     $check_picture = validatePicture('thumbnail_image');
                     if (!empty($check_picture)) {
@@ -524,11 +497,10 @@ class Pages extends CI_Controller
                 }
 
                 return true;
-            } else {
-                $this->error = alert_box($this->error, 'danger');
-
-                return false;
             }
+            $this->error = alert_box($this->error, 'danger');
+
+            return false;
         }
     }
 }

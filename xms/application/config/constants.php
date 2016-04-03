@@ -84,19 +84,20 @@ defined('EXIT_USER_INPUT')     or define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       or define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      or define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 /*
  * Customize definition
  */
+// path
 define('PATH_ROOT', rtrim(str_replace('system', '', str_replace($_SERVER['DOCUMENT_ROOT'], '', BASEPATH)), '/').'/');
 define('PATH_ROOT_DOCUMENT', rtrim(str_replace('system', '', BASEPATH), '/').'/');
 define('PATH_CMS', str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', FCPATH)));
-define('CACHE_PREFIX', 'CmSFATTY_');
-define('IMG_UPLOAD_MAX_SIZE', 102400000);
-define('FILE_UPLOAD_MAX_SIZE', 102400000);
 define('DOC_ROOT', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'/');
 define('UPLOAD_DIR', $_SERVER['DOCUMENT_ROOT'].PATH_ROOT.'uploads/');
 define('RELATIVE_UPLOAD_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', UPLOAD_DIR));
+
+// image sizing
 define('IMG_MAX_WIDTH', 800);
 define('IMG_MAX_HEIGHT', 600);
 define('IMG_THUMB_WIDTH', 400);
@@ -107,4 +108,11 @@ define('IMG_SMALL_WIDTH', 90);
 define('IMG_SMALL_HEIGHT', 90);
 define('IMG_ARTICLE_THUMB_WIDTH', 540);
 define('IMG_ARTICLE_THUMB_HEIGHT', 346);
+define('IMG_SLIDESHOW_WIDTH', 960);
+define('IMG_SLIDESHOW_HEIGHT', 350);
+
+// default
 define('SHOW_RECORDS_DEFAULT', 10);
+define('CACHE_PREFIX', 'CmSFATTY_');
+define('IMG_UPLOAD_MAX_SIZE', 102400000);
+define('FILE_UPLOAD_MAX_SIZE', 102400000);

@@ -13,6 +13,9 @@ table#dataTables-list thead {
 table#dataTables-list tbody {
     font-size: 11px;
 }
+table#dataTables-list>tbody>tr>td, table#dataTables-list>tbody>tr>th, table#dataTables-list>tfoot>tr>td, table#dataTables-list>tfoot>tr>th, table#dataTables-list>thead>tr>td, table#dataTables-list>thead>tr>th {
+    vertical-align: middle;
+}
 table#dataTables-list tbody tr.selected {
     background-color: #ccc;
 }
@@ -84,6 +87,21 @@ form .row-files {
 }
 .input-group.datetime .input-group-addon {
     cursor: pointer;
+}
+table.gallery-info, table.option-info, table.extra-info {
+    margin-top: 40px;
+}
+.table img.img-gallery-list {
+    max-width: 100px;
+}
+.transaction #main-info .form-group {
+    margin-bottom: 0;
+}
+.transaction #product-form .ship-this-row {
+    margin-bottom: 40px;
+}
+.amcharts-chart-div a {
+    display: none !important;
 }
 .footer {
     margin-top: 20px;

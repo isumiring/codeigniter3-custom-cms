@@ -10,18 +10,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Controller
- * @desc Login Controller
  */
-class Login extends CI_Controller
+class Auth extends CI_Controller
 {
     /**
      * login page.
      */
-    public function index()
+    public function login()
     {
         $this->load->model('Auth_model');
-        $this->layout = 'login';
-        $this->data['page_title'] = 'Login';
+        $this->layout              = 'login';
+        $this->data['page_title']  = 'Login';
         $this->data['form_action'] = site_url('login');
         if ($this->input->post()) {
             $post = $this->input->post();
@@ -45,7 +44,7 @@ class Login extends CI_Controller
     public function logout()
     {
         session_destroy();
-        redirect('login');
+        redirect('login', 'refresh');
         exit;
     }
 }

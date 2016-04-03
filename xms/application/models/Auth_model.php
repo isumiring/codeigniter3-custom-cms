@@ -10,7 +10,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * @desc authentication model
  */
 class Auth_model extends CI_Model
 {
@@ -20,7 +19,7 @@ class Auth_model extends CI_Model
      * @param string $username
      * @param string $password
      */
-    public function CheckAuth($username, $password)
+    function CheckAuth($username, $password)
     {
         if ($username != '' && $password != '') {
             $username = strtolower($username);
@@ -34,7 +33,7 @@ class Auth_model extends CI_Model
                     'admin_type'          => 'superadmin',
                     'admin_url'           => base_url(),
                     'admin_token'         => $this->security->get_csrf_hash(),
-                    'admin_ip'            => $_SERVER['REMOTE_ADDR'],
+                    'admin_ip'            => get_client_ip(),
                     'admin_last_login'    => date('Y-m-d H:i:s'),
                 ];
                 $_SESSION['ADM_SESS'] = $user_sess;
@@ -47,15 +46,19 @@ class Auth_model extends CI_Model
                 return;
             }
             // end of testing dev
-            $user_data = $this->db->query('SELECT * FROM '.$this->db->dbprefix('auth_user').' WHERE LCASE(username) = ?', [$username])->row_array();
+            $user_data = $this->db
+                ->where('LCASE(username)', $username)
+                ->limit(1)
+                ->get('auth_user')
+                ->row_array();
             if ($user_data) {
-                if (password_verify($password, $user_data['userpass']) && $user_data['userpass'] != '') {
+                if (validate_password($password, $user_data['userpass'])) {
                     $user_sess = [
                         'admin_name'          => $user_data['name'],
                         'admin_id_auth_group' => $user_data['id_auth_group'],
                         'admin_id_auth_user'  => md5plus($user_data['id_auth_user']),
                         'admin_email'         => $user_data['email'],
-                        'admin_ip'            => $_SERVER['REMOTE_ADDR'],
+                        'admin_ip'            => get_client_ip(),
                         'admin_url'           => base_url(),
                         'admin_token'         => $this->security->get_csrf_hash(),
                         'admin_last_login'    => $user_data['last_login'],
@@ -67,7 +70,7 @@ class Auth_model extends CI_Model
                         'id_user'  => $user_data['id_auth_user'],
                         'id_group' => $user_data['id_auth_group'],
                         'action'   => 'Login',
-                        'desc'     => 'Login:succeed; IP:'.$_SERVER['REMOTE_ADDR'].'; username:'.$username.';',
+                        'desc'     => 'Login:succeed; IP:'.get_client_ip().'; username:'.$username.';',
                     ];
                     insert_to_log($data);
                     if (isset($_SESSION['tmp_login_redirect'])) {
@@ -79,7 +82,7 @@ class Auth_model extends CI_Model
                     // insert to log
                     $data = [
                         'action' => 'Login',
-                        'desc'   => 'Login:failed; IP:'.$_SERVER['REMOTE_ADDR'].'; username:'.$username.';',
+                        'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$username.';',
                     ];
                     insert_to_log($data);
                 }
@@ -87,7 +90,7 @@ class Auth_model extends CI_Model
                 //insert to log
                 $data = [
                     'action' => 'Login',
-                    'desc'   => 'Login:failed; IP:'.$_SERVER['REMOTE_ADDR'].'; username:'.$username.';',
+                    'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$username.';',
                 ];
                 insert_to_log($data);
             }

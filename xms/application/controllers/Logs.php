@@ -10,14 +10,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Controller
- * @desc Logs Controller
  */
 class Logs extends CI_Controller
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
 
     /**
-     * constructor.
+     * Class contructor.
      */
     public function __construct()
     {
@@ -31,7 +35,7 @@ class Logs extends CI_Controller
      */
     public function index()
     {
-        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
+        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
 
@@ -47,31 +51,28 @@ class Logs extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort'] = $post['order'][0]['dir'];
+                $param['order_sort']  = $post['order'][0]['dir'];
             }
-            $param['row_from'] = $post['start'];
-            $param['length'] = $post['length'];
-            $count_all_records = $this->Logs_model->CountAllLogs();
-            $count_filtered_records = $this->Logs_model->CountAllLogs($param);
-            $records = $this->Logs_model->GetAllLogsData($param);
-            $return = [];
-            $return['draw'] = $post['draw'];
-            $return['recordsTotal'] = $count_all_records;
+            $param['row_from']         = $post['start'];
+            $param['length']           = $post['length'];
+            $count_all_records         = $this->Logs_model->CountAllLogs();
+            $count_filtered_records    = $this->Logs_model->CountAllLogs($param);
+            $records                   = $this->Logs_model->GetAllLogsData($param);
+            $return                    = [];
+            $return['draw']            = $post['draw'];
+            $return['recordsTotal']    = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = [];
+            $return['data']            = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['username'] = $record['username'];
-                $return['data'][$row]['email'] = $record['email'];
+                $return['data'][$row]['DT_RowId']   = $record['id'];
+                $return['data'][$row]['username']   = $record['username'];
+                $return['data'][$row]['email']      = $record['email'];
                 $return['data'][$row]['auth_group'] = $record['auth_group'];
-                $return['data'][$row]['action'] = $record['action'];
-                $return['data'][$row]['desc'] = $record['desc'];
-                $return['data'][$row]['created'] = custDateFormat($record['created'], 'd M Y H:i:s');
+                $return['data'][$row]['action']     = $record['action'];
+                $return['data'][$row]['desc']       = $record['desc'];
+                $return['data'][$row]['created']    = custDateFormat($record['created'], 'd M Y H:i:s');
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($return)
-            );
+            json_exit($return);
         }
         redirect($this->class_path_name);
     }

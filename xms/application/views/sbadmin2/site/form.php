@@ -9,7 +9,7 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> 
+                <?php echo $page_title; ?> 
             </div>
             <div class="panel-body">
                 <?php echo form_open($form_action, 'role="form" enctype="multipart/form-data"'); ?>
@@ -26,20 +26,20 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="site_name">Site Name</label>
-                                            <input type="text" class="form-control" name="site_name" id="site_name" value="<?=(isset($post['site_name'])) ? $post['site_name'] : ''?>"/>
+                                            <label for="site_name">Site Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="site_name" id="site_name" value="<?php echo (isset($post['site_name'])) ? $post['site_name'] : ''; ?>" required="required"/>
                                         </div>
                                         <div class="form-group">
-                                            <label for="site_url">Site URL</label>
-                                            <input type="text" class="form-control" name="site_url" id="site_url" value="<?=(isset($post['site_url'])) ? $post['site_url'] : ''?>"/>
+                                            <label for="site_url">Site URL <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="site_url" id="site_url" value="<?php echo (isset($post['site_url'])) ? $post['site_url'] : ''; ?>" required="required"/>
                                         </div>
                                         <div class="form-group">
                                             <label for="site_path">Site Path</label>
-                                            <input type="text" class="form-control" name="site_path" id="site_path" value="<?=(isset($post['site_path'])) ? $post['site_path'] : ''?>"/>
+                                            <input type="text" class="form-control" name="site_path" id="site_path" value="<?php echo (isset($post['site_path'])) ? $post['site_path'] : ''; ?>"/>
                                         </div>
                                         <div class="form-group">
                                             <label for="site_address">Address</label>
-                                            <textarea class="form-control" name="site_address" id="site_address"><?=(isset($post['site_address'])) ? $post['site_address'] : ''?></textarea>
+                                            <textarea class="form-control" name="site_address" id="site_address"><?php echo (isset($post['site_address'])) ? $post['site_address'] : ''; ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-lg-offset-2">
@@ -47,7 +47,7 @@
                                             <label for="is_default">Default</label>
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" value="1" name="is_default" id="is_default" <?=(isset($post['is_default']) && !empty($post['is_default'])) ? 'checked="checked"' : ''?>/>Default
+                                                    <input type="checkbox" value="1" name="is_default" id="is_default" <?php echo (isset($post['is_default']) && !empty($post['is_default'])) ? 'checked="checked"' : ''; ?>/>Default
                                                 </label>
                                             </div>
                                         </div>
@@ -55,9 +55,9 @@
                                             <label for="image">Logo</label>
                                             <div class="fileinput fileinput-new" data-provides="fileinput">
                                                 <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                                    <?php if (isset($post['site_logo']) && $post['site_logo'] != '' && file_exists(UPLOAD_DIR.'site/'.$post['site_logo'])): ?>
-                                                        <img src="<?=RELATIVE_UPLOAD_DIR.'site/'.$post['site_logo']?>" id="post-image" />
-                                                        <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?=$post['id_site']?>">x</span>
+                                                    <?php if (isset($post['site_logo']) && $post['site_logo'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['site_logo'])): ?>
+                                                        <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['site_logo']; ?>" id="post-image" />
+                                                        <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?php echo $post['id_site']; ?>">x</span>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
@@ -79,8 +79,8 @@
                                     <?php  foreach ($post['setting'] as $row => $setting): ?>
                                         <div class="col-lg-6">
                                             <div class="form-group">
-                                                <label for="<?=$row?>"><?=ucwords(str_replace('_', ' ', $row))?></label>
-                                                <textarea class="form-control" name="setting[<?=$row?>]" id="<?=$row?>" rows="1"><?=$setting?></textarea>
+                                                <label for="<?php echo $row; ?>"><?php echo ucwords(str_replace('_', ' ', $row)); ?> <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" name="setting[<?php echo $row; ?>]" id="<?php echo $row; ?>" rows="1"><?=$setting?></textarea>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -90,7 +90,7 @@
                         <div class="row">
                             <div class="col-lg-4 col-lg-offset-8">
                                 <button type="submit" class="btn btn-primary">Submit</button>
-                                <a class="btn btn-danger" href="<?=$cancel_url?>">Cancel</a>
+                                <a class="btn btn-danger" href="<?php echo $cancel_url; ?>">Cancel</a>
                             </div>
                         </div>
                         <!-- /.row (nested) -->
@@ -107,18 +107,20 @@
 <script type="text/javascript">
     $(function() {
         <?php if (isset($post['id_site'])): ?>
-        $("#delete-picture").click(function() {
+        $('#delete-picture').click(function() {
             var self = $(this);
-            var id = self.attr('data-id');
-            var post_delete = [{name:"id",value:id}];
-            submit_ajax('<?=$delete_picture_url?>',post_delete,self)
+            var id = $(this).data('id');
+            var post_delete = [
+                {'name': 'id', 'value': id}
+            ];
+            submit_ajax('<?php echo $delete_picture_url; ?>', post_delete, self)
                 .done(function(data) {
                     if (data['error'])  {
-                        $(".flash-message").html(data['error']);
+                        $('.flash-message').html(data['error']);
                     }
                     if (data['success']) {
-                        $(".flash-message").html(data['success']);
-                        $("#post-image").remove();
+                        $('.flash-message').html(data['success']);
+                        $('#post-image').remove();
                         self.remove();
                     }
                 });

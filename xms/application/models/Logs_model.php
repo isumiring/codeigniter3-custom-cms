@@ -10,26 +10,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * @desc Logs model
  */
 class Logs_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * get all data and filter.
+     * Get all data and filter.
      *
      * @param array $param
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetAllLogsData($param = [])
+    function GetAllLogsData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -59,9 +58,9 @@ class Logs_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('*,logs.create_date as created,id_logs as id')
-                ->join('auth_user', 'auth_user.id_auth_user=logs.id_user', 'left')
-                ->join('auth_group', 'auth_group.id_auth_group=logs.id_group', 'left')
+                ->select('*, logs.create_date as created, id_logs as id')
+                ->join('auth_user', 'auth_user.id_auth_user = logs.id_user', 'left')
+                ->join('auth_group', 'auth_group.id_auth_group = logs.id_group', 'left')
                 ->get('logs')
                 ->result_array();
 
@@ -69,13 +68,13 @@ class Logs_model extends CI_Model
     }
 
     /**
-     * count records.
+     * Count records.
      *
      * @param array $param
      *
-     * @return int total records
+     * @return int $total_records total records
      */
-    public function CountAllLogs($param = [])
+    function CountAllLogs($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -94,19 +93,19 @@ class Logs_model extends CI_Model
         }
         $total_records = $this->db
                 ->from('logs')
-                ->join('auth_user', 'auth_user.id_auth_user=logs.id_user', 'left')
-                ->join('auth_group', 'auth_group.id_auth_group=logs.id_group', 'left')
+                ->join('auth_user', 'auth_user.id_auth_user = logs.id_user', 'left')
+                ->join('auth_group', 'auth_group.id_auth_group = logs.id_group', 'left')
                 ->count_all_results();
 
         return $total_records;
     }
 
     /**
-     * delete record.
+     * Delete record.
      *
      * @param mixed $ids array or int of id
      */
-    public function DeleteRecords($ids)
+    function DeleteRecords($ids)
     {
         if (is_array($ids)) {
             $this->db->where_in('id_logs', $ids);

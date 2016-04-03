@@ -1,33 +1,33 @@
 <?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Article Category Model Class.
- *
+ * 
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- *
+ * 
  * @version 3.0
- *
+ * 
  * @category Model
- * @desc Article Category model
+ * 
  */
 class Article_category_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
+     * 
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
-
+    
     /**
-     * get localization list.
-     *
-     * @return array data
+     * Get localization list.
+     * 
+     * @return array|bool $data
      */
-    public function GetLocalization()
+    function GetLocalization() 
     {
         $data = $this->db
                 ->order_by('locale_status', 'desc')
@@ -37,13 +37,13 @@ class Article_category_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get default localization.
-     *
-     * @return array data
+     * Get default localization.
+     * 
+     * @return array|bool $data
      */
-    public function GetDefaultLocalization()
+    function GetDefaultLocalization() 
     {
         $data = $this->db
                 ->where('locale_status', 1)
@@ -53,22 +53,22 @@ class Article_category_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get all data.
-     *
-     * @param string $param
-     *
-     * @return array data
+     * Get all data.
+     * 
+     * @param array $param
+     * 
+     * @return array|bool $data
      */
-    public function GetAllData($param = [])
+    function GetAllData($param = []) 
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i = 0;
+            $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i == 0) {
+                    if ($i==0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -91,31 +91,31 @@ class Article_category_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('*,article_category.id_article_category as id', false)
-                ->join('article_category_detail', 'article_category_detail.id_article_category=article_category.id_article_category', 'left')
-                ->join('localization', 'localization.id_localization=article_category_detail.id_localization', 'left')
+                ->select("*, article_category.id_article_category as id")
+                ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
+                ->join('localization', 'localization.id_localization = article_category_detail.id_localization', 'left')
                 ->where('localization.locale_status', 1)
                 ->get('article_category')
                 ->result_array();
 
         return $data;
     }
-
+    
     /**
-     * count records.
-     *
-     * @param string $param
-     *
-     * @return int total records
+     * Count records.
+     * 
+     * @param array $param
+     * 
+     * @return int $total_records total records
      */
-    public function CountAllData($param = [])
+    function CountAllData($param = []) 
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i = 0;
+            $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i == 0) {
+                    if ($i==0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -127,31 +127,32 @@ class Article_category_model extends CI_Model
         }
         $total_records = $this->db
                 ->from('article_category')
-                ->join('article_category_detail', 'article_category_detail.id_article_category=article_category.id_article_category', 'left')
-                ->join('localization', 'localization.id_localization=article_category_detail.id_localization', 'left')
+                ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
+                ->join('localization', 'localization.id_localization = article_category_detail.id_localization', 'left')
                 ->where('localization.locale_status', 1)
                 ->count_all_results();
 
         return $total_records;
     }
-
+    
     /**
      * Get detail by id.
-     *
+     * 
      * @param int $id
-     *
-     * @return array data
+     * 
+     * @return array|bool $data
      */
-    public function GetArticleCategory($id)
+    function GetArticleCategory($id) 
     {
         $data = $this->db
                 ->where('id_article_category', $id)
                 ->limit(1)
                 ->get('article_category')
                 ->row_array();
+
         if ($data) {
             $locales = $this->db
-                        ->select('id_localization,title')
+                        ->select('id_localization, title')
                         ->where('id_article_category', $id)
                         ->order_by('id_localization', 'asc')
                         ->get('article_category_detail')
@@ -163,65 +164,67 @@ class Article_category_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * insert new record.
-     *
+     * Insert new record.
+     * 
      * @param array $param
-     *
-     * @return int last inserted id
+     * 
+     * @return int $last_id last inserted id
      */
-    public function InsertRecord($param)
+    function InsertRecord($param) 
     {
         $this->db->insert('article_category', $param);
         $last_id = $this->db->insert_id();
 
         return $last_id;
     }
-
+    
     /**
-     * update record.
-     *
-     * @param int   $id
+     * Update record.
+     * 
+     * @param int $id
      * @param array $param
      */
-    public function UpdateRecord($id, $param)
+    function UpdateRecord($id, $param) 
     {
-        $this->db->where('id_article_category', $id);
-        $this->db->update('article_category', $param);
+        $this->db
+            ->where('id_article_category', $id)
+            ->update('article_category', $param);
     }
-
+    
     /**
-     * delete record.
-     *
+     * Delete record.
+     * 
      * @param int $id
      */
-    public function DeleteRecord($id)
+    function DeleteRecord($id) 
     {
-        $this->db->where('id_article_category', $id);
-        $this->db->delete('article_category');
+        $this->db
+            ->where('id_article_category', $id)
+            ->delete('article_category');
     }
-
+    
     /**
-     * insert detail.
-     *
+     * Insert detail.
+     * 
      * @param array $param
      */
-    public function InsertDetailRecord($param)
-    {
+    function InsertDetailRecord($param) {
         $this->db->insert_batch('article_category_detail', $param);
     }
-
+    
     /**
-     * delete detail record.
-     *
+     * Delete detail record.
+     * 
      * @param int $id
      */
-    public function DeleteDetailRecordByID($id)
-    {
-        $this->db->where('id_article_category', $id);
-        $this->db->delete('article_category_detail');
+    function DeleteDetailRecordByID($id) {
+        $this->db
+            ->where('id_article_category', $id)
+            ->delete('article_category_detail');
     }
+    
 }
 /* End of file Article_category_model.php */
 /* Article: ./application/models/Article_category_model.php */

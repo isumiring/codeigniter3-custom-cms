@@ -1,43 +1,56 @@
 <?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Article Class.
- *
+ * 
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- *
+ * 
  * @version 3.0
- *
+ * 
  * @category Controller
- * @desc Article Controller
+ * 
  */
-class Article extends CI_Controller
+class Article extends CI_Controller 
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
+
+    /**
+     * Error message/system.
+     *
+     * @var string
+     */
     private $error;
 
-    public function __construct()
+    /**
+     * Class contructor.
+     */
+    public function __construct() 
     {
         parent::__construct();
         $this->load->model('Article_model');
         $this->class_path_name = $this->router->fetch_class();
     }
-
+    
     /**
-     * index page.
+     * Index page.
      */
-    public function index()
+    public function index() 
     {
-        $this->data['add_url'] = site_url($this->class_path_name.'/add');
-        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url']        = site_url($this->class_path_name.'/add');
+        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
-
+    
     /**
-     * list data.
+     * List data.
      */
-    public function list_data()
+    public function list_data() 
     {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
@@ -46,48 +59,43 @@ class Article extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort'] = $post['order'][0]['dir'];
+                $param['order_sort']  = $post['order'][0]['dir'];
             }
-            $param['row_from'] = $post['start'];
-            $param['length'] = $post['length'];
-            $count_all_records = $this->Article_model->CountAllData();
-            $count_filtered_records = $this->Article_model->CountAllData($param);
-            $records = $this->Article_model->GetAllData($param);
-            $return = [];
-            $return['draw'] = $post['draw'];
-            $return['recordsTotal'] = $count_all_records;
+            $param['row_from']         = $post['start'];
+            $param['length']           = $post['length'];
+            $count_all_records         = $this->Article_model->CountAllData();
+            $count_filtered_records    = $this->Article_model->CountAllData($param);
+            $records                   = $this->Article_model->GetAllData($param);
+            $return                    = [];
+            $return['draw']            = $post['draw'];
+            $return['recordsTotal']    = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = [];
+            $return['data']            = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['actions'] = '
-                    <a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                ';
-                $return['data'][$row]['title'] = $record['title'];
+                $return['data'][$row]['DT_RowId']       = $record['id'];
+                $return['data'][$row]['actions']        = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['title']          = $record['title'];
                 $return['data'][$row]['category_title'] = $record['category_title'];
-                $return['data'][$row]['publish_date'] = ($record['publish_date'] != '') ? custDateFormat($record['publish_date'], 'd M Y') : '-';
-                $return['data'][$row]['status_text'] = $record['status_text'];
-                $return['data'][$row]['create_date'] = custDateFormat($record['create_date'], 'd M Y H:i:s');
+                $return['data'][$row]['publish_date']   = ($record['publish_date'] != '') ? custDateFormat($record['publish_date'], 'd M Y') : '-';
+                $return['data'][$row]['status_text']    = $record['status_text'];
+                $return['data'][$row]['create_date']    = custDateFormat($record['create_date'], 'd M Y H:i:s');
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($return)
-            );
+            json_exit($return);
         }
         redirect($this->class_path_name);
     }
-
+    
     /**
-     * add page.
+     * Add page.
      */
-    public function add()
+    public function add() 
     {
-        $this->data['page_title'] = 'Add';
+        $this->data['page_title']  = 'Add';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Article_model->GetLocalization();
-        $this->data['statuses'] = $this->Article_model->GetStatus();
-        $this->data['categories'] = $this->Article_model->GetCategories();
+        $this->data['cancel_url']  = site_url($this->class_path_name);
+        $this->data['locales']     = $this->Article_model->GetLocalization();
+        $this->data['statuses']    = $this->Article_model->GetStatus();
+        $this->data['categories']  = $this->Article_model->GetCategories();
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
@@ -95,11 +103,13 @@ class Article extends CI_Controller
                     $post_locales = $post['locales'];
                     unset($post['locales']);
                 }
-                $post['expire_date'] = (isset($post['forever'])) ? null : $post['expire_date'];
+                $post['is_featured'] = (isset($post['is_featured'])) ?: 0;
+                $post['expire_date'] = (isset($post['forever'])) ? NULL : $post['expire_date'];
                 unset($post['forever']);
-
+                
                 // insert data
                 $id = $this->Article_model->InsertRecord($post);
+
                 $title_name = '';
                 if ($id && isset($post_locales)) {
                     $insert_locales = [];
@@ -118,18 +128,18 @@ class Article extends CI_Controller
                 }
                 $post_image = $_FILES;
                 if ($post_image['thumbnail_image']['tmp_name']) {
-                    $filename = url_title($title_name.'-thumb', '_', true);
-                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR.'article/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($title_name.'-thumb', '_', true);
+                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR . $this->class_path_name. '/', 'tmb_'. $filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT, 70);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR . $this->class_path_name. '/', 'sml_'. $filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT, 70);
                     // update data
                     $this->Article_model->UpdateRecord($id, ['thumbnail_image' => $picture_db]);
                 }
                 if ($post_image['primary_image']['tmp_name']) {
-                    $filename = url_title($title_name, '_', true);
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'article/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($title_name, '_', true);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR . $this->class_path_name. '/', 'tmb_'. $filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR . $this->class_path_name. '/', 'sml_'. $filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Article_model->UpdateRecord($id, ['primary_image' => $picture_db]);
                 }
@@ -142,8 +152,9 @@ class Article extends CI_Controller
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
-
+                
+                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
+                
                 redirect($this->class_path_name);
             }
             $this->data['post'] = $post;
@@ -153,28 +164,28 @@ class Article extends CI_Controller
             $this->data['form_message'] = $this->error;
         }
     }
-
+    
     /**
-     * detail page.
-     *
+     * Detail page.
+     * 
      * @param int $id
      */
-    public function edit($id = 0)
+    public function edit($id = 0) 
     {
-        if (!$id) {
+        if ( ! $id) {
             redirect($this->class_path_name);
         }
         $record = $this->Article_model->GetArticle($id);
-        if (!$record) {
+        if ( ! $record) {
             redirect($this->class_path_name);
         }
-        $this->data['page_title'] = 'Edit';
-        $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
+        $this->data['page_title']         = 'Edit';
+        $this->data['form_action']        = site_url($this->class_path_name.'/edit/'.$id);
         $this->data['delete_picture_url'] = site_url($this->class_path_name.'/delete_picture/'.$id);
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Article_model->GetLocalization();
-        $this->data['statuses'] = $this->Article_model->GetStatus();
-        $this->data['categories'] = $this->Article_model->GetCategories();
+        $this->data['cancel_url']         = site_url($this->class_path_name);
+        $this->data['locales']            = $this->Article_model->GetLocalization();
+        $this->data['statuses']           = $this->Article_model->GetStatus();
+        $this->data['categories']         = $this->Article_model->GetCategories();
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
@@ -183,11 +194,13 @@ class Article extends CI_Controller
                     unset($post['locales']);
                 }
                 $post['modify_date'] = date('Y-m-d H:i:s');
-                $post['expire_date'] = (isset($post['forever'])) ? null : $post['expire_date'];
+                $post['is_featured'] = (isset($post['is_featured'])) ?: 0;
+                $post['expire_date'] = (isset($post['forever'])) ? NULL : $post['expire_date'];
                 unset($post['forever']);
-
+                
                 // update data
-                $this->Article_model->UpdateRecord($id, $post);
+                $this->Article_model->UpdateRecord($id,$post);
+
                 $title_name = '';
                 // delete/purge detail content before new insert
                 $this->Article_model->DeleteDetailRecordByID($id);
@@ -208,28 +221,28 @@ class Article extends CI_Controller
                 }
                 $post_image = $_FILES;
                 if ($post_image['thumbnail_image']['tmp_name']) {
-                    $filename = url_title($title_name.'-thumb', '_', true);
-                    if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.'article/'.$record['thumbnail_image'])) {
-                        unlink(UPLOAD_DIR.'article/'.$record['thumbnail_image']);
-                        @unlink(UPLOAD_DIR.'article/tmb_'.$record['thumbnail_image']);
-                        @unlink(UPLOAD_DIR.'article/sml_'.$record['thumbnail_image']);
+                    if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['thumbnail_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['thumbnail_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['thumbnail_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['thumbnail_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR.'article/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($title_name.'-thumb', '_', true);
+                    $picture_db = file_copy_to_folder($post_image['thumbnail_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT, 70);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT, 70);
                     // update data
                     $this->Article_model->UpdateRecord($id, ['thumbnail_image' => $picture_db]);
                 }
                 if ($post_image['primary_image']['tmp_name']) {
-                    $filename = url_title($title_name, '_', true);
-                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'article/'.$record['primary_image'])) {
-                        unlink(UPLOAD_DIR.'article/'.$record['primary_image']);
-                        @unlink(UPLOAD_DIR.'article/tmb_'.$record['primary_image']);
-                        @unlink(UPLOAD_DIR.'article/sml_'.$record['primary_image']);
+                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['primary_image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['primary_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'article/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'article/'.$picture_db, UPLOAD_DIR.'article/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = url_title($title_name,'_',true);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
                     // update data
                     $this->Article_model->UpdateRecord($id, ['primary_image' => $picture_db]);
                 }
@@ -242,22 +255,22 @@ class Article extends CI_Controller
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
-
+                $this->session->set_flashdata('flash_message', alert_box('Success.','success'));
+                
                 redirect($this->class_path_name);
             }
         }
         $this->data['template'] = $this->class_path_name.'/form';
-        $this->data['post'] = $record;
+        $this->data['post']     = $record;
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
     }
-
+    
     /**
-     * delete page.
+     * Delete page.
      */
-    public function delete()
+    public function delete() 
     {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
@@ -269,12 +282,6 @@ class Article extends CI_Controller
                     foreach ($array_id as $row => $id) {
                         $record = $this->Article_model->GetArticle($id);
                         if ($record) {
-                            /*if ($record['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.'news/'.$record['thumbnail_image'])) {
-                                unlink(UPLOAD_DIR.'news/'.$record['thumbnail_image']);
-                            }
-                            if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'news/'.$record['primary_image'])) {
-                                unlink(UPLOAD_DIR.'news/'.$record['primary_image']);
-                            }*/
                             $this->Article_model->DeleteRecord($id);
                             // insert to log
                             $data_log = [
@@ -294,18 +301,15 @@ class Article extends CI_Controller
                     }
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
-
+    
     /**
-     * delete picture.
+     * Delete picture.
      */
-    public function delete_picture()
+    public function delete_picture() 
     {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
@@ -313,12 +317,12 @@ class Article extends CI_Controller
             $post = $this->input->post();
             if (isset($post['id']) && $post['id'] > 0 && ctype_digit($post['id'])) {
                 $detail = $this->Article_model->GetArticle($post['id']);
-                $type = (isset($post['type'])) ? $post['type'] : 'primary';
+                $type   = (isset($post['type'])) ? $post['type'] : 'primary';
+                $id = $post['id'];
                 if ($detail && ($detail[$type.'_image'] != '')) {
-                    $id = $post['id'];
-                    unlink(UPLOAD_DIR.'article/'.$detail[$type.'_image']);
-                    @unlink(UPLOAD_DIR.'article/tmb_'.$detail[$type.'_image']);
-                    @unlink(UPLOAD_DIR.'article/sml_'.$detail[$type.'_image']);
+                    unlink(UPLOAD_DIR. $this->class_path_name. '/'.$detail[$type.'_image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$detail[$type.'_image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$detail[$type.'_image']);
                     $data_update = [$type.'_image' => ''];
                     $this->Article_model->UpdateRecord($post['id'], $data_update);
                     $json['success'] = alert_box('File hase been deleted.', 'success');
@@ -335,64 +339,62 @@ class Article extends CI_Controller
                     $json['error'] = alert_box('Failed to remove File. Please try again.', 'danger');
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
-
+    
     /**
-     * validate form.
-     *
+     * Validate form.
+     * 
      * @param int $id
-     *
-     * @return bool
+     * 
+     * @return boolean
      */
-    private function validateForm($id = 0)
+    private function validateForm($id = 0) 
     {
-        $post = $this->input->post();
+        $post           = $this->input->post();
         $default_locale = $this->Article_model->GetDefaultLocalization();
-        $config = [
+        $rules = [
             [
                 'field' => 'publish_date',
                 'label' => 'Publish Date',
-                'rules' => 'required',
+                'rules' => 'required'
             ],
             [
                 'field' => 'uri_path',
                 'label' => 'SEO URL',
-                'rules' => 'required',
+                'rules' => 'required'
             ],
             [
                 'field' => 'id_status',
                 'label' => 'Status',
-                'rules' => 'required',
+                'rules' => 'required'
             ],
             [
                 'field' => 'id_article_category',
                 'label' => 'Category',
-                'rules' => 'required',
+                'rules' => 'required'
             ],
         ];
-        $this->form_validation->set_rules($config);
+        $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() === false) {
             $this->error = alert_box(validation_errors(), 'danger');
 
             return false;
         } else {
-            if (!check_exist_uri('article', $post['uri_path'], $id)) {
+            if ( ! check_exist_uri('article', $post['uri_path'], $id)) {
                 $this->error = 'SEO URL is already used.';
             } else {
                 foreach ($post['locales'] as $row => $local) {
                     if ($row == $default_locale['id_localization'] && $local['title'] == '') {
                         $this->error = 'Please insert Title.';
+
                         break;
                     }
                 }
             }
-            if (!isset($post['forever']) && $post['expire_date'] == '') {
+            if ( ! isset($post['forever']) && $post['expire_date'] == '') {
                 $this->error = 'Please input End Date.';
             }
             $post_image = $_FILES;
@@ -415,11 +417,10 @@ class Article extends CI_Controller
                 }
 
                 return true;
-            } else {
-                $this->error = alert_box($this->error, 'danger');
-
-                return false;
             }
+            $this->error = alert_box($this->error,'danger');
+
+            return FALSE;
         }
     }
 }

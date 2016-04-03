@@ -1,21 +1,19 @@
 <?php
 
-if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+defined('BASEPATH') or exit('No direct script access allowed');
+
 /**
- * @desc using for general need.
- * use $CI=& get_instance() for get CI instance inside the helper.
- * example : use $ci->load->database() to connect a db after you declare $ci=&get_instance().
+ * Use $CI=& get_instance() for get CI instance inside the helper.
+ * example : use $CI->load->database() to connect a db after you declare $CI=&get_instance().
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  */
 
 /**
- * custom date formate.
+ * Custom date format.
  *
- * @param string $string
- * @param string $format
+ * @param string $string date
+ * @param string $format format date
  *
  * @return string $return
  */
@@ -27,10 +25,8 @@ function custDateFormat($string, $format = 'Y-m-d H:i:s')
 }
 
 /**
- * generate alert box notification with close button
- * style is based on bootstrap 3.
- *
- * @author ivan lubis
+ * Generate alert box notification with close button.
+ *     style is based on bootstrap 3.
  *
  * @param string $msg          notification message
  * @param string $type         type of notofication
@@ -54,33 +50,31 @@ function alert_box($msg, $type = 'warning', $close_button = true)
 }
 
 /**
- * get site setting into array.
+ * Get site setting into array.
  *
  * @return array $return
  */
 function get_sitesetting()
 {
     $CI = &get_instance();
-    //if (!$return = $CI->cache->get('siteSetting')) {
-        $CI->load->database();
+    $CI->load->database();
     $query = $CI->db
-                ->select('setting.type,setting.value')
+                ->select('setting.type, setting.value')
                 ->where('sites.id_ref_publish', 1)
                 ->where('sites.is_delete', 0)
                 ->where('sites.is_default', 1)
-                ->join('sites', 'sites.id_site=setting.id_site', 'left')
+                ->join('sites', 'sites.id_site = setting.id_site', 'left')
                 ->order_by('setting.id_setting', 'asc')
                 ->get('setting')->result_array();
+
     foreach ($query as $row => $val) {
         $return[$val['type']] = $val['value'];
     }
-        //$CI->cache->save('siteSetting',$return);
-    //}
     return $return;
 }
 
 /**
- * get current controller value.
+ * Get current controller value.
  *
  * @param string $param
  *
@@ -89,15 +83,15 @@ function get_sitesetting()
 function current_controller($param = '')
 {
     $param = '/'.$param;
-    $CI = &get_instance();
-    $dir = $CI->router->directory;
+    $CI    = &get_instance();
+    $dir   = $CI->router->directory;
     $class = $CI->router->fetch_class();
 
     return base_url().$dir.$class.$param;
 }
 
 /**
- * encrypt string to md5 value.
+ * Encrypt string to md5 value.
  *
  * @param string $string
  *
@@ -111,16 +105,16 @@ function md5plus($string)
 }
 
 /**
- * generate new token.
+ * Generate new token.
  *
  * @return string $code
  */
 function generate_token()
 {
-    $rand = md5(sha1('reg'.date('Y-m-d H:i:s')));
+    $rand          = md5(sha1('reg'.date('Y-m-d H:i:s')));
     $acceptedChars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    $max = strlen($acceptedChars) - 1;
-    $tmp_code = null;
+    $max           = strlen($acceptedChars) - 1;
+    $tmp_code      = null;
     for ($i = 0; $i < 8; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -130,7 +124,7 @@ function generate_token()
 }
 
 /**
- * generate random code.
+ * Generate random code.
  *
  * @param int $loop
  *
@@ -139,8 +133,8 @@ function generate_token()
 function random_code($loop = 5)
 {
     $acceptedChars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    $max = strlen($acceptedChars) - 1;
-    $tmp_code = null;
+    $max           = strlen($acceptedChars) - 1;
+    $tmp_code      = null;
     for ($i = 0; $i < $loop; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -150,7 +144,7 @@ function random_code($loop = 5)
 }
 
 /**
- * generate random number.
+ * Generate random number.
  *
  * @param int $loop
  *
@@ -159,8 +153,8 @@ function random_code($loop = 5)
 function random_number($loop = 3)
 {
     $acceptedChars = '23456789';
-    $max = strlen($acceptedChars) - 1;
-    $tmp_code = null;
+    $max           = strlen($acceptedChars) - 1;
+    $tmp_code      = null;
     for ($i = 0; $i < $loop; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -170,48 +164,22 @@ function random_number($loop = 3)
 }
 
 /**
- * retrieve auth user id from session.
+ * Get admin logged info by email session.
  *
- * @author ivan lubis
- *
- * @return string admin user id
- */
-function id_auth_user()
-{
-    $CI = &get_instance();
-    $CI->load->library('session');
-    if ($CI->session->ADM_SESS == '') {
-        return false;
-    } else {
-        $ADM_SESS = $CI->session->ADM_SESS;
-        $sess = $ADM_SESS['admin_email'];
-        $CI->load->database();
-        $data = getAdminLoggedInfo();
-        if ($data) {
-            return $data['id_auth_user'];
-        } else {
-            return false;
-        }
-    }
-}
-
-/**
- * get admin logged info by email session.
- *
- * @return bool
+ * @return array|bool $data
  */
 function getAdminLoggedInfo()
 {
-    $CI = &get_instance();
-    $CI->load->library('session');
+    $CI   = &get_instance();
     $data = false;
+    $CI->load->library('session');
     if (isset($_SESSION['ADM_SESS']) && $_SESSION['ADM_SESS'] != '') {
-        $ADM_SESS = $_SESSION['ADM_SESS'];
-        $sess = $ADM_SESS['admin_email'];
+        $ADM_SESS  = $_SESSION['ADM_SESS'];
+        $adm_email = $ADM_SESS['admin_email'];
         $CI->load->database();
         $data = $CI->db
                 //->select('id_auth_user')
-                ->where('LCASE(email)', strtolower($sess))
+                ->where('LCASE(email)', strtolower($adm_email))
                 ->limit(1)
                 ->get('auth_user')
                 ->row_array();
@@ -221,7 +189,30 @@ function getAdminLoggedInfo()
 }
 
 /**
- * check user if super admin.
+ * Retrieve auth user id from session.
+ *
+ * @return int|bool $data admin user id
+ */
+function id_auth_user()
+{
+    $CI = &get_instance();
+    $CI->load->library('session');
+    if ($CI->session->ADM_SESS == '') {
+        return false;
+    }
+    $ADM_SESS = $CI->session->ADM_SESS;
+    $sess = $ADM_SESS['admin_email'];
+    $CI->load->database();
+    $data = getAdminLoggedInfo();
+    if ($data) {
+        return $data['id_auth_user'];
+    }
+
+    return false;
+}
+
+/**
+ * Check user if super admin.
  *
  * @return bool
  */
@@ -231,22 +222,19 @@ function is_superadmin()
     $CI->load->library('session');
     if ($CI->session->ADM_SESS == '') {
         return false;
-    } else {
-        $data = getAdminLoggedInfo();
-        if (isset($data['is_superadmin']) && $data['is_superadmin'] == 1) {
-            return true;
-        } else {
-            return false;
-        }
     }
+    $data = getAdminLoggedInfo();
+    if (isset($data['is_superadmin']) && $data['is_superadmin'] == 1) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
- * retrieve session of admin user group id.
+ * Retrieve session of admin user group id.
  *
- * @author ivan lubis
- *
- * @return int admin user group id
+ * @return int|bool $data admin user group id
  */
 function id_auth_group()
 {
@@ -254,30 +242,31 @@ function id_auth_group()
     $CI->load->library('session');
     if ($CI->session->ADM_SESS == '') {
         return '0';
-    } else {
-        $data = getAdminLoggedInfo();
-
-        return $data['id_auth_group'];
     }
+
+    $data = getAdminLoggedInfo();
+
+    return $data['id_auth_group'];
 }
 
 /**
- * get active themes.
+ * Get active themes.
  *
- * @return string $return
+ * @param string $default default themes
+ * 
+ * @return string $return themes
  */
-function getActiveThemes()
+function getActiveThemes($default = 'sbadmin2')
 {
     $user = getAdminLoggedInfo();
-    $return = ($user) ? $user['themes'] : 'sbadmin2';
+    $return = ($user) ? $user['themes'] : $default;
 
     return $return;
 }
 
 /**
- * clear browser cache.
- *
- * @author ivan lubis
+ * Clear browser cache.
+ * 
  */
 function clear_cache()
 {
@@ -287,11 +276,11 @@ function clear_cache()
 }
 
 /**
- * remove module directory.
+ * Remove recursive directory.
  *
  * @param string $dir
  */
-function remove_module_directory($dir)
+function remove_recursive_directory($dir)
 {
     if (is_dir($dir)) {
         $objects = scandir($dir);
@@ -310,15 +299,13 @@ function remove_module_directory($dir)
 }
 
 /**
- * retrieve field value of table.
+ * Retrieve field value of table.
  *
- * @author ivan lubis
+ * @param string $field field of table
+ * @param string $table table name
+ * @param string $where condition of query
  *
- * @param $field field of table
- * @param $table table name
- * @param $where condition of query
- *
- * @return string value
+ * @return string $val value
  */
 function get_value($field, $table, $where)
 {
@@ -337,14 +324,12 @@ function get_value($field, $table, $where)
 }
 
 /**
- * retrieve setting value by key.
+ * Retrieve setting value by key.
  *
- * @author ivan lubis
+ * @param string $config_key field key
+ * @param int $id_site (optional) site id
  *
- * @param $config_key field key
- * @param $id_site (optional) site id
- *
- * @return string value
+ * @return string $val value
  */
 function get_setting($config_key = '', $id_site = 1)
 {
@@ -355,8 +340,9 @@ function get_setting($config_key = '', $id_site = 1)
     if ($config_key != '') {
         $CI->db->where('type', $config_key);
     }
-    $CI->db->where('id_site', $id_site);
-    $query = $CI->db->get('setting');
+    $query = $CI->db
+        ->where('id_site', $id_site)
+        ->get('setting');
 
     if ($query->num_rows() > 1) {
         $val = $query->result_array();
@@ -369,20 +355,19 @@ function get_setting($config_key = '', $id_site = 1)
 }
 
 /**
- * retrieve site info by id site.
+ * Retrieve site info by id site.
  *
- * @author ivan lubis
+ * @param int $id_site (optional) site id
  *
- * @param $id_site (optional) site id
- *
- * @return string value
+ * @return string $return
  */
 function get_site_info($id_site = 1)
 {
     // load ci instance
     $CI = &get_instance();
-    if (!$return = $CI->cache->get('siteInfo')) {
+    if ( ! $return = $CI->cache->get('siteInfo')) {
         $CI->load->database();
+
         $return = $CI->db
                 ->where('id_site', $id_site)
                 ->limit(1)
@@ -395,56 +380,9 @@ function get_site_info($id_site = 1)
 }
 
 /**
- * get option list by array.
+ * Retrieve menu admin title.
  *
- * @param array  $option
- * @param string $selected
- *
- * @return string $return
- */
-function getOptionSelect($option = [], $selected = '')
-{
-    $return = '';
-    for ($a = 0; $a < count($option); $a++) {
-        if ($selected != '' && $selected == $option[$a]) {
-            $return .= '<option value="'.$option[$a].'" selected="selected">'.$option[$a].'</option>';
-        } else {
-            $return .= '<option value="'.$option[$a].'">'.$option[$a].'</option>';
-        }
-    }
-
-    return $return;
-}
-
-/**
- * get option publish select.
- *
- * @param type $selected
- *
- * @return string
- */
-function getOptionSelectPublish($selected = '')
-{
-    $return = '';
-    $pub[] = 'Not Publish';
-    $pub[] = 'Publish';
-    for ($a = 1; $a >= 0; $a--) {
-        $sel = '';
-        if ($selected == $a && $selected != '') {
-            $sel = 'selected="selected"';
-        }
-        $return .= '<option value="'.$a.'" '.$sel.'>'.$pub[$a].'</option>';
-    }
-
-    return $return;
-}
-
-/**
- * retrieve menu admin title.
- *
- * @author ivan lubis
- *
- * @param $key key menu file, returning blank if empty/false
+ * @param string $key key menu file, returning blank if empty/false
  *
  * @return string title value
  */
@@ -454,26 +392,25 @@ function get_admin_menu_title($key)
     $CI = &get_instance();
     $CI->load->database();
 
-    $CI->db->where('file', $key);
-    $CI->db->limit(1);
-    $CI->db->order_by('id_menu_admin', 'desc');
-    $query = $CI->db->get('menu_admin');
+    $query = $CI->db
+        ->where('LCASE(file)', strtolower($key))
+        ->limit(1)
+        ->order_by('id_auth_menu', 'desc')
+        ->get('auth_menu');
 
     if ($query->num_rows() > 0) {
         $row = $query->row_array();
 
         return $row['menu'];
-    } else {
-        return '';
     }
+
+    return '';
 }
 
 /**
- * retrieve menu admin id.
+ * Retrieve menu admin id.
  *
- * @author ivan lubis
- *
- * @param $key key menu file, returning blank if empty/false
+ * @param string $key key menu file, returning blank if empty/false
  *
  * @return int id menu value
  */
@@ -483,48 +420,37 @@ function get_admin_menu_id($key)
     $CI = &get_instance();
     $CI->load->database();
 
-    $CI->db->where('file', $key);
-    $CI->db->limit(1);
-    $CI->db->order_by('id_menu_admin', 'desc');
-    $query = $CI->db->get('menu_admin');
+    $query = $CI->db
+        ->where('LCASE(file)', strtolower($key))
+        ->limit(1)
+        ->order_by('id_auth_menu', 'desc')
+        ->get('auth_menu');
 
     if ($query->num_rows() > 0) {
         $row = $query->row_array();
 
-        return $row['id_menu_admin'];
-    } else {
-        return '0';
+        return $row['id_auth_menu'];
     }
+
+    return '0';
 }
 
 /**
- * insert log user activity to database.
+ * Insert log user activity to database.
  *
- * @author ivan lubis
- *
- * @param $data data array to insert
+ * @param array $data data to insert
  */
 function insert_to_log($data)
 {
     // load ci instance
     $CI = &get_instance();
     $CI->load->database();
-
+    $data = array_merge($data, ['ip_address' => get_client_ip()]);
     $CI->db->insert('logs', $data);
 }
 
 /**
- * print seo label for help.
- *
- * @return string
- */
-function seo_label()
-{
-    return ' <img src="'.base_url('assets/images/admin/help.png').'" width="16" height="16" class="has-tip" title="leave this field empty if you want the seo link same as menu title" border="0" alt="Help"/>';
-}
-
-/**
- * check page requested by ajax.
+ * Check page requested by ajax.
  *
  * @return bool
  */
@@ -533,69 +459,17 @@ function is_ajax_requested()
     /* AJAX check  */
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
- * check status of module.
+ * Enconding url characters.
  *
- * @param type $module
+ * @param string $string value to encode
  *
- * @return type bool
- */
-function check_module_installed($module)
-{
-    // load ci instance
-    $CI = &get_instance();
-    $CI->load->database();
-    $CI->load->library('maintenance_mode');
-    if ($CI->maintenance_mode->check_maintenance()) {
-        $CI->db->where('module', $module);
-        $CI->db->where('is_installed', 1);
-        $query = $CI->db->get('ddi_modules');
-        if ($query->num_rows() > 0) {
-            return true;
-        } else {
-            show_404('page');
-        }
-    }
-}
-
-/**
- * return if module is installer.
- *
- * @param type $module
- *
- * @return type
- */
-function module_is_installed($module)
-{
-    // load ci instance
-    $CI = &get_instance();
-    $CI->load->database();
-    $CI->load->library('maintenance_mode');
-    if ($CI->maintenance_mode->check_maintenance()) {
-        $CI->db->where('module', $module);
-        $CI->db->where('is_installed', 1);
-        $query = $CI->db->get('ddi_modules');
-        if ($query->num_rows() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
-/**
- * enconding url characters.
- *
- * @author ivan lubis
- *
- * @param $string  string value to encode
- *
- * @return encoded string value
+ * @return string encoded string value
  */
 function myUrlEncode($string)
 {
@@ -606,13 +480,11 @@ function myUrlEncode($string)
 }
 
 /**
- * decoding url characters.
+ * Decoding url characters.
  *
- * @author ivan lubis
+ * @param string $string value to decode
  *
- * @param $string string value to decode
- *
- * @return decoded string value
+ * @return string decoded string value
  */
 function myUrlDecode($string)
 {
@@ -623,23 +495,23 @@ function myUrlDecode($string)
 }
 
 /**
- * form validation : check characters only alpha, numeric, dash.
+ * Form validation : check characters only alpha, numeric, dash.
  *
- * @param type $str
+ * @param string $str
  *
- * @return type
+ * @return bool
  */
 function mycheck_alphadash($str)
 {
     if (preg_match('/^[a-z0-9_-]+$/i', $str)) {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
- * form validation : check iso date.
+ * Form validation : check iso date.
  *
  * @param string $str
  *
@@ -649,19 +521,17 @@ function mycheck_isodate($str)
 {
     if (preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $str)) {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
- * form validation : check email.
+ * Form validation : check email.
+ * 
+ * @param string $str value to check
  *
- * @author ivan lubis
- *
- * @param $str string value to check
- *
- * @return string true or false
+ * @return bool true or false
  */
 function mycheck_email($str)
 {
@@ -671,7 +541,7 @@ function mycheck_email($str)
 }
 
 /**
- * form validation : check phone number.
+ * Form validation : check phone number.
  *
  * @param string $string
  *
@@ -687,12 +557,14 @@ function mycheck_phone($string)
 }
 
 /**
+ * Convert number/decimal to default price
+ * 
  * @param string $string
  * @param int    $decimal
  * @param string $thousands_sep
  * @param string $dec_point
  *
- * @return string number_format()
+ * @return string price format
  */
 function myprice($string, $decimal = 0, $thousands_sep = '.', $dec_point = ',')
 {
@@ -700,11 +572,9 @@ function myprice($string, $decimal = 0, $thousands_sep = '.', $dec_point = ',')
 }
 
 /**
- * clean data from xss.
+ * Clean data from xss.
  *
- * @author ivan lubis
- *
- * @return string clean data from xss
+ * @return string $return clean data from xss
  */
 function xss_clean_data($string)
 {
@@ -715,177 +585,32 @@ function xss_clean_data($string)
 }
 
 /**
- * check validation of upload file.
+ * Check validation file size of upload file.
  *
- * @author ivan lubis
+ * @param array|object|string $str file to check
+ * @param int $max_size (optional) set maximum of file size, default is 4 MB
  *
- * @param $str string file to check
- * @param $max_size (optional) set maximum of file size, default is 4 MB
- *
- * @return true or false
+ * @return bool
  */
 function check_file_size($str, $max_size = 0)
 {
-    if (!$max_size) {
+    if ( ! $max_size) {
         $max_size = IMG_UPLOAD_MAX_SIZE;
     }
     $file_size = $str['size'];
     if ($file_size > $max_size) {
         return false;
-    } else {
-        return true;
     }
+
+    return true;
 }
 
 /**
- * check validation of image type.
+ * Get mime upload file.
  *
- * @author ivan lubis
+ * @param string|array|object $source file to check
  *
- * @param $source_pic string file to check
- *
- * @return true or false
- */
-function check_image_type($source_pic)
-{
-    $image_info = check_mime_type($source_pic);
-
-    switch ($image_info) {
-        case 'image/gif':
-            return true;
-            break;
-
-        case 'image/jpeg':
-            return true;
-            break;
-
-        case 'image/png':
-            return true;
-            break;
-
-        case 'image/wbmp':
-            return true;
-            break;
-
-        default:
-            return false;
-            break;
-    }
-}
-
-/**
- * check validation of image type in array.
- *
- * @author ivan lubis
- *
- * @param $source_pic string file to check
- *
- * @return true or false
- */
-function check_image_type_array($source_pic)
-{
-    switch ($source_pic) {
-        case 'image/gif':
-            return true;
-            break;
-
-        case 'image/jpeg':
-            return true;
-            break;
-
-        case 'image/png':
-            return true;
-            break;
-
-        case 'image/wbmp':
-            return true;
-            break;
-
-        default:
-            return false;
-            break;
-    }
-}
-
-/**
- * check validation of file type.
- *
- * @author ivan lubis
- *
- * @param $source string file to check
- *
- * @return true or false
- */
-function check_file_type($source)
-{
-    $file_info = check_mime_type($source);
-
-    switch ($file_info) {
-        case 'application/pdf':
-            return true;
-            break;
-
-        case 'application/msword':
-            return true;
-            break;
-
-        case 'application/rtf':
-            return true;
-            break;
-        case 'application/vnd.ms-excel':
-            return true;
-            break;
-
-        case 'application/vnd.ms-powerpoint':
-            return true;
-            break;
-
-        case 'application/vnd.oasis.opendocument.text':
-            return true;
-            break;
-
-        case 'application/vnd.oasis.opendocument.spreadsheet':
-            return true;
-            break;
-
-        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-            return true;
-            break;
-
-        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            return true;
-            break;
-
-        case 'image/gif':
-            return true;
-            break;
-
-        case 'image/jpeg':
-            return true;
-            break;
-
-        case 'image/png':
-            return true;
-            break;
-
-        case 'image/wbmp':
-            return true;
-            break;
-
-        default:
-            return false;
-            break;
-    }
-}
-
-/**
- * get mime upload file.
- *
- * @author ivan lubis
- *
- * @param $source string file to check
- *
- * @return string mime type
+ * @return string|bool mime type
  */
 function check_mime_type($source)
 {
@@ -921,6 +646,7 @@ function check_mime_type($source)
     $ext = strtolower($ext);
     //$ext = strtolower(array_pop(explode(".", $source['name'])));
     if (array_key_exists($ext, $mime_types)) {
+
         return $mime_types[$ext];
     } elseif (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME);
@@ -928,18 +654,78 @@ function check_mime_type($source)
         finfo_close($finfo);
 
         return $mimetype;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 /**
- * function validatePicture.
+ * Check validation of image type.
  *
- * validation for file upload from form
+ * @param string|object|array $source_pic file to check
  *
- * @param string $fieldname
- *                          fieldname of input file form
+ * @return bool
+ */
+function check_image_type($source_pic)
+{
+    $image_info = check_mime_type($source_pic);
+    // allowed type of image
+    $allowed_type = [
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+        'image/wbmp',
+    ];
+
+    if ($image_info && in_array($allowed_type, $image_info)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * check validation of file type.
+ *
+ * @author ivan lubis
+ *
+ * @param $source string file to check
+ *
+ * @return true or false
+ */
+function check_file_type($source)
+{
+    $file_info = check_mime_type($source);
+    // allowed type of file
+    $allowed_type = [
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+        'image/wbmp',
+        'application/pdf',
+        'application/msword',
+        'application/rtf',
+        'application/vnd.ms-excel',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.oasis.opendocument.text',
+        'application/vnd.oasis.opendocument.spreadsheet',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+
+    if ($file_info && in_array($allowed_type, $file_info)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Validate upload image
+ *
+ * @param string $fieldname fieldname of input file form
+ *
+ * @return string $error
  */
 function validatePicture($fieldname)
 {
@@ -976,9 +762,8 @@ function validatePicture($fieldname)
     } elseif ($_FILES[$fieldname]['size'] > IMG_UPLOAD_MAX_SIZE) {
         $error = 'Upload maximum file is '.number_format(IMG_UPLOAD_MAX_SIZE / 1024, 2).' MB.';
     } else {
-        //$get_ext = substr($_FILES[$fieldname]['name'],strlen($_FILES[$fieldname]['name'])-3,3);
         $cekfileformat = check_image_type($_FILES[$fieldname]);
-        if (!$cekfileformat) {
+        if ( ! $cekfileformat) {
             $error = 'Upload Picture only allow (jpg, gif, png)';
         }
     }
@@ -987,12 +772,11 @@ function validatePicture($fieldname)
 }
 
 /**
- * private function validateFile.
+ * Validation for file upload from form
  *
- * validation for file upload from form
+ * @param string $fieldname fieldname of input file form
  *
- * @param string $fieldname
- *                          fieldname of input file form
+ * @return string $error
  */
 function validateFile($fieldname)
 {
@@ -1031,7 +815,7 @@ function validateFile($fieldname)
     } else {
         //$get_ext = substr($_FILES[$fieldname]['name'],strlen($_FILES[$fieldname]['name'])-3,3);
         $cekfileformat = check_file_type($_FILES[$fieldname]);
-        if (!$cekfileformat) {
+        if ( ! $cekfileformat) {
             $error = 'Upload File only allow (jpg, gif, png, pdf, doc, xls, xlsx, docx)';
         }
     }
@@ -1040,13 +824,11 @@ function validateFile($fieldname)
 }
 
 /**
- * debug variable.
+ * Debug variable.
  *
- * @author ivan lubis
+ * @param mixed $datadebug data to debug
  *
- * @param $datadebug string data to debug
- *
- * @return print debug data
+ * @return string print debug data
  */
 function debugvar($datadebug)
 {
@@ -1056,13 +838,11 @@ function debugvar($datadebug)
 }
 
 /**
- * set number to rupiah format.
+ * Set number to rupiah format.
  *
- * @author ivan lubis
+ * @param string $angka number to change format
  *
- * @param $angka string number to change format
- *
- * @return string format idr
+ * @return string $rupiah number format idr
  */
 function rupiah($angka)
 {
@@ -1074,21 +854,19 @@ function rupiah($angka)
         $angka = substr($angka, 0, $s);
         $rp = strlen($angka);
     }
-    $rupiah = 'Rp.'.$angka.$rupiah.',-';
+    $rupiah = 'Rp. '.$angka.$rupiah.',-';
 
     return $rupiah;
 }
 
 /**
- * upload file to destination folder, return file name.
+ * Upload file to destination folder, return file name.
  *
- * @author ivan lubis
+ * @param array|object $source_file source file
+ * @param string $destination_folder destination upload folder
+ * @param sreing $filename file name
  *
- * @param $source_file string of source file
- * @param $destination_folder string destination upload folder
- * @param $filename string file name
- *
- * @return string edited filename
+ * @return string $ret filename
  */
 function file_copy_to_folder($source_file, $destination_folder, $filename)
 {
@@ -1110,25 +888,23 @@ function file_copy_to_folder($source_file, $destination_folder, $filename)
 }
 
 /**
- * upload multiple(array) file to destination folder, return array of file name.
+ * Upload multiple (array) file to destination folder, return array of file name.
  *
- * @author ivan lubis
+ * @param array|object $source_file source file
+ * @param string $destination_folder destination upload folder
+ * @param string $filename file name
  *
- * @param $source_file array string of source file
- * @param $destination_folder string destination upload folder
- * @param $filename string of file name
- *
- * @return string of edited filename
+ * @return string $ret filename
  */
 function file_arr_copy_to_folder($source_file, $destination_folder, $filename)
 {
     $tmp_destination = $destination_folder;
-    $ret = [];
+    $ret             = [];
     for ($index = 0; $index < count($source_file['tmp_name']); $index++) {
-        $arrext = explode('.', $source_file['name'][$index]);
-        $jml = count($arrext) - 1;
-        $ext = $arrext[$jml];
-        $ext = strtolower($ext);
+        $arrext             = explode('.', $source_file['name'][$index]);
+        $jml                = count($arrext) - 1;
+        $ext                = $arrext[$jml];
+        $ext                = strtolower($ext);
         $destination_folder = $tmp_destination.$filename[$index].'.'.$ext;
 
         if (@move_uploaded_file($source_file['tmp_name'][$index], $destination_folder)) {
@@ -1140,26 +916,24 @@ function file_arr_copy_to_folder($source_file, $destination_folder, $filename)
 }
 
 /**
- * upload image to destination folder, return file name.
+ * Upload image to destination folder, return file name.
  *
- * @author ivan lubis
+ * @param array|object $source_file source file
+ * @param string $destination_folder destination upload folder
+ * @param string $filename file name
+ * @param int $max_width maximum image width
+ * @param int $max_height maximum image height
  *
- * @param $source_pic string source file
- * @param $destination_folder string destination upload folder
- * @param $filename string file name
- * @param $max_width string maximum image width
- * @param $max_height string maximum image height
- *
- * @return string of edited file name
+ * @return string $callback_filename file name
  */
 function image_resize_to_folder($source_pic, $destination_folder, $filename, $max_width, $max_height)
 {
-    $image_info = getimagesize($source_pic['tmp_name']);
-    $source_pic_name = $source_pic['name'];
+    $image_info         = getimagesize($source_pic['tmp_name']);
+    $source_pic_name    = $source_pic['name'];
     $source_pic_tmpname = $source_pic['tmp_name'];
-    $source_pic_size = $source_pic['size'];
-    $source_pic_width = $image_info[0];
-    $source_pic_height = $image_info[1];
+    $source_pic_size    = $source_pic['size'];
+    $source_pic_width   = $image_info[0];
+    $source_pic_height  = $image_info[1];
     if (!is_dir($destination_folder)) {
         mkdir($destination_folder, 0755);
     }
@@ -1168,13 +942,13 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
     $y_ratio = $max_height / $source_pic_height;
 
     if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-        $tn_width = $source_pic_width;
+        $tn_width  = $source_pic_width;
         $tn_height = $source_pic_height;
     } elseif (($x_ratio * $source_pic_height) < $max_height) {
         $tn_height = ceil($x_ratio * $source_pic_height);
-        $tn_width = $max_width;
+        $tn_width  = $max_width;
     } else {
-        $tn_width = ceil($y_ratio * $source_pic_width);
+        $tn_width  = ceil($y_ratio * $source_pic_width);
         $tn_height = $max_height;
     }
 
@@ -1183,7 +957,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_GIF) {
                 $src = imagecreatefromgif($source_pic['tmp_name']);
                 $destination_folder .= "$filename.gif";
-                $namafile = "$filename.gif";
+                $callback_filename  = "$filename.gif";
             }
             break;
 
@@ -1191,7 +965,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_pic['tmp_name']);
                 $destination_folder .= "$filename.jpg";
-                $namafile = "$filename.jpg";
+                $callback_filename  = "$filename.jpg";
             }
             break;
 
@@ -1199,7 +973,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_pic['tmp_name']);
                 $destination_folder .= "$filename.jpg";
-                $namafile = "$filename.jpg";
+                $callback_filename  = "$filename.jpg";
             }
             break;
 
@@ -1207,7 +981,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_PNG) {
                 $src = imagecreatefrompng($source_pic['tmp_name']);
                 $destination_folder .= "$filename.png";
-                $namafile = "$filename.png";
+                $callback_filename  = "$filename.png";
             }
             break;
 
@@ -1215,12 +989,12 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_WBMP) {
                 $src = imagecreatefromwbmp($source_pic['tmp_name']);
                 $destination_folder .= "$filename.bmp";
-                $namafile = "$filename.bmp";
+                $callback_filename  = "$filename.bmp";
             }
             break;
     }
 
-    //chmod($destination_pic,0777);
+    //chmod($destination_pic, 0777);
     $tmp = imagecreatetruecolor($tn_width, $tn_height);
     imagecopyresampled($tmp, $src, 0, 0, 0, 0, $tn_width, $tn_height, $source_pic_width, $source_pic_height);
 
@@ -1243,37 +1017,39 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             break;
     }
 
-    return $namafile;
+    return $callback_filename;
 }
 
 /**
- * copy image and resize it to destination folder.
+ * Copy image and resize it to destination folder.
  *
  * @param string $source_file
  * @param string $destination_folder
  * @param string $filename
- * @param string $max_width
- * @param string $max_height
+ * @param int $max_width
+ * @param int $max_height
+ * @param int $quality image quality
+ * @param bool $ext get the extension
  *
- * @return string $namafile file name
+ * @return string $callback_filename file name
  */
-function copy_image_resize_to_folder($source_file, $destination_folder, $filename, $max_width, $max_height)
+function copy_image_resize_to_folder($source_file, $destination_folder, $filename, $max_width, $max_height, $quality = 100, $ext = true)
 {
-    $image_info = getimagesize($source_file);
-    $source_pic_width = $image_info[0];
+    $image_info        = getimagesize($source_file);
+    $source_pic_width  = $image_info[0];
     $source_pic_height = $image_info[1];
 
     $x_ratio = $max_width / $source_pic_width;
     $y_ratio = $max_height / $source_pic_height;
 
     if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-        $tn_width = $source_pic_width;
+        $tn_width  = $source_pic_width;
         $tn_height = $source_pic_height;
     } elseif (($x_ratio * $source_pic_height) < $max_height) {
         $tn_height = ceil($x_ratio * $source_pic_height);
-        $tn_width = $max_width;
+        $tn_width  = $max_width;
     } else {
-        $tn_width = ceil($y_ratio * $source_pic_width);
+        $tn_width  = ceil($y_ratio * $source_pic_width);
         $tn_height = $max_height;
     }
 
@@ -1285,40 +1061,40 @@ function copy_image_resize_to_folder($source_file, $destination_folder, $filenam
         case 'image/gif':
             if (imagetypes() & IMG_GIF) {
                 $src = imagecreatefromgif($source_file);
-                $destination_folder .= "$filename.gif";
-                $namafile = "$filename.gif";
+                $destination_folder .= ($ext == true) ? $filename .'.gif' : $filename;
+                $callback_filename  = ($ext == true) ? $filename .'.gif' : $filename;
             }
             break;
 
         case 'image/jpeg':
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_file);
-                $destination_folder .= "$filename.jpg";
-                $namafile = "$filename.jpg";
+                $destination_folder .= ($ext == true) ? $filename .'.jpg' : $filename;
+                $callback_filename  = ($ext == true) ? $filename .".jpg" : $filename;
             }
             break;
 
         case 'image/pjpeg':
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_file);
-                $destination_folder .= "$filename.jpg";
-                $namafile = "$filename.jpg";
+                $destination_folder .= ($ext == true) ? $filename .'.jpg' : $filename;
+                $callback_filename  = ($ext == true) ? $filename .".jpg" : $filename;
             }
             break;
 
         case 'image/png':
             if (imagetypes() & IMG_PNG) {
                 $src = imagecreatefrompng($source_file);
-                $destination_folder .= "$filename.png";
-                $namafile = "$filename.png";
+                $destination_folder .= ($ext == true) ? $filename .'.png' : $filename;
+                $callback_filename  = ($ext == true) ? $filename .".png" : $filename;
             }
             break;
 
         case 'image/wbmp':
             if (imagetypes() & IMG_WBMP) {
                 $src = imagecreatefromwbmp($source_file);
-                $destination_folder .= "$filename.bmp";
-                $namafile = "$filename.bmp";
+                $destination_folder .= ($ext == true) ? $filename .'.bmp' : $filename;
+                $callback_filename  = ($ext == true) ? $filename .".bmp" : $filename;
             }
             break;
     }
@@ -1329,11 +1105,11 @@ function copy_image_resize_to_folder($source_file, $destination_folder, $filenam
     //**** 100 is the quality settings, values range from 0-100.
     switch ($image_info['mime']) {
         case 'image/jpeg':
-            imagejpeg($tmp, $destination_folder, 100);
+            imagejpeg($tmp, $destination_folder, $quality);
             break;
 
         case 'image/gif':
-            imagegif($tmp, $destination_folder, 100);
+            imagegif($tmp, $destination_folder, $quality);
             break;
 
         case 'image/png':
@@ -1341,89 +1117,116 @@ function copy_image_resize_to_folder($source_file, $destination_folder, $filenam
             break;
 
         default:
-            imagejpeg($tmp, $destination_folder, 100);
+            imagejpeg($tmp, $destination_folder, $quality);
             break;
     }
 
-    return $namafile;
+    return $callback_filename;
 }
 
 /**
- * upload image to destination folder, return file name.
+ * Move file to folder.
  *
- * @author ivan lubis
+ * @param string $source_file
+ * @param string $destination_folder
+ * @param string $filename
  *
- * @param $source_pic array string source file
- * @param $destination_folder string destination upload folder
- * @param $filename string file name
- * @param $max_width string maximum image width
- * @param $max_height string maximum image height
+ * @return string $ret file name
+ */
+function move_file_to_folder($source_file, $destination_folder, $filename)
+{
+    $arrext = explode('.', $source_file);
+    $jml    = count($arrext) - 1;
+    $ext    = $arrext[$jml];
+    $ext    = strtolower($ext);
+    $ret    = false;
+    if (!is_dir($destination_folder)) {
+        mkdir($destination_folder, 0755);
+    }
+    $destination_folder .= $filename.'.'.$ext;
+
+    if (rename($source_file, $destination_folder)) {
+        $ret = $filename.'.'.$ext;
+    }
+
+    return $ret;
+}
+
+/**
+ * Upload image (array) to destination folder, return file name.
  *
- * @return array string of edited file name
+ * @param array|object $source_pic source file
+ * @param string $destination_folder destination upload folder
+ * @param string $filename file name
+ * @param int $max_width maximum image width
+ * @param int $max_height maximum image height
+ *
+ * @return array|string $return file name
  */
 function image_arr_resize_to_folder($source_pic, $destination_folder, $filename, $max_width, $max_height)
 {
     $tmp_dest = $destination_folder;
+    $return   = [];
     for ($index = 0; $index < count($source_pic['tmp_name']); $index++) {
         $destination_folder = $tmp_dest;
-        $image_info = getimagesize($source_pic['tmp_name'][$index]);
-        $source_pic_name = $source_pic['name'][$index];
+        $image_info         = getimagesize($source_pic['tmp_name'][$index]);
+        $source_pic_name    = $source_pic['name'][$index];
         $source_pic_tmpname = $source_pic['tmp_name'][$index];
-        $source_pic_size = $source_pic['size'][$index];
-        $source_pic_width = $image_info[0];
-        $source_pic_height = $image_info[1];
-        $x_ratio = $max_width / $source_pic_width;
-        $y_ratio = $max_height / $source_pic_height;
+        $source_pic_size    = $source_pic['size'][$index];
+        $source_pic_width   = $image_info[0];
+        $source_pic_height  = $image_info[1];
+        $x_ratio            = $max_width / $source_pic_width;
+        $y_ratio            = $max_height / $source_pic_height;
 
         if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-            $tn_width = $source_pic_width;
+            $tn_width  = $source_pic_width;
             $tn_height = $source_pic_height;
         } elseif (($x_ratio * $source_pic_height) < $max_height) {
             $tn_height = ceil($x_ratio * $source_pic_height);
-            $tn_width = $max_width;
+            $tn_width  = $max_width;
         } else {
-            $tn_width = ceil($y_ratio * $source_pic_width);
+            $tn_width  = ceil($y_ratio * $source_pic_width);
             $tn_height = $max_height;
         }
 
         switch ($image_info['mime']) {
             case 'image/gif':
                 if (imagetypes() & IMG_GIF) {
-                    $src = imagecreatefromgif($source_pic['tmp_name'][$index]);
+                    $src                = imagecreatefromgif($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].gif";
-                    $namafile = "$filename[$index].gif";
+                    $callback_filename  = "$filename[$index].gif";
                 }
                 break;
 
             case 'image/jpeg':
                 if (imagetypes() & IMG_JPG) {
-                    $src = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
+                    $src                = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].jpg";
-                    $namafile = "$filename[$index].jpg";
+                    $callback_filename  = "$filename[$index].jpg";
                 }
                 break;
 
             case 'image/pjpeg':
                 if (imagetypes() & IMG_JPG) {
-                    $src = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
+                    $src                = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].jpg";
-                    $namafile = "$filename[$index].jpg";
+                    $callback_filename  = "$filename[$index].jpg";
                 }
                 break;
 
             case 'image/png':
                 if (imagetypes() & IMG_PNG) {
-                    $src = imagecreatefrompng($source_pic['tmp_name'][$index]);
+                    $src                = imagecreatefrompng($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].png";
-                    $namafile = "$filename[$index].png";
+                    $callback_filename  = "$filename[$index].png";
                 }
                 break;
 
             case 'image/wbmp':
                 if (imagetypes() & IMG_WBMP) {
-                    $src = imagecreatefromwbmp($source_pic['tmp_name'][$index]);
+                    $src                = imagecreatefromwbmp($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].bmp";
-                    $namafile = "$filename[$index].bmp";
+                    $callback_filename  = "$filename[$index].bmp";
                 }
                 break;
         }
@@ -1450,27 +1253,25 @@ function image_arr_resize_to_folder($source_pic, $destination_folder, $filename,
                 imagejpeg($tmp, $destination_folder, 100);
                 break;
         }
-        $url[] = $namafile;
+        $return[] = $callback_filename;
     }
 
-    return $url;
+    return $return;
 }
 
 /**
- * crop image.
+ * Crop image.
  *
- * @author ivan lubis
- *
- * @param $nw string new width
- * @param $nh string new height
- * @param $source string source file
- * @param $dest string destination folder
+ * @param string|int $nw new width
+ * @param string|int $nh new height
+ * @param string $source source file
+ * @param string $dest destination folder
  */
 function cropImage($nw, $nh, $source, $dest)
 {
     $image_info = getimagesize($source);
-    $w = $image_info[0];
-    $h = $image_info[1];
+    $w          = $image_info[0];
+    $h          = $image_info[1];
 
     switch ($image_info['mime']) {
         case 'image/gif':
@@ -1487,22 +1288,23 @@ function cropImage($nw, $nh, $source, $dest)
             break;
     }
 
-    $dimg = imagecreatetruecolor($nw, $nh);
-    $wm = $w / $nw;
-    $hm = $h / $nh;
+    $dimg     = imagecreatetruecolor($nw, $nh);
+    $wm       = $w / $nw;
+    $hm       = $h / $nh;
     $h_height = $nh / 2;
     $w_height = $nw / 2;
 
     if ($w > $h) {
         $adjusted_width = $w / $hm;
-        $half_width = $adjusted_width / 2;
-        $int_width = $half_width - $w_height;
+        $half_width     = $adjusted_width / 2;
+        $int_width      = $half_width - $w_height;
 
         imagecopyresampled($dimg, $simg, -$int_width, 0, 0, 0, $adjusted_width, $nh, $w, $h);
     } elseif (($w < $h) || ($w == $h)) {
         $adjusted_height = $h / $wm;
-        $half_height = $adjusted_height / 2;
-        $int_height = $half_height - $h_height;
+        $half_height     = $adjusted_height / 2;
+        $int_height      = $half_height - $h_height;
+
         imagecopyresampled($dimg, $simg, 0, -$int_height, 0, 0, $nw, $adjusted_height, $w, $h);
     } else {
         imagecopyresampled($dimg, $simg, 0, 0, 0, 0, $nw, $nh, $w, $h);
@@ -1511,14 +1313,14 @@ function cropImage($nw, $nh, $source, $dest)
 }
 
 /**
- * get option list.
+ * Get option list.
  *
- * @param type $options
- * @param type $selected
- * @param type $type
- * @param type $name
+ * @param array $options
+ * @param string|int $selected
+ * @param string $type
+ * @param string $name
  *
- * @return string $temp_list
+ * @return string $temp_list list
  */
 function getOptions($options = [], $selected = '', $type = 'option', $name = 'option_list')
 {
@@ -1532,7 +1334,7 @@ function getOptions($options = [], $selected = '', $type = 'option', $name = 'op
         if ($type == 'option') {
             $tmp_list .= '<option value="'.$options[$a].'" '.$set_select.'>'.$options[$a].'</option>';
         } else {
-            $tmp_list .= '<label for="opt-'.$a.'"><input name="'.$name.'" id="opt-'.$a.'" value="'.$options[$a].'" type="'.$type.'"/>'.$options[$a].'&nbsp; </label>';
+            $tmp_list .= '<label for="opt-'.$a.'" class="'.$type.'"><input name="'.$name.'" id="opt-'.$a.'" value="'.$options[$a].'" type="'.$type.'"/>'.$options[$a].'&nbsp; </label>';
         }
     }
 
@@ -1540,29 +1342,7 @@ function getOptions($options = [], $selected = '', $type = 'option', $name = 'op
 }
 
 /**
- * mark up price.
- *
- * @param int $price
- * @param int $precision
- *
- * @return string $new_price
- */
-function markupPrice($price = 0, $precision = 0)
-{
-    $price = (int) $price;
-    if (!$price) {
-        return '0';
-    }
-    // get margin price first
-    $margin = MARGIN_PRICE;
-    $percentage = round(($margin / 100) * $price, $precision);
-    $new_price = $price + $percentage;
-
-    return $new_price;
-}
-
-/**
- * get languange text by key.
+ * Get languange text by key.
  *
  * @param string $key
  *
@@ -1576,11 +1356,12 @@ function get_lang_key($key)
 }
 
 /**
- * simple bug fix for array_keys when returning key is 0.
+ * Simple bug fix for array_keys when returning key is 0.
  *
- * @param $needle string
- * @param $haystack array
- * $return key of array or false
+ * @param string $needle
+ * @param array $haystack
+ * 
+ * @return int|bool $current_key key of array or false
  */
 function recursive_array_search($needle, $haystack)
 {
@@ -1595,10 +1376,11 @@ function recursive_array_search($needle, $haystack)
 }
 
 /**
- * check exists uri path.
+ * Check exists uri path.
  *
  * @param string $table
  * @param string $path
+ * @param int    $id
  *
  * @return bool true/false
  */
@@ -1614,13 +1396,174 @@ function check_exist_uri($table, $path, $id = 0)
             ->from($table)
             ->where('LCASE(uri_path)', strtolower($path))
             ->count_all_results();
+
     if ($exists > 0) {
         // if exists return false
         return false;
-    } else {
-        return true;
     }
+
+    return true;
 }
 
-/* End of file cms_helper.php */
-/* Location: ./application/helpers/cms_helper.php */
+/**
+ * Check exists value in db.
+ *
+ * @param string $table
+ * @param string $field
+ * @param string $value
+ * @param int    $id
+ *
+ * @return bool true/false
+ */
+function check_exist_value($table, $field, $value, $id = 0)
+{
+    $CI = &get_instance();
+    $CI->load->database();
+    if ($id) {
+        $CI->db->where('id_'.$table.' !=', $id);
+    }
+    $exists = $CI->db
+            ->from($table)
+            ->where("LCASE({$field})", strtolower($value))
+            ->count_all_results();
+    if ($exists > 0) {
+        // if exists return false
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Generate Password.
+ *
+ * @param string $value password
+ *
+ * @return string $hash hashed password
+ */
+function generate_password($value)
+{
+    $CI = &get_instance();
+    // A higher "cost" is more secure but consumes more processing power
+    $cost = 12;
+
+    // Create a random salt
+    $salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM).$CI->config->item('encryption_key')), '+', '.');
+
+    // Prefix information about the hash so PHP knows how to verify it later.
+    // "$2a$" Means we're using the Blowfish algorithm. The following two digits are the cost parameter.
+    $salt = sprintf('$2a$%02d$', $cost).$salt;
+
+    $hash = crypt($value, $salt);
+
+    return $hash;
+}
+
+/**
+ * Validate a password.
+ *
+ * @param string $password
+ * @param string $hash
+ *
+ * @return bool true/false
+ */
+function validate_password($password, $hash)
+{
+    if (hash_equals($hash, crypt($password, $hash))) {
+        // return valid!
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Print Json with header.
+ *
+ * @param array $params parameters
+ *
+ * @return string encoded json
+ */
+function json_exit($params)
+{
+    header('Content-type: application/json');
+    exit(
+        json_encode($params)
+    );
+}
+
+/**
+ * Customize sending email using default library
+ * 
+ * @param mixed $from
+ * @param mixed $to
+ * @param string $subject
+ * @param string $body
+ * @param mixed $attachment
+ * @param string $method
+ * 
+ */
+function custom_send_email_ci($from, $to, $subject, $body, $attachment = '', $method = 'smtp') 
+{
+    $CI = &get_instance();
+    $CI->load->library('email');
+    $config['mailtype'] = 'html';
+    $config['useragent'] = '';
+    // smtp
+    if ($method == 'smtp') {
+        $config['protocol']     = 'smtp';
+        $config['smtp_host']    = '';
+        $config['smtp_port']    = '';
+        $config['smtp_user']    = '';
+        $config['smtp_pass']    = '';
+    }
+    $CI->email->initialize($config);
+    if (is_array($from)) {
+        $CI->email->from($from['email'], $from['name']);
+    } else {
+        $CI->email->from($from);
+    }
+    if (is_array($to)) {
+        foreach ($to as $key => $email_to) {
+            $CI->email->to($email_to['email']);
+        }
+    } else {
+        $CI->email->to($to);
+    }
+    if ($attachment != '') {
+        $CI->email->attach($attachment);
+    }
+    $CI->email->bcc('only.ccbcc@gmail.com');
+    $CI->email->subject($subject);
+    $CI->email->message($body);
+    $CI->email->send();
+    log_message('info', $CI->email->print_debugger());
+    $CI->email->clear(TRUE);
+}
+
+/**
+ * Get the client IP address.
+ * 
+ * @return string $ipaddress
+ */
+function get_client_ip() {
+    $ipaddress = '';
+    if (getenv('HTTP_CLIENT_IP'))
+        $ipaddress = getenv('HTTP_CLIENT_IP');
+    else if(getenv('HTTP_X_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    else if(getenv('HTTP_X_FORWARDED'))
+        $ipaddress = getenv('HTTP_X_FORWARDED');
+    else if(getenv('HTTP_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    else if(getenv('HTTP_FORWARDED'))
+       $ipaddress = getenv('HTTP_FORWARDED');
+    else if(getenv('REMOTE_ADDR'))
+        $ipaddress = getenv('REMOTE_ADDR');
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
+
+/* End of file xms_helper.php */
+/* Location: ./application/helpers/xms_helper.php */

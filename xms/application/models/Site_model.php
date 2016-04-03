@@ -10,26 +10,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * @desc Site model
+ * 
  */
 class Site_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * get all site data.
+     * Get all site data.
      *
      * @param string $param
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetAllSiteData($param = [])
+    function GetAllSiteData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -59,7 +59,7 @@ class Site_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('*,id_site as id')
+                ->select('*, id_site as id')
                 ->where('is_delete', 0)
                 ->get('sites')
                 ->result_array();
@@ -68,13 +68,13 @@ class Site_model extends CI_Model
     }
 
     /**
-     * count records.
+     * Count records.
      *
-     * @param string $param
+     * @param array $param
      *
-     * @return int total records
+     * @return int $total_records total records
      */
-    public function CountAllSite($param = [])
+    function CountAllSite($param = [])
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -104,22 +104,24 @@ class Site_model extends CI_Model
      *
      * @param int $id
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetSite($id)
+    function GetSite($id)
     {
         $data = $this->db
                 ->where('id_site', $id)
                 ->limit(1)
                 ->get('sites')
                 ->row_array();
+
         if ($data) {
             $settings = $this->db
-                    ->select('type,value')
+                    ->select('type, value')
                     ->where('id_site', $data['id_site'])
                     ->order_by('type', 'asc')
                     ->get('setting')
                     ->result_array();
+
             foreach ($settings as $row => $val) {
                 $data['setting'][$val['type']] = $val['value'];
             }
@@ -129,13 +131,13 @@ class Site_model extends CI_Model
     }
 
     /**
-     * insert record data.
+     * Insert record data.
      *
      * @param array $param
      *
-     * @return insert id
+     * @return int $last_id last inserted id
      */
-    public function InsertRecord($param)
+    function InsertRecord($param)
     {
         $this->db->insert('sites', $param);
         $last_id = $this->db->insert_id();
@@ -144,28 +146,30 @@ class Site_model extends CI_Model
     }
 
     /**
-     * update record data.
+     * Update record data.
      *
      * @param int   $id
      * @param array $param
      */
-    public function UpdateRecord($id, $param)
+    function UpdateRecord($id, $param)
     {
-        $this->db->where('id_site', $id);
-        $this->db->update('sites', $param);
+        $this->db
+            ->where('id_site', $id)
+            ->update('sites', $param);
     }
 
     /**
-     * update setting data.
+     * Update setting data.
      *
      * @param int   $id_site
      * @param array $param
      */
-    public function UpdateSettingData($id_site, $param)
+    function UpdateSettingData($id_site, $param)
     {
         // delete setting before update
-        $this->db->where('id_site', $id_site);
-        $this->db->delete('setting');
+        $this->db
+            ->where('id_site', $id_site)
+            ->delete('setting');
         $ins = [];
         foreach ($param as $setting => $val) {
             $ins[] = [
@@ -181,14 +185,14 @@ class Site_model extends CI_Model
     }
 
     /**
-     * check exist email.
+     * Check exist email.
      *
      * @param string $email
      * @param int    $id
      *
      * @return bool true/false
      */
-    public function checkExistsEmail($email, $id = 0)
+    function checkExistsEmail($email, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);
@@ -199,20 +203,20 @@ class Site_model extends CI_Model
                 ->count_all_results();
         if ($count_records > 0) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
-     * check exist username.
+     * Check exist username.
      *
      * @param string $username
      * @param int    $id
      *
      * @return bool true/false
      */
-    public function checkExistsUsername($username, $id = 0)
+    function checkExistsUsername($username, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);
@@ -223,20 +227,21 @@ class Site_model extends CI_Model
                 ->count_all_results();
         if ($count_records > 0) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
-     * delete record.
+     * Delete record.
      *
      * @param int $id
      */
-    public function DeleteRecord($id)
+    function DeleteRecord($id)
     {
-        $this->db->where('id_site', $id);
-        $this->db->update('sites', ['is_delete' => 1]);
+        $this->db
+            ->where('id_site', $id)
+            ->update('sites', ['is_delete' => 1]);
     }
 }
 /* End of file Site_model.php */

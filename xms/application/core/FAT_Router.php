@@ -4,18 +4,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Router Class Extension.
+ *      extended of router class
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
  * @category Core
- * @desc extension of router class
  */
 class FAT_Router extends CI_Router
 {
     /**
-     * load the constructor.
+     * Class Contructor.
      */
     public function __construct()
     {
@@ -23,7 +23,7 @@ class FAT_Router extends CI_Router
     }
 
     /**
-     * set routes to lowercaser.
+     * Set routes to lowercaser.
      *
      * @return string routes
      */
@@ -36,3 +36,5 @@ class FAT_Router extends CI_Router
         return parent::_parse_routes();
     }
 }
+/* End of file FAT_Router.php */
+/* Location: ./application/core/FAT_Router.php */

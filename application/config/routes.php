@@ -1,6 +1,5 @@
 <?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -51,18 +50,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 
-$route['default_controller'] = 'home';
-$route['404_override'] = 'pages/error_404';
-/* routes buat internationalization */
+$route['default_controller'] = "home";
+$route['404_override']       = 'error/page_not_found';
+/**
+ * Routes for internationalization.
+ * 	use static mode for example.
+ */
 // URI for static pages
-$route['^(id|en)/pages/(.+)$'] = 'pages/index/$2';
-$route['^(id|en)/article/(:any)'] = 'article/index/$2';
-$route['^(id|en)/article/detail/(:any)'] = 'article/detail/$2';
+$route['^(id|en)/pages/(.+)$']           = "pages/index/$2";
+$route['^(id|en)/article/(:any)']        = "article/index/$2";
+$route['^(id|en)/article/detail/(:any)'] = "article/detail/$2";
 
 // URI like '/en/about' -> use controller 'about'
-$route['^(id|en)/(.+)$'] = '$2';
+$route['^(id|en)/(.+)$'] = "$2";
 
-// '/en' and '/fr' URIs -> use default controller
+// '/en' and '/id' URIs -> use default controller
 $route['^(id|en)$'] = $route['default_controller'];
-/* routes buat internationalization */
-$route['translate_uri_dashes'] = false;
+
+$route['translate_uri_dashes'] = FALSE;

@@ -9,56 +9,52 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> Form
+                <?php echo $page_title; ?> Form
             </div>
             <div class="panel-body">
                 <?php echo form_open($form_action, 'role="form" enctype="multipart/form-data"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" id="username" value="<?=(isset($post['username'])) ? $post['username'] : ''?>"/>
+                                <label for="username">Username <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="username" id="username" value="<?php echo (isset($post['username'])) ? $post['username'] : ''; ?>" required="required"/>
                             </div>
                             <div class="form-group">
-                                <label for="id_auth_group">Group</label>
-                                <select class="form-control" name="id_auth_group" id="id_auth_group">
-                                    <?php
-                                        foreach ($groups as $group) {
-                                            if (isset($post['id_auth_group']) && $group['id_auth_group'] == $post['id_auth_group']) {
-                                                echo '<option value="'.$group['id_auth_group'].'" selected="selected">'.$group['auth_group'].'</option>';
-                                            } else {
-                                                echo '<option value="'.$group['id_auth_group'].'">'.$group['auth_group'].'</option>';
-                                            }
-                                        }
-                                    ?>
+                                <label for="id_auth_group">Group <span class="text-danger">*</span></label>
+                                <select class="form-control" name="id_auth_group" id="id_auth_group" required="required">
+                                    <?php foreach ($groups as $group) : ?>
+                                    <option value="<?php echo $group['id_auth_group']; ?>" <?php echo (isset($post['id_auth_group']) && $group['id_auth_group'] == $post['id_auth_group']) ? 'selected="selected"' : ''; ?>>
+                                        <?php echo $group['auth_group']; ?>
+                                    </option>
+                                    <?php endforeach ?>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password </label>
+                                <label for="password">Password  <span class="text-danger">*</span></label>
                                 <input type="password" id="password" class="form-control" name="password" value=""/>
                                 <?php if (isset($post['id_auth_user'])): ?>
-                                <p class="help-block"><small>Leave this field empty if You don't want to change Your password.</small></p>
+                                <p class="help-block"><small>Leave this field empty if You don't want to change the password.</small></p>
                                 <?php endif; ?>
                             </div>
                             <div class="form-group">
-                                <label for="conf_password">Password Confirmation</label>
+                                <label for="conf_password">Password Confirmation <span class="text-danger">*</span></label>
                                 <input type="password" id="conf_password" class="form-control" name="conf_password" value=""/>
                             </div>
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" name="name" id="name" value="<?=(isset($post['name'])) ? $post['name'] : ''?>"/>
+                                <label for="name">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="name" id="name" value="<?php echo (isset($post['name'])) ? $post['name'] : ''; ?>" required="required"/>
                             </div>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" name="email" id="name" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
+                                <label for="email">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" name="email" id="name" value="<?php echo (isset($post['email'])) ? $post['email'] : ''; ?>" required="required"/>
                             </div>
                             <div class="form-group">
-                                <label for="alamat">Address</label>
-                                <textarea class="form-control" rows="3" id="alamat" name="alamat"><?=(isset($post['alamat'])) ? $post['alamat'] : ''?></textarea>
+                                <label for="address">Address</label>
+                                <textarea class="form-control" rows="3" id="address" name="address"><?php echo (isset($post['address'])) ? $post['address'] : ''; ?></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
-                                <input type="text" class="form-control" name="phone" id="phone" value="<?=(isset($post['phone'])) ? $post['phone'] : ''?>"/>
+                                <input type="text" class="form-control" name="phone" id="phone" value="<?php echo (isset($post['phone'])) ? $post['phone'] : ''; ?>"/>
                             </div>
                         </div>
                         <div class="col-lg-4 col-lg-offset-2">
@@ -66,7 +62,7 @@
                                 <label for="status">Status</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="status" id="status" <?=(isset($post['status']) && !empty($post['status'])) ? 'checked="checked"' : ''?>/>Active
+                                        <input type="checkbox" value="1" name="status" id="status" <?php echo (isset($post['status']) && !empty($post['status'])) ? 'checked="checked"' : ''; ?>/>Active
                                     </label>
                                 </div>
                             </div>
@@ -75,7 +71,7 @@
                                 <label for="is_superadmin">Super Administrator</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?=(isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''?>/>Yes
+                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?php echo (isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>
@@ -85,14 +81,15 @@
                                 <select class="form-control" name="themes" id="themes">
                                     <option value="sbadmin2">SBADMIN 2</option>
                                 </select>
+                                <p class="help-block"><small>You have to logout first before changing new themes.</small></p>
                             </div>
                             <div class="form-group">
                                 <label for="image">Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$post['image'])): ?>
-                                            <img src="<?=RELATIVE_UPLOAD_DIR.'admin/tmb_'.$post['image']?>" id="post-image" />
-                                            <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">x</span>
+                                        <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class() . '/'.$post['image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['image']; ?>" id="post-image" />
+                                            <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?php echo $post['id_auth_user']; ?>">x</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
@@ -110,7 +107,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-lg-offset-8">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a class="btn btn-danger" href="<?=$cancel_url?>">Cancel</a>
+                            <a class="btn btn-danger" href="<?php echo $cancel_url; ?>">Cancel</a>
                         </div>
                     </div>
                     <!-- /.row (nested) -->
@@ -127,10 +124,13 @@
     $(function() {
         <?php if (isset($post['id_auth_user'])): ?>
         $("#delete-picture").click(function() {
+            $('.flash-message').empty();
             var self = $(this);
             var id = self.attr('data-id');
-            var post_delete = [{name:"id",value:id}];
-            submit_ajax('<?=$delete_picture_url?>',post_delete,self)
+            var post_delete = [
+                {'name': 'id', 'value': id}
+            ];
+            submit_ajax('<?php echo $delete_picture_url; ?>', post_delete, self)
                 .done(function(data) {
                     if (data['error'])  {
                         $(".flash-message").html(data['error']);

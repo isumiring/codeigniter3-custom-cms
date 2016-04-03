@@ -10,14 +10,27 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Controller
- * @desc Slideshow Controller
  */
-class Slideshow extends CI_Controller
+class Slideshow extends CI_Controller 
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
+
+    /**
+     * Error message/system.
+     *
+     * @var string
+     */
     private $error;
 
-    public function __construct()
+    /**
+     * Class contructor.
+     */
+    function __construct() 
     {
         parent::__construct();
         $this->load->model('Slideshow_model');
@@ -25,19 +38,19 @@ class Slideshow extends CI_Controller
     }
 
     /**
-     * index page.
+     * Index page.
      */
     public function index()
     {
-        $this->data['add_url'] = site_url($this->class_path_name.'/add');
-        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url']        = site_url($this->class_path_name.'/add');
+        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
-
+    
     /**
-     * list data.
+     * List data.
      */
-    public function list_data()
+    public function list_data() 
     {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
@@ -46,47 +59,42 @@ class Slideshow extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort'] = $post['order'][0]['dir'];
+                $param['order_sort']  = $post['order'][0]['dir'];
             }
-            $param['row_from'] = $post['start'];
-            $param['length'] = $post['length'];
-            $count_all_records = $this->Slideshow_model->CountAllSlideshow();
-            $count_filtered_records = $this->Slideshow_model->CountAllSlideshow($param);
-            $records = $this->Slideshow_model->GetAllSlideshowData($param);
-            $return = [];
-            $return['draw'] = $post['draw'];
-            $return['recordsTotal'] = $count_all_records;
+            $param['row_from']         = $post['start'];
+            $param['length']           = $post['length'];
+            $count_all_records         = $this->Slideshow_model->CountAllSlideshow();
+            $count_filtered_records    = $this->Slideshow_model->CountAllSlideshow($param);
+            $records                   = $this->Slideshow_model->GetAllSlideshowData($param);
+            $return                    = [];
+            $return['draw']            = $post['draw'];
+            $return['recordsTotal']    = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = [];
+            $return['data']            = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['actions'] = '
-                    <a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                ';
-                $return['data'][$row]['title'] = $record['title'];
-                $return['data'][$row]['url_link'] = $record['url_link'];
-                $return['data'][$row]['position'] = $record['position'];
+                $return['data'][$row]['DT_RowId']    = $record['id'];
+                $return['data'][$row]['actions']     = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['title']       = $record['title'];
+                $return['data'][$row]['url_link']    = ($record['url_link'] != '') ? $record['url_link'] : '--';
+                $return['data'][$row]['position']    = $record['position'];
                 $return['data'][$row]['status_text'] = ucfirst($record['status_text']);
                 $return['data'][$row]['create_date'] = custDateFormat($record['create_date'], 'd M Y H:i:s');
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($return)
-            );
+            json_exit($return);
         }
         redirect($this->class_path_name);
     }
-
+    
     /**
-     * add page.
+     * Add page.
      */
-    public function add()
+    public function add() 
     {
-        $this->data['page_title'] = 'Add';
-        $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Slideshow_model->GetLocalization();
-        $this->data['statuses'] = $this->Slideshow_model->GetStatus();
+        $this->data['page_title']   = 'Add';
+        $this->data['form_action']  = site_url($this->class_path_name.'/add');
+        $this->data['cancel_url']   = site_url($this->class_path_name);
+        $this->data['locales']      = $this->Slideshow_model->GetLocalization();
+        $this->data['statuses']     = $this->Slideshow_model->GetStatus();
         $this->data['max_position'] = $this->Slideshow_model->GetMaxPosition();
         if ($this->input->post()) {
             $post = $this->input->post();
@@ -100,6 +108,7 @@ class Slideshow extends CI_Controller
                 }
                 // insert data
                 $id = $this->Slideshow_model->InsertRecord($post);
+
                 $title_name = '';
                 if ($id && isset($post_locales)) {
                     $insert_locales = [];
@@ -115,12 +124,17 @@ class Slideshow extends CI_Controller
                     $post['locales'] = $insert_locales;
                     $this->Slideshow_model->InsertDetailRecord($insert_locales);
                 }
-
+                
                 $post_image = $_FILES;
                 if ($post_image['primary_image']['tmp_name']) {
-                    $filename = url_title($title_name, '_', true);
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'slideshow/', $filename);
+                    $filename   = url_title($title_name, '_', true);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
                     $this->Slideshow_model->UpdateRecord($id, ['primary_image' => $picture_db]);
+                }
+                if ($post_image['mobile_image']['tmp_name']) {
+                    $filename   = url_title($title_name .'-mob', '_', true);
+                    $picture_db = file_copy_to_folder($post_image['mobile_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    $this->Slideshow_model->UpdateRecord($id, ['mobile_image' => $picture_db]);
                 }
                 // insert to log
                 $data_log = [
@@ -132,7 +146,7 @@ class Slideshow extends CI_Controller
                 insert_to_log($data_log);
                 // end insert to log
                 $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
-
+                
                 redirect($this->class_path_name);
             }
             $this->data['post'] = $post;
@@ -142,26 +156,26 @@ class Slideshow extends CI_Controller
             $this->data['form_message'] = $this->error;
         }
     }
-
+    
     /**
-     * detail page.
-     *
+     * Edit page.
+     * 
      * @param int $id
      */
-    public function edit($id = 0)
+    public function edit($id = 0) 
     {
-        if (!$id) {
+        if ( ! $id) {
             redirect($this->class_path_name);
         }
         $record = $this->Slideshow_model->GetSlideshow($id);
-        if (!$record) {
+        if ( ! $record) {
             redirect($this->class_path_name);
         }
-        $this->data['page_title'] = 'Edit';
+        $this->data['page_title']  = 'Edit';
         $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
-        $this->data['cancel_url'] = site_url($this->class_path_name);
-        $this->data['locales'] = $this->Slideshow_model->GetLocalization();
-        $this->data['statuses'] = $this->Slideshow_model->GetStatus();
+        $this->data['cancel_url']  = site_url($this->class_path_name);
+        $this->data['locales']     = $this->Slideshow_model->GetLocalization();
+        $this->data['statuses']    = $this->Slideshow_model->GetStatus();
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
@@ -173,10 +187,10 @@ class Slideshow extends CI_Controller
                     $post['url_link'] = prep_url($post['url_link']);
                 }
                 $post['modify_date'] = date('Y-m-d H:i:s');
-
+                
                 // update data
-                $this->Slideshow_model->UpdateRecord($id, $post);
-
+                $this->Slideshow_model->UpdateRecord($id,$post);
+                
                 $title_name = '';
                 // delete/purge detail content before new insert
                 $this->Slideshow_model->DeleteDetailRecordByID($id);
@@ -194,52 +208,25 @@ class Slideshow extends CI_Controller
                     $post['locales'] = $insert_locales;
                     $this->Slideshow_model->InsertDetailRecord($insert_locales);
                 }
-
+                
                 $post_image = $_FILES;
                 if ($post_image['primary_image']['tmp_name']) {
-                    $filename = url_title($title_name, '_', true);
                     // delete file if exists
-                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$record['primary_image'])) {
-                        unlink(UPLOAD_DIR.'slideshow/'.$record['primary_image']);
+                    if ($record['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['primary_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR.'slideshow/', $filename);
+                    $filename   = url_title($title_name, '_', true);
+                    $picture_db = file_copy_to_folder($post_image['primary_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
                     $this->Slideshow_model->UpdateRecord($id, ['primary_image' => $picture_db]);
                 }
                 if ($post_image['mobile_image']['tmp_name']) {
-                    $filename = url_title($title_name.'-mob', '_', true);
                     // delete file if exists
-                    if ($record['mobile_image'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$record['mobile_image'])) {
-                        unlink(UPLOAD_DIR.'slideshow/'.$record['mobile_image']);
+                    if ($record['mobile_image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['mobile_image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['mobile_image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['mobile_image'], UPLOAD_DIR.'slideshow/', $filename);
+                    $filename   = url_title($title_name.'-mob', '_', true);
+                    $picture_db = file_copy_to_folder($post_image['mobile_image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
                     $this->Slideshow_model->UpdateRecord($id, ['mobile_image' => $picture_db]);
-                }
-                if ($post_image['video']['tmp_name']) {
-                    $filename = url_title('vidz-'.$title_name, '_', true);
-                    // delete file if exists
-                    if ($record['video'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$record['video'])) {
-                        unlink(UPLOAD_DIR.'slideshow/'.$record['video']);
-                    }
-                    $picture_db = file_copy_to_folder($post_image['video'], UPLOAD_DIR.'slideshow/', $filename);
-                    $this->Slideshow_model->UpdateRecord($id, ['video' => $picture_db]);
-                }
-                if ($post_image['video_mobile_1']['tmp_name']) {
-                    $filename = url_title('m1vidz-'.$title_name, '_', true);
-                    // delete file if exists
-                    if ($record['video_mobile_1'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$record['video_mobile_1'])) {
-                        unlink(UPLOAD_DIR.'slideshow/'.$record['video_mobile_1']);
-                    }
-                    $picture_db = file_copy_to_folder($post_image['video_mobile_1'], UPLOAD_DIR.'slideshow/', $filename);
-                    $this->Slideshow_model->UpdateRecord($id, ['video_mobile_1' => $picture_db]);
-                }
-                if ($post_image['video_mobile_2']['tmp_name']) {
-                    $filename = url_title('m2vidz-'.$title_name, '_', true);
-                    // delete file if exists
-                    if ($record['video_mobile_2'] != '' && file_exists(UPLOAD_DIR.'slideshow/'.$record['video_mobile_2'])) {
-                        unlink(UPLOAD_DIR.'slideshow/'.$record['video_mobile_2']);
-                    }
-                    $picture_db = file_copy_to_folder($post_image['video_mobile_2'], UPLOAD_DIR.'slideshow/', $filename);
-                    $this->Slideshow_model->UpdateRecord($id, ['video_mobile_2' => $picture_db]);
                 }
                 // insert to log
                 $data_log = [
@@ -251,29 +238,29 @@ class Slideshow extends CI_Controller
                 insert_to_log($data_log);
                 // end insert to log
                 $this->session->set_flashdata('flash_message', alert_box('Success.', 'success'));
-
+                
                 redirect($this->class_path_name);
             }
         }
         $this->data['template'] = $this->class_path_name.'/form';
-        $this->data['post'] = $record;
+        $this->data['post']     = $record;
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
     }
-
+    
     /**
-     * delete page.
+     * Delete page.
      */
-    public function delete()
+    public function delete() 
     {
         $this->layout = 'none';
         if ($this->input->post() && $this->input->is_ajax_request()) {
             $post = $this->input->post();
-            $json = [];
+            $json = array();
             if ($post['ids'] != '') {
                 $array_id = array_map('trim', explode(',', $post['ids']));
-                if (count($array_id) > 0) {
+                if (count($array_id)>0) {
                     foreach ($array_id as $row => $id) {
                         $record = $this->Slideshow_model->GetSlideshow($id);
                         if ($record) {
@@ -296,33 +283,30 @@ class Slideshow extends CI_Controller
                     }
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
-
+    
     /**
-     * validate form.
-     *
+     * Validate form.
+     * 
      * @param int $id
-     *
-     * @return bool
+     * 
+     * @return boolean
      */
-    private function validateForm($id = 0)
+    private function validateForm($id=0) 
     {
-        $post = $this->input->post();
+        $post           = $this->input->post();
         $default_locale = $this->Slideshow_model->GetDefaultLocalization();
-        $config = [
+        $rules = [
             [
                 'field' => 'id_status',
                 'label' => 'Status',
-                'rules' => 'required',
+                'rules' => 'required'
             ],
         ];
-        $this->form_validation->set_rules($config);
+        $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() === false) {
             $this->error = alert_box(validation_errors(), 'danger');
 
@@ -331,14 +315,23 @@ class Slideshow extends CI_Controller
             foreach ($post['locales'] as $row => $local) {
                 if ($row == $default_locale['id_localization'] && $local['title'] == '') {
                     $this->error = 'Please insert Title.';
+
                     break;
                 }
             }
             $post_image = $_FILES;
-            if (!$this->error) {
-                if (!empty($post_image['primary_image']['tmp_name'])) {
+            if ( ! $this->error) {
+                if ( ! empty($post_image['primary_image']['tmp_name'])) {
                     $check_picture = validatePicture('primary_image');
-                    if (!empty($check_picture)) {
+                    if ( ! empty($check_picture)) {
+                        $this->error = alert_box($check_picture, 'danger');
+
+                        return false;
+                    }
+                }
+                if ( ! empty($post_image['primary_image']['tmp_name'])) {
+                    $check_picture = validatePicture('primary_image');
+                    if ( ! empty($check_picture)) {
                         $this->error = alert_box($check_picture, 'danger');
 
                         return false;
@@ -346,11 +339,10 @@ class Slideshow extends CI_Controller
                 }
 
                 return true;
-            } else {
-                $this->error = alert_box($this->error, 'danger');
-
-                return false;
             }
+            $this->error = alert_box($this->error, 'danger');
+
+            return false;
         }
     }
 }

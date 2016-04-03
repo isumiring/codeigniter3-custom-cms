@@ -4,16 +4,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Error Class.
+ *     hook class that using for error handler
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
  * @category Hook
- * @desc hook class that using for error handler
  */
 class FAT_Error
 {
+    /**
+     * Load Codeigniter Super Class
+     * 
+     * @var object
+     */
     protected $CI;
 
     /**

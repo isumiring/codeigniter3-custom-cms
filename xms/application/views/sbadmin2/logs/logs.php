@@ -12,5 +12,5 @@
 </table>
 <br/><br/>
 <script type="text/javascript">
-    list_dataTables('#dataTables-list','<?= $url_data ?>');
+    list_dataTables('#dataTables-list','<?php echo $url_data; ?>');
 </script>

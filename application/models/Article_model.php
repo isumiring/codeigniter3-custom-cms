@@ -4,83 +4,104 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Article Model Class.
- *
+ * 
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- *
+ * 
  * @version 3.0
- *
+ * 
  * @category Model
- * @desc Article model
+ * 
  */
 class Article_model extends CI_Model
 {
     /**
-     * constructor.
+     * Current Date.
+     * 
+     * @var string
      */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $date_now;
 
     /**
-     * get categories.
-     *
-     * @return array $data
+     * Current Date Time.
+     * 
+     * @var string
      */
-    public function GetCategories()
+    protected $date_time_now;
+
+    /**
+     * Class constructor.
+     */
+    function __construct() 
+    {
+        parent::__construct();
+        $this->date_now      = date('Y-m-d');
+        $this->date_time_now = date('Y-m-d H:i:s');
+    }
+    
+    /**
+     * Get categories.
+     * 
+     * @return array|bool $data
+     */
+    function GetCategories() 
     {
         $data = $this->db
-                ->join('article_category_detail', 'article_category_detail.id_article_category=article_category.id_article_category', 'left')
-                ->join('localization', 'localization.id_localization=article_category_detail.id_localization', 'left')
+                ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
+                ->join('localization', 'localization.id_localization = article_category_detail.id_localization', 'left')
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
                 ->group_by('article_category.id_article_category')
                 ->get('article_category')
                 ->result_array();
-
+        
         return $data;
     }
-
+    
     /**
-     * count total records.
-     *
+     * Count total records.
+     * 
      * @param array $param
-     *
-     * @return int $total_records
+     * 
+     * @return int $total_records total records
      */
-    public function CountArticles($param)
+    function CountArticles($param = []) 
     {
-        $now = date('Y-m-d');
         if (isset($param['conditions'])) {
             foreach ($param['conditions'] as $key => $val) {
-                $this->db->where($key, $val);
+                if (ctype_digit($val)) {
+                    $this->db->where($key, $val);
+                } else {
+                    $this->db->where("LCASE({$key})", strtolower($val));
+                }
             }
         }
         $total_records = $this->db
                 ->from('article')
-                ->join('status', 'status.id_status=article.id_status', 'left')
+                ->join('status', 'status.id_status = article.id_status', 'left')
                 ->where('article.is_delete', 0)
-                ->where('publish_date <=', $now)
-                ->where("(expire_date >= '{$now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
-                //->group_by('article.id_article')
+                ->where('publish_date <=', $this->date_now)
+                ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
                 ->count_all_results();
 
         return $total_records;
     }
-
+    
     /**
-     * get articles.
-     *
+     * Get articles.
+     * 
      * @param array $param
-     *
-     * @return array $data
+     * 
+     * @return array|bool $data
      */
-    public function GetArticles($param)
+    function GetArticles($param = []) 
     {
-        $now = date('Y-m-d');
         if (isset($param['conditions'])) {
             foreach ($param['conditions'] as $key => $val) {
-                $this->db->where($key, $val);
+                if (ctype_digit($val)) {
+                    $this->db->where($key, $val);
+                } else {
+                    $this->db->where("LCASE({$key})", strtolower($val));
+                }
             }
         }
         $from = 0;
@@ -94,7 +115,7 @@ class Article_model extends CI_Model
             }
         }
         if (isset($param['order'])) {
-            $sort = 'desc';
+            $sort    = 'desc';
             $sort_by = 'id_article';
             if (isset($param['order']['field'])) {
                 $sort_by = $param['order']['field'];
@@ -104,26 +125,29 @@ class Article_model extends CI_Model
             }
             $this->db->order_by($sort_by, $sort);
         }
+
         $this->db->limit($per_page, $from);
+
         $data = $this->db
-                ->select('article.*,article_detail.*,article_category.category_title')
-                ->join('status', 'status.id_status=article.id_status', 'left')
-                ->join('article_detail', 'article_detail.id_article=article.id_article', 'left')
-                ->join('localization', 'localization.id_localization=article_detail.id_localization', 'left')
+                ->select('article.*, article_detail.*, article_category.category_title')
+                ->join('status', 'status.id_status = article.id_status', 'left')
+                ->join('article_detail', 'article_detail.id_article = article.id_article', 'left')
+                ->join('localization', 'localization.id_localization = article_detail.id_localization', 'left')
                 ->join(
                     "(
-                        select {$this->db->dbprefix('article_category')}.id_article_category as id_category, title as category_title from {$this->db->dbprefix('article_category')}
-                        left join {$this->db->dbprefix('article_category_detail')} on {$this->db->dbprefix('article_category_detail')}.id_article_category={$this->db->dbprefix('article_category')}.id_article_category
-                        left join {$this->db->dbprefix('localization')} on {$this->db->dbprefix('localization')}.id_localization={$this->db->dbprefix('article_category_detail')}.id_localization
-                        where {$this->db->dbprefix('localization')}.iso_1='{$this->lang->get_active_uri_lang()}'
-                    ) as {$this->db->dbprefix('article_category')}",
-                    'article_category.id_category=article.id_article_category',
+                        SELECT {$this->db->dbprefix('article_category')}.id_article_category AS id_category, title AS category_title, uri_path AS category_uri_path
+                        FROM {$this->db->dbprefix('article_category')}
+                        LEFT JOIN {$this->db->dbprefix('article_category_detail')} ON {$this->db->dbprefix('article_category_detail')}.id_article_category = {$this->db->dbprefix('article_category')}.id_article_category
+                        LEFT JOIN {$this->db->dbprefix('localization')} ON {$this->db->dbprefix('localization')}.id_localization = {$this->db->dbprefix('article_category_detail')}.id_localization
+                        WHERE {$this->db->dbprefix('localization')}.iso_1 = '{$this->lang->get_active_uri_lang()}'
+                    ) AS {$this->db->dbprefix('article_category')}",
+                    'article_category.id_category = article.id_article_category',
                     'left'
                 )
                 ->where('article.is_delete', 0)
-                ->where('publish_date <=', $now)
-                ->where("(expire_date >= '{$now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
+                ->where('publish_date <=', $this->date_now)
+                ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
                 ->order_by('publish_date', 'desc')
                 ->order_by('article.id_article', 'desc')
@@ -132,84 +156,65 @@ class Article_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get category by uri.
-     *
+     * Get category by uri.
+     * 
      * @param string $uri_path
-     *
-     * @return array $data
+     * 
+     * @return array|bool $data
      */
-    public function GetCatagoryByURI($uri_path)
+    function GetCatagoryByURI($uri_path = '') 
     {
+        if (! $uri_path) {
+            return false;
+        }
         $data = $this->db
-                ->join('article_category_detail', 'article_category_detail.id_article_category=article_category.id_article_category', 'left')
+                ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
                 ->join('localization', 'localization.id_localization=article_category_detail.id_localization', 'left')
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
-                ->where('LCASE(uri_path)', strtolower($uri_path))
+                ->where("LCASE(uri_path)", strtolower($uri_path))
                 ->limit(1)
                 ->get('article_category')
                 ->row_array();
-
+        
         return $data;
     }
-
+    
     /**
-     * get article info by URI.
-     *
+     * Get article info by URI.
+     * 
      * @param string $uri_path
-     *
-     * @return bool
+     * 
+     * @return array|bool $data
      */
-    public function GetArticleByURI($uri_path = '')
+    function GetArticleByURI($uri_path = '') 
     {
-        $now = date('Y-m-d');
-        if ($uri_path) {
-            $data = $this->db
-                    ->join('status', 'status.id_status=article.id_status', 'left')
-                    ->join('article_detail', 'article_detail.id_article=article.id_article', 'left')
-                    ->join('localization', 'localization.id_localization=article_detail.id_localization', 'left')
-                    ->where('is_delete', 0)
-                    ->where('publish_date <=', $now)
-                    ->where("(expire_date >= '{$now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                    ->where('LCASE(uri_path)', strtolower($uri_path))
-                    ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
-                    ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
-                    ->order_by('article.id_article', 'desc')
-                    ->limit(1)
-                    ->get('article')
-                    ->row_array();
-
-            return $data;
-        } else {
+        if ( ! $uri_path) {
             return false;
         }
-    }
-
-    public function GetNextPrevArticle($id_article, $publish_date, $direction = 'next')
-    {
-        $now = date('Y-m-d');
-        if ($direction == 'prev') {
-            $this->db->where('article.publish_date<=', $publish_date);
-            $this->db->where('article.id_article<', $id_article);
-            $this->db->order_by('article.publish_date', 'desc');
-            $this->db->order_by('article.id_article', 'desc');
-        } else {
-            $this->db->where('article.publish_date>=', $publish_date);
-            $this->db->where('article.id_article>', $id_article);
-            $this->db->order_by('article.publish_date', 'asc');
-            $this->db->order_by('article.id_article', 'asc');
-        }
         $data = $this->db
-                ->join('status', 'status.id_status=article.id_status', 'left')
-                ->join('article_detail', 'article_detail.id_article=article.id_article', 'left')
-                ->join('localization', 'localization.id_localization=article_detail.id_localization', 'left')
+                ->join('status', 'status.id_status = article.id_status', 'left')
+                ->join('article_detail', 'article_detail.id_article = article.id_article', 'left')
+                ->join('localization', 'localization.id_localization = article_detail.id_localization', 'left')
+                ->join(
+                    "(
+                        SELECT {$this->db->dbprefix('article_category')}.id_article_category AS id_category, title AS category_title, uri_path AS category_uri_path 
+                        FROM {$this->db->dbprefix('article_category')}
+                        LEFT JOIN {$this->db->dbprefix('article_category_detail')} ON {$this->db->dbprefix('article_category_detail')}.id_article_category = {$this->db->dbprefix('article_category')}.id_article_category
+                        LEFT JOIN {$this->db->dbprefix('localization')} ON {$this->db->dbprefix('localization')}.id_localization = {$this->db->dbprefix('article_category_detail')}.id_localization
+                        WHERE {$this->db->dbprefix('localization')}.iso_1 = '{$this->lang->get_active_uri_lang()}'
+                    ) AS {$this->db->dbprefix('article_category')}",
+                    'article_category.id_category = article.id_article_category',
+                    'left'
+                )
                 ->where('is_delete', 0)
-                //->where('article.id_article !=',$id_article)
-                ->where('publish_date <=', $now)
-                ->where("(expire_date >= '{$now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
+                ->where('publish_date <=', $this->date_now)
+                ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
+                ->where("LCASE({$this->db->dbprefix('article')}.uri_path)", strtolower($uri_path))
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
+                ->order_by('article.id_article', 'desc')
                 ->limit(1)
                 ->get('article')
                 ->row_array();

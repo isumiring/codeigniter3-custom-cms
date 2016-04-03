@@ -9,24 +9,24 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> Form
+                <?php echo $page_title; ?> Form
             </div>
             <div class="panel-body">
                 <?php echo form_open($form_action, 'role="form"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="auth_group">Group Name</label>
-                                <input type="text" class="form-control" name="auth_group" id="auth_group" value="<?=(isset($post['auth_group'])) ? $post['auth_group'] : ''?>"/>
+                                <label for="auth_group">Group Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="auth_group" id="auth_group" value="<?php echo (isset($post['auth_group'])) ? $post['auth_group'] : ''; ?>" required="required"/>
                             </div>
                         </div>
                         <div class="col-lg-4 col-lg-offset-2">
-                            <?php if (is_superadmin()) : ?>
+                            <?php if (is_superadmin()): ?>
                             <div class="form-group">
                                 <label for="is_superadmin">Super Administrator</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?=(isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''?>/>Yes
+                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?php echo (isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-lg-offset-8">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a class="btn btn-danger" href="<?=$cancel_url?>">Cancel</a>
+                            <a class="btn btn-danger" href="<?php echo $cancel_url; ?>">Cancel</a>
                         </div>
                     </div>
                     <!-- /.row (nested) -->

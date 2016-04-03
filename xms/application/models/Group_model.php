@@ -10,26 +10,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * @desc Group model
+ * 
  */
 class Group_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * get all group data.
+     * Get all group data.
      *
-     * @param string $param
+     * @param array $param
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetAllGroupData($param = [])
+    function GetAllGroupData($param = [])
     {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
@@ -62,7 +62,7 @@ class Group_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('*,id_auth_group as id')
+                ->select('*, id_auth_group as id')
                 ->get('auth_group')
                 ->result_array();
 
@@ -70,15 +70,15 @@ class Group_model extends CI_Model
     }
 
     /**
-     * count records.
+     * Count records.
      *
-     * @param string $param
+     * @param array $param
      *
-     * @return int total records
+     * @return int $total_records total records
      */
-    public function CountAllGroup($param = [])
+    function CountAllGroup($param = [])
     {
-        if (!is_superadmin()) {
+        if ( ! is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
@@ -108,9 +108,9 @@ class Group_model extends CI_Model
      *
      * @param int $id
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetGroup($id)
+    function GetGroup($id)
     {
         $data = $this->db
                 ->where('id_auth_group', $id)
@@ -122,13 +122,13 @@ class Group_model extends CI_Model
     }
 
     /**
-     * insert new record.
+     * Insert new record.
      *
      * @param array $param
      *
-     * @return int last inserted id
+     * @return int $last_id last inserted id
      */
-    public function InsertRecord($param)
+    function InsertRecord($param)
     {
         $this->db->insert('auth_group', $param);
         $last_id = $this->db->insert_id();
@@ -137,46 +137,50 @@ class Group_model extends CI_Model
     }
 
     /**
-     * update record admin group.
+     * Update record admin group.
      *
      * @param int   $id
      * @param array $param
      */
-    public function UpdateRecord($id, $param)
+    function UpdateRecord($id, $param)
     {
-        $this->db->where('id_auth_group', $id);
-        $this->db->update('auth_group', $param);
+        $this->db
+            ->where('id_auth_group', $id)
+            ->update('auth_group', $param);
     }
 
     /**
-     * delete record.
+     * Delete record.
      *
      * @param int $id
      */
-    public function DeleteRecord($id)
+    function DeleteRecord($id)
     {
-        $this->db->where('id_auth_group', $id);
-        $this->db->delete('auth_group');
+        $this->db
+            ->where('id_auth_group', $id)
+            ->delete('auth_group');
     }
 
     /**
-     * get all auth menu.
+     * Get all auth menu.
      *
      * @param int $id_parent
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function MenusData($id_group = 0, $id_parent = 0)
+    function MenusData($id_group = 0, $id_parent = 0)
     {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         $data = $this->db
                 ->join(
-                    "
-                        (select id_auth_menu as id_auth,id_auth_group from {$this->db->dbprefix('auth_menu_group')} where id_auth_group={$id_group}) {$this->db->dbprefix('auth_menu_group')}
-                    ",
-                    'auth_menu_group.id_auth=auth_menu.id_auth_menu',
+                    "(
+                        SELECT id_auth_menu as id_auth,id_auth_group 
+                        FROM {$this->db->dbprefix('auth_menu_group')} 
+                        WHERE id_auth_group = {$id_group}
+                    ) AS {$this->db->dbprefix('auth_menu_group')}", 
+                    'auth_menu_group.id_auth = auth_menu.id_auth_menu', 
                     'left'
                 )
                 ->where('parent_auth_menu', $id_parent)
@@ -184,11 +188,11 @@ class Group_model extends CI_Model
                 ->order_by('auth_menu.id_auth_menu', 'asc')
                 ->get('auth_menu')
                 ->result_array();
+
         foreach ($data as $row => $val) {
+            $data[$row]['checked'] = false;
             if ($val['id_auth_group'] == $id_group) {
                 $data[$row]['checked'] = true;
-            } else {
-                $data[$row]['checked'] = false;
             }
             $data[$row]['children'] = $this->MenusData($id_group, $val['id_auth_menu']);
         }
@@ -197,34 +201,36 @@ class Group_model extends CI_Model
     }
 
     /**
-     * update authorization.
+     * Update authorization.
      *
      * @param int   $id_group
      * @param array $data
      */
-    public function UpdateAuth($id_group, $data = [])
+    function UpdateAuth($id_group, $data = [])
     {
-        $this->db->where('id_auth_group', $id_group);
-        $this->db->delete('auth_menu_group');
+        $this->db
+            ->where('id_auth_group', $id_group)
+            ->delete('auth_menu_group');
+
         if (count($data) > 0) {
             $insert = [];
             foreach ($data as $row => $val) {
                 $insert[$row]['id_auth_group'] = $id_group;
-                $insert[$row]['id_auth_menu'] = $val;
+                $insert[$row]['id_auth_menu']  = $val;
             }
             $this->db->insert_batch('auth_menu_group', $insert);
         }
     }
 
     /**
-     * print auth menu to html.
+     * Print auth menu to html.
      *
      * @param array  $menus
      * @param string $prefix
      *
      * @return string $return
      */
-    public function PrintAuthMenu($menus = [], $prefix = '')
+    function PrintAuthMenu($menus = [], $prefix = '')
     {
         $return = '';
         if ($menus) {
@@ -232,7 +238,7 @@ class Group_model extends CI_Model
                 $return .= '<div class="checkbox">';
                 if ($menu['parent_auth_menu'] != 0) {
                     $return .= $prefix;
-                    $return .= '<img src="'.PATH_CMS.'assets/default/img/tree-tax.png"/>&nbsp;&nbsp;';
+                    $return .= '<img src="'.PATH_CMS.'assets/default/img/tree-taxo.png"/>&nbsp;&nbsp;';
                 } else {
                     $prefix = '';
                 }
@@ -252,40 +258,6 @@ class Group_model extends CI_Model
         }
 
         return $return;
-    }
-
-    /**
-     * print list of menu to checkbox.
-     *
-     * @param int    $id_group
-     * @param int    $id_parent
-     * @param string $prefix
-     *
-     * @return string return
-     */
-    public function printAuthMenuGroup($id_group, $id_parent = 0, $prefix = '')
-    {
-        $tmp_menu = '';
-        $menus = $this->getMenus($id_parent);
-        foreach ($menus as $menu) {
-            $checked = '';
-            $tree = '';
-            $divider = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-            $id_auth_menu_group = $this->getAuthMenuGroup($id_group, $menu['id_auth_menu']);
-            if ($id_auth_menu_group) {
-                $checked = 'checked="checked"';
-            }
-            if ($id_parent != 0) {
-                $tree = '&nbsp;&nbsp;<img src="'.PATH_CMS.'assets/'.getActiveThemes().'/img/tree-tax.png" class="tree-tax" alt="taxo"/>';
-            }
-            $tmp_menu .=  '<label class="checkbox" style="margin-top: 8px;">
-                                <input type="checkbox" value="'.$menu['id_auth_menu'].'" '.$checked.'" id="menu-group-'.$menu['id_auth_menu'].'" name="auth_menu_group[]" class="checkauth">
-                        '.$prefix.' '.$tree.' &nbsp;&nbsp;'.$menu['menu'].'</label>';
-
-            $tmp_menu .=  $this->printAuthMenuGroup($id_group, $menu['id_auth_menu'], $prefix.$divider);
-        }
-
-        return $tmp_menu;
     }
 }
 /* End of file Group_model.php */

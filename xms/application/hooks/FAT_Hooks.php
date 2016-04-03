@@ -4,16 +4,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * HOOKS Class.
+ *     hook class that load before and after the controller
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
  * @category Hook
- * @desc hook class that load before and after the controller
  */
 class FAT_Hooks
 {
+    /**
+     * Load Codeigniter Super Class
+     * 
+     * @var object
+     */
     protected $CI;
 
     /**
@@ -22,7 +27,7 @@ class FAT_Hooks
     public function set_profiler()
     {
         $this->CI = &get_instance();
-        //$this->CI->output->enable_profiler(TRUE);
+        $this->CI->output->enable_profiler(TRUE);
     }
 
     public function set_cache()

@@ -1,6 +1,5 @@
 <?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -12,27 +11,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
-/*$hook['pre_system'][] = array(
-    'class'    => 'FAT_Error',
-    'function' => 'error_catcher',
-    'filename' => 'FAT_Error.php',
-    'filepath' => 'hooks'
-);*/
-$hook['post_controller_constructor'][] = [
+$hook['post_controller_constructor'][] = array(
     'class'    => 'FAT_Hooks',
     'function' => 'set_cache',
     'filename' => 'FAT_Hooks.php',
-    'filepath' => 'hooks',
-];
-$hook['post_controller_constructor'][] = [
+    'filepath' => 'hooks'
+);
+$hook['post_controller_constructor'][] = array(
     'class'    => 'FAT_Hooks',
     'function' => 'set_profiler',
     'filename' => 'FAT_Hooks.php',
-    'filepath' => 'hooks',
-];
-$hook['post_controller'][] = [
+    'filepath' => 'hooks'
+);
+$hook['post_controller'][] = array(
     'class'    => 'FAT_Layout',
     'function' => 'layout',
     'filename' => 'FAT_Layout.php',
-    'filepath' => 'hooks',
-];
+    'filepath' => 'libraries'
+);

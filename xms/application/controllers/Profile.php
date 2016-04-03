@@ -4,19 +4,33 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Profile Class.
+ *     Profile page for every admin user
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
  * @category Controller
- * @desc Profile Controller
  */
 class Profile extends CI_Controller
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
-    private $error = '';
 
+    /**
+     * Error message/system.
+     *
+     * @var string
+     */
+    private $error;
+
+    /**
+     * Class contructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -25,35 +39,36 @@ class Profile extends CI_Controller
     }
 
     /**
-     * index page for this controller.
+     * Index page for this controller.
      */
     public function index()
     {
         $id = id_auth_user();
-        if (!$id) {
+        $id_group = id_auth_group();
+        if ( ! $id || ! $id_group) {
             redirect();
         }
-        $this->data['page_title'] = 'Profile';
-        $this->load->model('Admin_model');
-        $this->data['form_action'] = site_url($this->class_path_name);
+        $this->data['page_title']      = 'Profile';
+        $this->data['form_action']     = site_url($this->class_path_name);
         $this->data['changepass_form'] = site_url($this->class_path_name.'/change_pass');
-        $detail = $this->Admin_model->getAdmin($id);
-        $post = $detail;
+        $detail                        = $this->Admin_model->GetAdmin($id);
+        $post                          = $detail;
 
         if ($this->input->post()) {
             if ($this->validateForm()) {
-                $post = $this->input->post();
-                $now = date('Y-m-d H:i:s');
+                $post      = $this->input->post();
+                $now       = date('Y-m-d H:i:s');
                 $data_post = [
                     'name'        => $post['name'],
                     'email'       => strtolower($post['email']),
                     'phone'       => $post['phone'],
-                    'alamat'      => $post['alamat'],
+                    'address'      => $post['address'],
                     'modify_date' => $now,
                 ];
 
                 // update data
                 $this->Admin_model->UpdateRecord($id, $data_post);
+
                 $post_image = $_FILES;
                 if ($post_image['image']['tmp_name']) {
                     $filename = 'adm_'.url_title($post['name'], '_', true).md5plus($id);
@@ -63,25 +78,27 @@ class Profile extends CI_Controller
                         @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
                     }
                     $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR.'admin/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT, 70);
+                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT, 70);
                     // update data
                     $this->Admin_model->UpdateRecord($id, ['image' => $picture_db]);
                 }
 
-                $user_session = $_SESSION['ADM_SESS'];
-                $user_session['admin_name'] = $post['name'];
+                $user_session                = $_SESSION['ADM_SESS'];
+                $user_session['admin_name']  = $post['name'];
                 $user_session['admin_email'] = strtolower($post['email']);
+                
+                $_SESSION['ADM_SESS'] = $user_session;
+
                 // insert to log
                 $data_log = [
-                    'id_user'  => id_auth_user(),
-                    'id_group' => id_auth_group(),
+                    'id_user'  => $id,
+                    'id_group' => $id_group,
                     'action'   => 'Profile',
                     'desc'     => 'Edit Profile; ID: '.$id.'; Data: '.json_encode($post),
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                $_SESSION['ADM_SESS'] = $user_session;
 
                 $this->session->set_flashdata('form_message', alert_box('Your Profile has been updated.', 'success'));
 
@@ -98,27 +115,26 @@ class Profile extends CI_Controller
     }
 
     /**
-     * change user password.
+     * Change user password.
      */
     public function change_pass()
     {
         $this->layout = 'none';
         if ($this->input->is_ajax_request() && $this->input->post()) {
-            $json = [];
-            $post = $this->input->post();
-            $id = id_auth_user();
-            $this->load->model('Admin_model');
-            $detail = $this->Admin_model->getAdmin($id);
-            if (!$id || !$detail) {
+            $json   = [];
+            $post   = $this->input->post();
+            $id     = id_auth_user();
+            $detail = $this->Admin_model->GetAdmin($id);
+            if ( ! $id || ! $detail) {
                 $json['location'] = site_url('home');
             }
-            if (!$this->validatePassword()) {
+            if ( ! $this->validatePassword($detail)) {
                 $json['error'] = $this->error;
             }
             if (!$json) {
                 $now = date('Y-m-d H:i:s');
                 $data = [
-                    'userpass'    => password_hash($post['new_password'], PASSWORD_DEFAULT),
+                    'userpass'    => generate_password($post['new_password']),
                     'modify_date' => $now,
                 ];
                 $this->Admin_model->UpdateRecord($id, $data);
@@ -131,109 +147,114 @@ class Profile extends CI_Controller
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                $json['success'] = alert_box('Your Password has been changed.', 'success');
-                $this->session->set_flashdata('form_message', $json['success']);
+                $json['success']  = alert_box('Your Password has been changed.', 'success');
                 $json['redirect'] = site_url('profile');
+                $this->session->set_flashdata('form_message', $json['success']);
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect('profile');
     }
 
     /**
-     * validate form.
+     * Validate form.
      *
      * @return bool
      */
     private function validateForm()
     {
-        $this->load->model('Admin_model');
-        $id = id_auth_user();
+        $id   = id_auth_user();
         $post = $this->input->post();
-        $err = '';
+        $config = [
+            [
+                'field' => 'name',
+                'label' => 'Name',
+                'rules' => 'required|alpha_numeric_spaces',
+            ],
+            [
+                'field' => 'email',
+                'label' => 'Email',
+                'rules' => 'required|valid_email|callback_check_email_exists['.$id.']',
+            ],
+        ];
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() === false) {
+            $this->error = alert_box(validation_errors(), 'danger');
 
-        if ($post['name'] == '') {
-            $err .= 'Please insert Name.<br/>';
+            return false;
         } else {
-            if ((strlen($post['name']) < 1) || (strlen($post['name']) > 32)) {
-                $err .= 'Please insert Name.<br/>';
-            }
-        }
+            $post_image = $_FILES;
+            if (!empty($post_image['image']['tmp_name'])) {
+                $check_picture = validatePicture('image');
+                if (!empty($check_picture)) {
+                    $this->error = alert_box($check_picture, 'danger');
 
-        if ($post['email'] == '') {
-            $err .= 'Please insert Email.<br/>';
-        } else {
-            if (!mycheck_email($post['email'])) {
-                $err .= 'Please insert correct Email.<br/>';
-            } else {
-                if (!$this->Admin_model->checkExistsEmail($post['email'], $id)) {
-                    $err .= 'Email already exists, please input different Email.<br/>';
+                    return false;
                 }
             }
         }
 
-        if (($post['phone'] != '') && (!ctype_digit($post['phone']))) {
-            $err .= 'Please insert correct Phone.<br/>';
-        }
-
-        $post_image = $_FILES;
-        if (!empty($post_image['image']['tmp_name'])) {
-            $check_picture = validatePicture('image');
-            if (!empty($check_picture)) {
-                $err .= $check_picture.'<br/>';
-            }
-        }
-
-        if ($err) {
-            $this->error = $err;
-
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     /**
-     * validate change password form.
+     * Validate change password form.
      *
      * @return bool
      */
-    private function validatePassword()
+    private function validatePassword($user_data)
     {
-        $this->load->model('Admin_model');
-        $id = id_auth_user();
-        $post = $this->input->post();
-        $err = '';
-        $detail = $this->Admin_model->getAdmin($id);
-        if ($post['old_password'] == '') {
-            $err .= 'Please insert Old Password.<br/>';
-        } else {
-            if (!password_verify($post['old_password'], $detail['userpass']) && $detail['userpass'] != '') {
-                $err .= 'Your Old Password is incorrect.<br/>';
-            }
-        }
-        if ($post['new_password'] == '') {
-            $err .= 'Please input your New Password.<br/>';
-        } else {
-            if (strlen($post['new_password']) <= 6) {
-                $err .= 'Please input New Password more than 6 characters.<br/>';
-            } else {
-                if ($post['conf_password'] != $post['new_password']) {
-                    $err .= 'Your Confirmation Password is not same with Your New Password.<br/>';
-                }
-            }
-        }
-
-        if ($err) {
-            $this->error = alert_box($err, 'danger');
+        $post   = $this->input->post();
+        $config = [
+            [
+                'field' => 'old_password',
+                'label' => 'Old Password',
+                'rules' => 'required',
+            ],
+            [
+                'field' => 'password',
+                'label' => 'Password',
+                'rules' => 'required|min_lenght[8]',
+            ],
+            [
+                'field' => 'conf_password',
+                'label' => 'Password Confirmation',
+                'rules' => 'required|matches[password]',
+            ],
+        ];
+        $this->form_validation->set_rules($config);
+        if ($this->form_validation->run() === false) {
+            $this->error = alert_box(validation_errors(), 'danger');
 
             return false;
         } else {
-            return true;
+            if ( ! validate_password($post['old_password'], $user_data['userpass']) && $user_data['userpass'] != '') {
+                $this->error = alert_box('Your Old Password is incorrect.', 'danger');
+
+                return false;
+            }
         }
+
+        return true;
+    }
+
+    /**
+     * Form validation check email exist.
+     *
+     * @param string $string
+     * @param int    $id
+     *
+     * @return bool
+     */
+    public function check_email_exists($string, $id = 0)
+    {
+        if ( ! $this->Admin_model->checkExistsEmail($string, $id)) {
+            $this->form_validation->set_message('check_email_exists', '{field} is already exists. Please use different {field}');
+
+            return false;
+        }
+
+        return true;
     }
 }
 /* End of file Profile.php */

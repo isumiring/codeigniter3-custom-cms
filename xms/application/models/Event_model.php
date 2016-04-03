@@ -1,33 +1,33 @@
 <?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Event Model Class.
- *
+ * 
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- *
+ * 
  * @version 3.0
- *
+ * 
  * @category Model
- * @desc Event model
+ * 
  */
 class Event_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
+     * 
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
-
+    
     /**
-     * get localization list.
-     *
-     * @return array data
+     * Get localization list.
+     * 
+     * @return array|bool $data
      */
-    public function GetLocalization()
+    function GetLocalization() 
     {
         $data = $this->db
                 ->order_by('locale_status', 'desc')
@@ -37,13 +37,13 @@ class Event_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get default localization.
-     *
-     * @return array data
+     * Get default localization.
+     * 
+     * @return array|bool $data
      */
-    public function GetDefaultLocalization()
+    function GetDefaultLocalization() 
     {
         $data = $this->db
                 ->where('locale_status', 1)
@@ -53,13 +53,13 @@ class Event_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get status.
-     *
-     * @return array data
+     * Get status.
+     * 
+     * @return array|bool $data
      */
-    public function GetStatus()
+    function GetStatus() 
     {
         $data = $this->db
                 ->order_by('id_status', 'asc')
@@ -68,22 +68,22 @@ class Event_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * get all data.
-     *
-     * @param string $param
-     *
-     * @return array data
+     * Get all data.
+     * 
+     * @param array $param
+     * 
+     * @return array|bool $data
      */
-    public function GetAllData($param = [])
+    function GetAllData($param = []) 
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i = 0;
+            $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i == 0) {
+                    if ($i==0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -106,10 +106,10 @@ class Event_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('*,event.id_event as id')
-                ->join('event_detail', 'event_detail.id_event=event.id_event', 'left')
-                ->join('localization', 'localization.id_localization=event_detail.id_localization', 'left')
-                ->join('status', 'status.id_status=event.id_status', 'left')
+                ->select("*, event.id_event as id")
+                ->join('event_detail', 'event_detail.id_event = event.id_event', 'left')
+                ->join('localization',' localization.id_localization = event_detail.id_localization', 'left')
+                ->join('status', 'status.id_status = event.id_status', 'left')
                 ->where('localization.locale_status', 1)
                 ->where('event.is_delete', 0)
                 ->get('event')
@@ -117,22 +117,22 @@ class Event_model extends CI_Model
 
         return $data;
     }
-
+    
     /**
-     * count records.
-     *
-     * @param string $param
-     *
-     * @return int total records
+     * Count records.
+     * 
+     * @param array $param
+     * 
+     * @return int $total_records total records
      */
-    public function CountAllData($param = [])
+    function CountAllData($param = []) 
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i = 0;
+            $i=0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i == 0) {
+                    if ($i==0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -144,105 +144,109 @@ class Event_model extends CI_Model
         }
         $total_records = $this->db
                 ->from('event')
-                ->join('event_detail', 'event_detail.id_event=event.id_event', 'left')
-                ->join('localization', 'localization.id_localization=event_detail.id_localization', 'left')
-                ->join('status', 'status.id_status=event.id_status', 'left')
+                ->join('event_detail', 'event_detail.id_event = event.id_event', 'left')
+                ->join('localization', 'localization.id_localization = event_detail.id_localization', 'left')
+                ->join('status', 'status.id_status = event.id_status',' left')
                 ->where('localization.locale_status', 1)
                 ->where('event.is_delete', 0)
                 ->count_all_results();
 
         return $total_records;
     }
-
+    
     /**
      * Get detail by id.
-     *
+     * 
      * @param int $id
-     *
-     * @return array data
+     * 
+     * @return array|bool $data
      */
-    public function GetEvent($id)
+    function GetEvent($id) 
     {
         $data = $this->db
                 ->where('id_event', $id)
                 ->limit(1)
                 ->get('event')
                 ->row_array();
+
         if ($data) {
             $locales = $this->db
-                        ->select('id_localization,title,teaser,description')
+                        ->select('id_localization, title, teaser, description')
                         ->where('id_event', $id)
                         ->order_by('id_localization', 'asc')
                         ->get('event_detail')
                         ->result_array();
             foreach ($locales as $row => $local) {
-                $data['locales'][$local['id_localization']]['title'] = $local['title'];
-                $data['locales'][$local['id_localization']]['teaser'] = $local['teaser'];
+                $data['locales'][$local['id_localization']]['title']       = $local['title'];
+                $data['locales'][$local['id_localization']]['teaser']      = $local['teaser'];
                 $data['locales'][$local['id_localization']]['description'] = $local['description'];
             }
         }
-
         return $data;
     }
-
+    
     /**
-     * insert new record.
-     *
+     * Insert new record.
+     * 
      * @param array $param
-     *
-     * @return int last inserted id
+     * 
+     * @return int $last_id last inserted id
      */
-    public function InsertRecord($param)
+    function InsertRecord($param) 
     {
         $this->db->insert('event', $param);
         $last_id = $this->db->insert_id();
 
         return $last_id;
     }
-
+    
     /**
-     * update record.
-     *
-     * @param int   $id
+     * Update record.
+     * 
+     * @param int $id
      * @param array $param
      */
-    public function UpdateRecord($id, $param)
+    function UpdateRecord($id, $param) 
     {
-        $this->db->where('id_event', $id);
-        $this->db->update('event', $param);
+        $this->db
+            ->where('id_event', $id)
+            ->update('event', $param);
     }
-
+    
     /**
-     * delete record.
-     *
+     * Delete record.
+     * 
      * @param int $id
      */
-    public function DeleteRecord($id)
+    function DeleteRecord($id) 
     {
-        $this->db->where('id_event', $id);
-        $this->db->update('event', ['is_delete' => 1]);
+        $this->db
+            ->where('id_event', $id)
+            ->update('event', ['is_delete' => 1]);
     }
-
+    
     /**
-     * insert detail.
-     *
+     * Insert detail.
+     * 
      * @param array $param
      */
-    public function InsertDetailRecord($param)
+    function InsertDetailRecord($param) 
     {
-        $this->db->insert_batch('event_detail', $param);
+        $this->db->insert_batch('event_detail',$param);
     }
-
+    
     /**
-     * delete detail record.
-     *
+     * Delete detail record.
+     * 
      * @param int $id
      */
-    public function DeleteDetailRecordByID($id)
+    function DeleteDetailRecordByID($id) 
     {
-        $this->db->where('id_event', $id);
-        $this->db->delete('event_detail');
+        $this->db
+            ->where('id_event', $id)
+            ->delete('event_detail');
     }
+    
 }
 /* End of file Event_model.php */
 /* Location: ./application/models/Event_model.php */

@@ -10,26 +10,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * @desc Admin model
  */
 class Admin_model extends CI_Model
 {
     /**
-     * constructor.
+     * Class constructor.
      */
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * get group data.
+     * Get group data.
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetGroups()
+    function GetGroups()
     {
-        if (!is_superadmin()) {
+        if ( ! is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         $data = $this->db
@@ -41,15 +40,15 @@ class Admin_model extends CI_Model
     }
 
     /**
-     * get all admin data.
+     * Get all admin data.
      *
-     * @param string $param
+     * @param array $param
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetAllData($param = [])
+    function GetAllData($param = [])
     {
-        if (!is_superadmin()) {
+        if ( ! is_superadmin()) {
             $this->db->where('auth_user.is_superadmin', 0);
             $this->db->where('auth_group.is_superadmin', 0);
         }
@@ -81,8 +80,8 @@ class Admin_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select('auth_user.*,auth_group.auth_group,id_auth_user as id')
-                ->join('auth_group', 'auth_group.id_auth_group=auth_user.id_auth_group', 'left')
+                ->select('auth_user.*, auth_group.auth_group, id_auth_user as id')
+                ->join('auth_group', 'auth_group.id_auth_group = auth_user.id_auth_group', 'left')
                 ->get('auth_user')
                 ->result_array();
 
@@ -90,15 +89,15 @@ class Admin_model extends CI_Model
     }
 
     /**
-     * count records.
+     * Count records.
      *
-     * @param string $param
+     * @param array $param
      *
-     * @return int total records
+     * @return int $total_records total records
      */
-    public function CountAllData($param = [])
+    function CountAllData($param = [])
     {
-        if (!is_superadmin()) {
+        if ( ! is_superadmin()) {
             $this->db->where('auth_user.is_superadmin', 0);
             $this->db->where('auth_group.is_superadmin', 0);
         }
@@ -119,7 +118,7 @@ class Admin_model extends CI_Model
         }
         $total_records = $this->db
                 ->from('auth_user')
-                ->join('auth_group', 'auth_group.id_auth_group=auth_user.id_auth_group', 'left')
+                ->join('auth_group', 'auth_group.id_auth_group = auth_user.id_auth_group', 'left')
                 ->count_all_results();
 
         return $total_records;
@@ -130,9 +129,9 @@ class Admin_model extends CI_Model
      *
      * @param int $id
      *
-     * @return array data
+     * @return array|bool $data
      */
-    public function GetAdmin($id)
+    function GetAdmin($id)
     {
         $data = $this->db
                 ->where('id_auth_user', $id)
@@ -144,13 +143,13 @@ class Admin_model extends CI_Model
     }
 
     /**
-     * insert new record.
+     * Insert new record.
      *
      * @param array $param
      *
-     * @return int last inserted id
+     * @return int $last_id last inserted id
      */
-    public function InsertRecord($param)
+    function InsertRecord($param)
     {
         $this->db->insert('auth_user', $param);
         $last_id = $this->db->insert_id();
@@ -159,37 +158,39 @@ class Admin_model extends CI_Model
     }
 
     /**
-     * update record admin user.
+     * Update record admin user.
      *
      * @param int   $id
      * @param array $param
      */
-    public function UpdateRecord($id, $param)
+    function UpdateRecord($id, $param)
     {
-        $this->db->where('id_auth_user', $id);
-        $this->db->update('auth_user', $param);
+        $this->db
+            ->where('id_auth_user', $id)
+            ->update('auth_user', $param);
     }
 
     /**
-     * delete record.
+     * Delete record.
      *
      * @param int $id
      */
-    public function DeleteRecord($id)
+    function DeleteRecord($id)
     {
-        $this->db->where('id_auth_user', $id);
-        $this->db->delete('auth_user');
+        $this->db
+            ->where('id_auth_user', $id)
+            ->delete('auth_user');
     }
 
     /**
-     * check exist email.
+     * Check exist email.
      *
      * @param string $email
      * @param int    $id
      *
      * @return bool true/false
      */
-    public function checkExistsEmail($email, $id = 0)
+    function checkExistsEmail($email, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);
@@ -200,20 +201,20 @@ class Admin_model extends CI_Model
                 ->count_all_results();
         if ($count_records > 0) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
-     * check exist username.
+     * Check exist username.
      *
      * @param string $username
      * @param int    $id
      *
      * @return bool true/false
      */
-    public function checkExistsUsername($username, $id = 0)
+    function checkExistsUsername($username, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);
@@ -224,9 +225,9 @@ class Admin_model extends CI_Model
                 ->count_all_results();
         if ($count_records > 0) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 }
 /* End of file Admin_model.php */

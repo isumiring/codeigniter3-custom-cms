@@ -40,5 +40,5 @@ $hook['post_controller'][] = [
     'class'    => 'FAT_Layout',
     'function' => 'layout',
     'filename' => 'FAT_Layout.php',
-    'filepath' => 'hooks',
+    'filepath' => 'libraries',
 ];

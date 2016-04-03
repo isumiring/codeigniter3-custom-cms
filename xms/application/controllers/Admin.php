@@ -10,15 +10,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Controller
- * @desc Admin Controller
  */
 class Admin extends CI_Controller
 {
+    /**
+     * This show current class.
+     *
+     * @var string
+     */
     private $class_path_name;
+
+    /**
+     * Error message/system.
+     *
+     * @var string
+     */
     private $error;
 
     /**
-     * constructor.
+     * Class contructor.
      */
     public function __construct()
     {
@@ -28,17 +38,19 @@ class Admin extends CI_Controller
     }
 
     /**
-     * index page.
+     * Index page.
      */
     public function index()
     {
-        $this->data['add_url'] = site_url($this->class_path_name.'/add');
-        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url']        = site_url($this->class_path_name.'/add');
+        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
 
     /**
-     * list data.
+     * listing data from record.
+     *
+     * @return json $return
      */
     public function list_data()
     {
@@ -49,51 +61,50 @@ class Admin extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort'] = $post['order'][0]['dir'];
+                $param['order_sort']  = $post['order'][0]['dir'];
             }
-            $param['row_from'] = $post['start'];
-            $param['length'] = $post['length'];
-            $count_all_records = $this->Admin_model->CountAllData();
-            $count_filtered_records = $this->Admin_model->CountAllData($param);
-            $records = $this->Admin_model->GetAllData($param);
-            $return = [];
-            $return['draw'] = $post['draw'];
-            $return['recordsTotal'] = $count_all_records;
+            $param['row_from']         = $post['start'];
+            $param['length']           = $post['length'];
+            $count_all_records         = $this->Admin_model->CountAllData();
+            $count_filtered_records    = $this->Admin_model->CountAllData($param);
+            $records                   = $this->Admin_model->GetAllData($param);
+            $return                    = [];
+            $return['draw']            = $post['draw'];
+            $return['recordsTotal']    = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data'] = [];
+            $return['data']            = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId'] = $record['id'];
-                $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                $return['data'][$row]['username'] = $record['username'];
-                $return['data'][$row]['name'] = $record['name'];
-                $return['data'][$row]['email'] = $record['email'];
-                $return['data'][$row]['auth_group'] = $record['auth_group'];
+                $return['data'][$row]['DT_RowId']    = $record['id'];
+                $return['data'][$row]['actions']     = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['username']    = $record['username'];
+                $return['data'][$row]['name']        = $record['name'];
+                $return['data'][$row]['email']       = $record['email'];
+                $return['data'][$row]['auth_group']  = $record['auth_group'];
                 $return['data'][$row]['create_date'] = custDateFormat($record['create_date'], 'd M Y H:i:s');
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($return)
-            );
+            json_exit($return);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * add page.
+     * Add page.
+     *
+     * @return string layout page
      */
     public function add()
     {
-        $this->data['groups'] = $this->Admin_model->GetGroups();
-        $this->data['page_title'] = 'Add';
+        $this->data['groups']      = $this->Admin_model->GetGroups();
+        $this->data['page_title']  = 'Add';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url'] = site_url($this->class_path_name);
+        $this->data['cancel_url']  = site_url($this->class_path_name);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
-                $post['status'] = (isset($post['status'])) ? 1 : 0;
-                $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
-                $post['email'] = strtolower($post['email']);
-                $post['userpass'] = password_hash($post['password'], PASSWORD_DEFAULT);
+                $post['status']        = (isset($post['status'])) ?: 0;
+                $post['is_superadmin'] = (isset($post['is_superadmin'])) ? : 0;
+                $post['email']         = strtolower($post['email']);
+                $post['userpass']      = generate_password($post['password']);
                 unset($post['password']);
                 unset($post['conf_password']);
 
@@ -102,10 +113,10 @@ class Admin extends CI_Controller
                 unset($post['userpass']);
                 $post_image = $_FILES;
                 if ($post_image['image']['tmp_name']) {
-                    $filename = 'adm_'.url_title($post['name'], '_', true).md5plus($id);
-                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR.'admin/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = 'adm_'.url_title($post['name'], '_', true).md5plus($id);
+                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT, 70);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT, 70);
                     // update data
                     $this->Admin_model->UpdateRecord($id, ['image' => $picture_db]);
                 }
@@ -131,9 +142,11 @@ class Admin extends CI_Controller
     }
 
     /**
-     * detail page.
+     * Detail/Edit Page.
      *
      * @param int $id
+     *
+     * @return string layout
      */
     public function edit($id = 0)
     {
@@ -148,21 +161,21 @@ class Admin extends CI_Controller
             $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Administrator', 'danger'));
             redirect($this->class_path_name);
         }
-        $this->data['groups'] = $this->Admin_model->GetGroups();
-        $this->data['page_title'] = 'Edit';
-        $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
+        $this->data['groups']             = $this->Admin_model->GetGroups();
+        $this->data['page_title']         = 'Edit';
+        $this->data['form_action']        = site_url($this->class_path_name.'/edit/'.$id);
         $this->data['delete_picture_url'] = site_url($this->class_path_name.'/delete_picture/'.$id);
-        $this->data['cancel_url'] = site_url($this->class_path_name);
+        $this->data['cancel_url']         = site_url($this->class_path_name);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
-                $post['modify_date'] = date('Y-m-d H:i:s');
-                $post['status'] = (isset($post['status'])) ? 1 : 0;
-                $post['is_superadmin'] = (isset($post['is_superadmin'])) ? 1 : 0;
-                $post['email'] = strtolower($post['email']);
+                $post['modify_date']   = date('Y-m-d H:i:s');
+                $post['status']        = (isset($post['status'])) ?: 0;
+                $post['is_superadmin'] = (isset($post['is_superadmin'])) ?: 0;
+                $post['email']         = strtolower($post['email']);
 
                 if ($post['password'] != '') {
-                    $post['userpass'] = password_hash($post['password'], PASSWORD_DEFAULT);
+                    $post['userpass'] = generate_password($post['password']);
                 }
                 unset($post['password']);
                 unset($post['conf_password']);
@@ -172,23 +185,23 @@ class Admin extends CI_Controller
                 unset($post['userpass']);
                 // now change session if user is edit themselve
                 if (id_auth_user() == $id) {
-                    $user_session = $_SESSION['ADM_SESS'];
-                    $user_session['admin_name'] = $post['name'];
+                    $user_session                        = $_SESSION['ADM_SESS'];
+                    $user_session['admin_name']          = $post['name'];
                     $user_session['admin_id_auth_group'] = $post['id_auth_group'];
-                    $user_session['admin_email'] = strtolower($post['email']);
-                    $_SESSION['ADM_SESS'] = $user_session;
+                    $user_session['admin_email']         = strtolower($post['email']);
+                    $_SESSION['ADM_SESS']                = $user_session;
                 }
                 $post_image = $_FILES;
                 if ($post_image['image']['tmp_name']) {
-                    $filename = 'adm_'.url_title($post['name'], '_', true).md5plus($id);
-                    if ($record['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$record['image'])) {
-                        unlink(UPLOAD_DIR.'admin/'.$record['image']);
-                        @unlink(UPLOAD_DIR.'admin/tmb_'.$record['image']);
-                        @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
+                    if ($record['image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['image'])) {
+                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['image']);
+                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['image']);
                     }
-                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR.'admin/', $filename);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT);
-                    copy_image_resize_to_folder(UPLOAD_DIR.'admin/'.$picture_db, UPLOAD_DIR.'admin/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT);
+                    $filename   = 'adm_'.url_title($post['name'], '_', true).md5plus($id);
+                    $picture_db = file_copy_to_folder($post_image['image'], UPLOAD_DIR. $this->class_path_name. '/', $filename);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'tmb_'.$filename, IMG_THUMB_WIDTH, IMG_THUMB_HEIGHT, 70);
+                    copy_image_resize_to_folder(UPLOAD_DIR. $this->class_path_name. '/'.$picture_db, UPLOAD_DIR. $this->class_path_name. '/', 'sml_'.$filename, IMG_SMALL_WIDTH, IMG_SMALL_HEIGHT, 70);
                     // update data
                     $this->Admin_model->UpdateRecord($id, ['image' => $picture_db]);
                 }
@@ -207,14 +220,16 @@ class Admin extends CI_Controller
             }
         }
         $this->data['template'] = $this->class_path_name.'/form';
-        $this->data['post'] = $record;
+        $this->data['post']     = $record;
         if (isset($this->error)) {
             $this->data['form_message'] = $this->error;
         }
     }
 
     /**
-     * delete page.
+     * Delete page.
+     *
+     * @return json $json
      */
     public function delete()
     {
@@ -233,10 +248,10 @@ class Admin extends CI_Controller
                                 break;
                             } else {
                                 if (is_superadmin()) {
-                                    if ($record['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$record['image'])) {
-                                        unlink(UPLOAD_DIR.'admin/'.$record['image']);
-                                        @unlink(UPLOAD_DIR.'admin/tmb_'.$record['image']);
-                                        @unlink(UPLOAD_DIR.'admin/sml_'.$record['image']);
+                                    if ($record['image'] != '' && file_exists(UPLOAD_DIR. $this->class_path_name. '/'.$record['image'])) {
+                                        unlink(UPLOAD_DIR. $this->class_path_name. '/'.$record['image']);
+                                        @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$record['image']);
+                                        @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$record['image']);
                                     }
                                     $this->Admin_model->DeleteRecord($id);
                                     $json['success'] = alert_box('Data has been deleted', 'success');
@@ -262,16 +277,15 @@ class Admin extends CI_Controller
                     }
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * delete picture.
+     * Delete Picture.
+     *
+     * @return json $json
      */
     public function delete_picture()
     {
@@ -283,9 +297,9 @@ class Admin extends CI_Controller
                 $detail = $this->Admin_model->GetAdmin($post['id']);
                 if ($detail && $detail['image'] != '') {
                     $id = $post['id'];
-                    unlink(UPLOAD_DIR.'admin/'.$detail['image']);
-                    @unlink(UPLOAD_DIR.'admin/tmb_'.$detail['image']);
-                    @unlink(UPLOAD_DIR.'admin/sml_'.$detail['image']);
+                    unlink(UPLOAD_DIR. $this->class_path_name. '/'.$detail['image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/tmb_'.$detail['image']);
+                    @unlink(UPLOAD_DIR. $this->class_path_name. '/sml_'.$detail['image']);
                     $data_update = ['image' => ''];
                     $this->Admin_model->UpdateRecord($post['id'], $data_update);
                     $json['success'] = alert_box('File hase been deleted.', 'success');
@@ -302,16 +316,13 @@ class Admin extends CI_Controller
                     $json['error'] = alert_box('Failed to remove File. Please try again.', 'danger');
                 }
             }
-            header('Content-type: application/json');
-            exit(
-                json_encode($json)
-            );
+            json_exit($json);
         }
         redirect($this->class_path_name);
     }
 
     /**
-     * validate form.
+     * Validate Form.
      *
      * @param int $id
      *
@@ -320,7 +331,7 @@ class Admin extends CI_Controller
     private function validateForm($id = 0)
     {
         $post = $this->input->post();
-        $config = [
+        $rules = [
             [
                 'field' => 'username',
                 'label' => 'Username',
@@ -347,40 +358,44 @@ class Admin extends CI_Controller
                 'rules' => 'required|is_natural_no_zero',
             ],
         ];
-        $this->form_validation->set_rules($config);
+        if ( ! $id) {
+            array_push($rules, 
+                [
+                    'field' => 'password',
+                    'label' => 'Password',
+                    'rules' => 'required|min_lenght[8]',
+                ],
+                [
+                    'field' => 'conf_password',
+                    'label' => 'Password Confirmation',
+                    'rules' => 'required|matches[password]',
+                ]);
+        } else {
+            if (strlen($post['password']) > 0) {
+                array_push($rules, 
+                    [
+                        'field' => 'password',
+                        'label' => 'Password',
+                        'rules' => 'required|min_lenght[8]',
+                    ],
+                    [
+                        'field' => 'conf_password',
+                        'label' => 'Password Confirmation',
+                        'rules' => 'required|matches[password]',
+                    ]);
+            }
+        }
+        $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() === false) {
             $this->error = alert_box(validation_errors(), 'danger');
 
             return false;
         } else {
             $post_image = $_FILES;
-            if (!$id) {
-                if ($post['password'] == '') {
-                    $this->error = 'Please insert Password.<br/>';
-                } else {
-                    if (strlen($post['password']) <= 6) {
-                        $this->error = 'Please input Password more than 6 characters.<br/>';
-                    } else {
-                        if ($post['conf_password'] != $post['password']) {
-                            $this->error = 'Your Confirmation Password is not same with Your Password.<br/>';
-                        }
-                    }
-                }
-            } else {
-                if (strlen($post['password']) > 0) {
-                    if (strlen($post['password']) <= 6) {
-                        $this->error = 'Please input Password more than 6 characters.<br/>';
-                    } else {
-                        if ($post['conf_password'] != $post['password']) {
-                            $this->error = 'Your Confirmation Password is not same with Your Password.<br/>';
-                        }
-                    }
-                }
-            }
             if (!$this->error) {
-                if (!empty($post_image['image']['tmp_name'])) {
+                if ( ! empty($post_image['image']['tmp_name'])) {
                     $check_picture = validatePicture('image');
-                    if (!empty($check_picture)) {
+                    if ( ! empty($check_picture)) {
                         $this->error = alert_box($check_picture, 'danger');
 
                         return false;
@@ -410,9 +425,9 @@ class Admin extends CI_Controller
             $this->form_validation->set_message('check_email_exists', '{field} is already exists. Please use different {field}');
 
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
@@ -429,9 +444,9 @@ class Admin extends CI_Controller
             $this->form_validation->set_message('check_username_exists', '{field} is already exists. Please use different {field}');
 
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 }
 /* End of file Admin.php */

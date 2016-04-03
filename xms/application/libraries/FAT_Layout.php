@@ -4,20 +4,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Layout Class.
+ *     library class that load to display layouts
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0
  *
- * @category Hook
- * @desc hook class that load to display layouts
+ * @category Libraries
  */
 class FAT_Layout
 {
+    /**
+     * Load Codeigniter Super Object
+     * 
+     * @var object
+     */
     protected $CI;
 
     /**
-     * print layout based on controller class and function.
+     * Print layout based on controller class and function.
      *
      * @return string view layout
      */
@@ -30,32 +35,39 @@ class FAT_Layout
         }
 
         // set data
-        $dir = $this->CI->router->directory;
-        $class = $this->CI->router->fetch_class();
-        $method = $this->CI->router->fetch_method();
-        $method = ($method == 'index') ? $class : $method;
-        $data = (isset($this->CI->data)) ? $this->CI->data : [];
+        $dir                        = $this->CI->router->directory;
+        $class                      = $this->CI->router->fetch_class();
+        $method                     = $this->CI->router->fetch_method();
+        $method                     = ($method == 'index') ? $class : $method;
+        $data                       = (isset($this->CI->data)) ? $this->CI->data : [];
         $data['current_controller'] = base_url().$dir.$class.'/';
-        $page_info = $this->GetPageInfoByFile($class);
-        $id_auth_menu = $page_info['id_auth_menu'];
-        $data['base_url'] = base_url();
+        if (isset($data['current_path'])) {
+            $current_path = str_replace(base_url().$dir, '', current_url());
+        } else {
+            $current_path = $class;
+        }
+        $page_info           = $this->GetPageInfoByFile($class);
+        $id_auth_menu        = $page_info['id_auth_menu'];
+        $data['base_url']    = base_url();
         $data['current_url'] = current_url();
         if (isset($_SESSION['ADM_SESS'])) {
             $data['ADM_SESSION'] = $_SESSION['ADM_SESS'];
         }
-        $data['flash_message'] = $this->CI->session->flashdata('flash_message');
-        $data['persistent_message'] = $this->CI->session->userdata('persistent_message');
-
-        $data['auth_sess'] = $this->CI->session->userdata('ADM_SESS');
-        $data['site_setting'] = get_sitesetting();
-        $data['site_info'] = get_site_info();
-        $data['page_title'] = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
-
-        $menus = $this->MenusData();
-        $data['left_menu'] = $this->PrintLeftMenu($menus, $class);
-
-        $data['save_button_text'] = 'Save';
-        $data['cancel_button_text'] = 'Cancel';
+        $data['flash_message']      = $this->CI->session->flashdata('flash_message');
+        $data['persistent_message'] = (isset($_SESSION['persistent_message'])) ? $_SESSION['persistent_message'] : '';
+        
+        $data['auth_sess']          = (isset($_SESSION['ADM_SESS'])) ? $_SESSION['ADM_SESS'] : [];
+        $data['site_setting']       = get_sitesetting();
+        $data['site_info']          = get_site_info();
+        $data['page_title']         = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
+        
+        $menus                      = $this->MenusData();
+        $ids[]                      = $id_auth_menu;
+        $menus_ids                  = [];
+        if (isset($page_info['parent_auth_menu'])) {
+            $menus_ids = $this->ActiveMenuIds($page_info['parent_auth_menu'], $ids);
+        }
+        $data['main_menu'] = $this->PrintMainMenu($menus, $menus_ids);
 
         $breadcrumbs = $this->Breadcrumbs($id_auth_menu);
         $breadcrumbs[] = [
@@ -73,18 +85,18 @@ class FAT_Layout
         $template_dir = getActiveThemes();
         // default
         $data['GLOBAL_ASSETS_URL'] = PATH_CMS.'assets/default/';
-        $data['GLOBAL_IMG_URL'] = $data['GLOBAL_ASSETS_URL'].'img/';
-        $data['GLOBAL_CSS_URL'] = $data['GLOBAL_ASSETS_URL'].'css/';
-        $data['GLOBAL_JS_URL'] = $data['GLOBAL_ASSETS_URL'].'js/';
+        $data['GLOBAL_IMG_URL']    = $data['GLOBAL_ASSETS_URL'].'img/';
+        $data['GLOBAL_CSS_URL']    = $data['GLOBAL_ASSETS_URL'].'css/';
+        $data['GLOBAL_JS_URL']     = $data['GLOBAL_ASSETS_URL'].'js/';
         $data['GLOBAL_VENDOR_URL'] = $data['GLOBAL_ASSETS_URL'].'vendor/';
-        $data['GLOBAL_LIBS_URL'] = $data['GLOBAL_ASSETS_URL'].'libs/';
+        $data['GLOBAL_LIBS_URL']   = $data['GLOBAL_ASSETS_URL'].'libs/';
         // active template
         $data['ASSETS_URL'] = PATH_CMS.'assets/'.$template_dir.'/';
-        $data['IMG_URL'] = $data['ASSETS_URL'].'img/';
-        $data['CSS_URL'] = $data['ASSETS_URL'].'css/';
-        $data['JS_URL'] = $data['ASSETS_URL'].'js/';
+        $data['IMG_URL']    = $data['ASSETS_URL'].'img/';
+        $data['CSS_URL']    = $data['ASSETS_URL'].'css/';
+        $data['JS_URL']     = $data['ASSETS_URL'].'js/';
         $data['VENDOR_URL'] = $data['ASSETS_URL'].'vendor/';
-        $data['LIBS_URL'] = $data['ASSETS_URL'].'libs/';
+        $data['LIBS_URL']   = $data['ASSETS_URL'].'libs/';
 
         if (isset($data['template'])) {
             $data['content'] = $this->CI->load->view($template_dir.'/'.$data['template'], $data, true);
@@ -102,7 +114,7 @@ class FAT_Layout
     }
 
     /**
-     * get page info by file.
+     * Get page info by file.
      *
      * @param string $class
      * @param mixed  $return array or string
@@ -134,23 +146,23 @@ class FAT_Layout
     }
 
     /**
-     * get all authenticated menu.
+     * Get all authenticated menu.
      *
      * @param int $id_parent
      *
-     * @return array data
+     * @return array|bool $data
      */
     private function MenusData($id_parent = 0)
     {
         $i = 0;
         $id_group = id_auth_group();
-        if (!$id_group) {
+        if ( ! $id_group) {
             return;
         }
         $this->CI = &get_instance();
         $this->CI->load->database();
         $data = $this->CI->db
-                ->join('auth_menu', 'auth_menu.id_auth_menu=auth_menu_group.id_auth_menu', 'left')
+                ->join('auth_menu', 'auth_menu.id_auth_menu = auth_menu_group.id_auth_menu', 'left')
                 ->where('auth_menu_group.id_auth_group', $id_group)
                 ->where('auth_menu.parent_auth_menu', $id_parent)
                 ->order_by('auth_menu.position', 'asc')
@@ -166,25 +178,57 @@ class FAT_Layout
     }
 
     /**
+     * Active Menu Ids 
+     *     return array for listing hierarcy active menu
+     *     
+     * @param int $id_parent
+     * @param array &$ids
+     *
+     * @return array $ids;
+     */
+    private function ActiveMenuIds($id_parent = 0, &$ids = [])
+    {
+        $this->CI = &get_instance();
+        $this->CI->load->database();
+        if ( ! $id_parent) {
+            return $ids;
+        }
+        $data = $this->CI->db
+                ->select('id_auth_menu, parent_auth_menu, file')
+                ->where('id_auth_menu', $id_parent)
+                ->limit(1)
+                ->get('auth_menu')
+                ->row_array();
+        if ($data) {
+            $ids[] = $data['id_auth_menu'];
+            $parent = $this->ActiveMenuIds($data['parent_auth_menu'], $ids);
+        }
+
+        return $ids;
+    }
+
+    /**
      * print left menu.
      *
      * @param array $menus
      *
      * @return string $return left menu html
      */
-    private function PrintLeftMenu($menus = [], $active_menu = '')
+    private function PrintMainMenu($menus = [], $active_menus = [])
     {
         $return = '';
         if ($menus) {
             foreach ($menus as $row => $menu) {
-                $return .= '<li>';
                 $style = $set_active = '';
                 if (strlen($menu['menu']) > 25) {
                     $style = 'style="font-size:12px;"';
                 }
-                if ($active_menu != '' && ($menu['file'] != '#' || $menu['file'] != '') && strtolower($active_menu) == strtolower($menu['file'])) {
-                    $set_active = 'class="active"';
+                if (is_array($active_menus) && count($active_menus) > 0) {
+                    if (in_array($menu['id_auth_menu'], $active_menus)) {
+                        $set_active = 'class="in active"';
+                    }
                 }
+                $return .= '<li '.$set_active.'>';
                 $return .= '<a href="'.(($menu['file'] == '#' || $menu['file'] == '') ? '#' : site_url($menu['file'])).'" '.$style.' '.$set_active.'>';
                 $return .= $menu['menu'];
                 if (isset($menu['children']) && count($menu['children']) > 0) {
@@ -193,7 +237,7 @@ class FAT_Layout
                 $return .= '</a>';
                 if (isset($menu['children']) && count($menu['children']) > 0) {
                     $return .= '<ul class="nav" style="padding-left:15px;">';
-                    $return .= $this->PrintLeftMenu($menu['children']);
+                    $return .= $this->PrintMainMenu($menu['children'], $active_menus);
                     $return .= '</ul>';
                 }
                 $return .= '</li>';

@@ -10,31 +10,31 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?=$page_title?> Form
+                <?php echo $page_title; ?> Form
             </div>
             <div class="panel-body">
-                <form role="form" action="<?=$form_action?>" method="post" enctype="multipart/form-data">
+                <?php echo form_open($form_action, 'enctype="multipart/form-data" role="form"'); ?>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="username">Username:</label>
-                                <strong><?=$post['username']?></strong>
+                                <strong><?php echo $post['username']; ?></strong>
                             </div>
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" name="name" id="name" value="<?=(isset($post['name'])) ? $post['name'] : ''?>"/>
+                                <label for="name">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="name" id="name" value="<?php echo (isset($post['name'])) ? $post['name'] : ''; ?>" required="required"/>
                             </div>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" name="email" id="email" value="<?=(isset($post['email'])) ? $post['email'] : ''?>"/>
+                                <label for="email">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" name="email" id="email" value="<?php echo (isset($post['email'])) ? $post['email'] : ''; ?>" required="required"/>
                             </div>
                             <div class="form-group">
                                 <label for="address">Address</label>
-                                <textarea class="form-control" rows="3" id="address" name="address"><?=(isset($post['address'])) ? $post['address'] : ''?></textarea>
+                                <textarea class="form-control" rows="3" id="address" name="address"><?php echo (isset($post['address'])) ? $post['address'] : ''; ?></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
-                                <input type="text" class="form-control" name="phone" id="phone" value="<?=(isset($post['phone'])) ? $post['phone'] : ''?>"/>
+                                <input type="text" class="form-control" name="phone" id="phone" value="<?php echo (isset($post['phone'])) ? $post['phone'] : ''; ?>"/>
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-info" id="change_pass" type="button" data-toggle="modal" data-target="#passModal">Change Password</button>
@@ -52,8 +52,8 @@
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
                                         <?php if (isset($post['image']) && $post['image'] != '' && file_exists(UPLOAD_DIR.'admin/'.$post['image'])): ?>
-                                            <img src="<?=RELATIVE_UPLOAD_DIR.'admin/tmb_'.$post['image']?>" id="post-image" />
-                                            <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?=$post['id_auth_user']?>">x</span>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.'admin/tmb_'.$post['image']; ?>" id="post-image" />
+                                            <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?php echo $post['id_auth_user']; ?>">x</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <!-- /.row (nested) -->
-                </form>
+                <?php echo form_close(); ?>
             </div>
             <!-- /.panel-body -->
         </div>
@@ -93,40 +93,41 @@
                 Change Password
             </div>
             <div class="modal-body">
-                <form action="<?= $changepass_form ?>" method="post" id="change_pass_form" onsubmit="return false;">
+                <form action="<?php echo $changepass_form; ?>" method="post" id="change_pass_form" onsubmit="return false;">
                     <div id="print-msg" class="error"></div>
                     <div class="form-group">
                         <label for="old_password" class="control-label">Old Password:</label>
-                        <input type="password" id="old_password" class="form-control" name="old_password" value=""/>
+                        <input type="password" id="old_password" class="form-control" name="old_password" value="" required="required" />
                     </div>
                     <div class="form-group">
                         <label for="new_password" class="control-label">New Password:</label>
-                        <input type="password" id="new_password" class="form-control" name="new_password" value=""/>
+                        <input type="password" id="new_password" class="form-control" name="new_password" value="" required="required" />
                     </div>
                     <div class="form-group">
                         <label for="conf_password" class="control-label">Confirm New Password:</label>
-                        <input type="password" id="conf_password" class="form-control" name="conf_password" value=""/>
+                        <input type="password" id="conf_password" class="form-control" name="conf_password" value="" required="required" />
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="save_password">Save changes</button>
-                <button class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" id="save_password" type="button">Save changes</button>
+                <button class="btn btn-warning" data-dismiss="modal" aria-hidden="true" type="button">Close</button>
             </div>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <script type="text/javascript">
     $("#save_password").click(function() {
-        $("#print-msg").html('');
-        var self = $(this);
+        $("#print-msg").empty();
+        var self = $(this),
+            self_html = $(this).html();
         var old_password = $("#old_password").val();
         var new_password = $("#new_password").val();
         var conf_password = $("#conf_password").val();
         if (old_password != '') {
             if (new_password != '' && (conf_password == new_password)) {
                 var data = $('#change_pass_form').serializeArray();
-                submit_ajax('<?=$changepass_form?>',data,self)
+                submit_ajax('<?php echo $changepass_form; ?>', data, self)
                     .done(function(data) {
                         if (data['location']) {
                             window.location = data['location'];
@@ -141,14 +142,15 @@
                                 if (data['redirect']) {
                                     window.location = data['redirect'];
                                 }
-                            }, 2000);
+                            }, 1000);
                         }
+                        self.html(self_html).removeAttr('disabled');
                     });
             } else {
-                $("#print-msg").html('<?=alert_box('Please input Your New Password or Confirmation is not correct.', 'danger')?>');
+                $("#print-msg").html('<?php echo alert_box('Please input Your New Password or Confirmation is not correct.', 'danger'); ?>');
             }
         } else {
-            $("#print-msg").html('<?=alert_box('Please input Your old password.', 'danger')?>');
+            $("#print-msg").html('<?php echo alert_box('Please input Your old password.', 'danger'); ?>');
         }
     });
 </script>
