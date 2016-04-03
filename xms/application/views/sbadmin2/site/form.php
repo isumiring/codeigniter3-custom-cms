@@ -55,8 +55,8 @@
                                             <label for="image">Logo</label>
                                             <div class="fileinput fileinput-new" data-provides="fileinput">
                                                 <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                                    <?php if (isset($post['site_logo']) && $post['site_logo'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['site_logo'])): ?>
-                                                        <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['site_logo']; ?>" id="post-image" />
+                                                    <?php if (isset($post['site_logo']) && $post['site_logo'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['site_logo'])): ?>
+                                                        <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/'.$post['site_logo']; ?>" id="post-image" />
                                                         <span class="btn btn-danger btn-delete-photo" id="delete-picture" data-id="<?php echo $post['id_site']; ?>">x</span>
                                                     <?php endif; ?>
                                                 </div>

@@ -38,10 +38,10 @@
                                 <!-- /.tab content -->
                                 <div class="tab-content">
                                     <?php foreach ($locales as $row => $local): ?>
-                                    <div role="tabpanel" class="tab-pane fade <?php echo ($row==0) ? 'in active' : ''?>" id="<?php echo $local['iso_2'].'-'.$local['id_localization']?>">
+                                    <div role="tabpanel" class="tab-pane fade <?php echo ($row == 0) ? 'in active' : ''?>" id="<?php echo $local['iso_2'].'-'.$local['id_localization']?>">
                                         <div class="form-group">
                                             <label for="title_<?php echo $local['iso_1']?>">Title (<?php echo ucfirst($local['locale'])?>)</label>
-                                            <input type="text" class="form-control <?php echo ($row==0) ? 'seodef' : ''; ?>" name="locales[<?php echo $local['id_localization']; ?>][title]" id="title_<?php echo $local['iso_1']; ?>" value="<?php echo (isset($post['locales'][$local['id_localization']]['title'])) ? $post['locales'][$local['id_localization']]['title'] : ''; ?>"/>
+                                            <input type="text" class="form-control <?php echo ($row == 0) ? 'seodef' : ''; ?>" name="locales[<?php echo $local['id_localization']; ?>][title]" id="title_<?php echo $local['iso_1']; ?>" value="<?php echo (isset($post['locales'][$local['id_localization']]['title'])) ? $post['locales'][$local['id_localization']]['title'] : ''; ?>"/>
                                         </div>
                                         <div class="form-group">
                                             <label for="teaser_<?php echo $local['iso_1']; ?>">Teaser (<?php echo ucfirst($local['locale']); ?>)</label>
@@ -89,15 +89,15 @@
                                     <span class="input-group-addon expire_date"><i class="glyphicon glyphicon-calendar"></i></span>
                                 </div>
                                 <label>
-                                    <input type="checkbox" value="1" name="forever" id="forever" <?php echo ( (isset($post['forever']) && !empty($post['forever'])) || ( (empty($post['expire_date']) || $post['expire_date'] == '0000-00-00' || $post['expire_date'] == '1970-01-01')) ) ? 'checked="checked"' : ''; ?>/> Set as forever
+                                    <input type="checkbox" value="1" name="forever" id="forever" <?php echo ((isset($post['forever']) && !empty($post['forever'])) || ((empty($post['expire_date']) || $post['expire_date'] == '0000-00-00' || $post['expire_date'] == '1970-01-01'))) ? 'checked="checked"' : ''; ?>/> Set as forever
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label for="thumbnail_image">Thumbnail Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['thumbnail_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
+                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['thumbnail_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_article']; ?>" data-type="thumbnail">x</span>
                                         <?php endif; ?> 
                                     </div>
@@ -115,8 +115,8 @@
                                 <label for="primary_image">Primary Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['primary_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
+                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['primary_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_article']; ?>" data-type="primary">x</span>
                                         <?php endif; ?>
                                     </div>

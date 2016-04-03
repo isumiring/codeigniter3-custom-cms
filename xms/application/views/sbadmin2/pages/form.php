@@ -12,7 +12,7 @@
                 <?php echo $page_title; ?> Form
             </div>
             <div class="panel-body">
-                <?php echo form_open($form_action,'role="form" enctype="multipart/form-data" id="form-pages"'); ?>
+                <?php echo form_open($form_action, 'role="form" enctype="multipart/form-data" id="form-pages"'); ?>
                     <div class="row">
                         <div class="col-lg-8">
                             <div class="form-group">
@@ -128,7 +128,7 @@
                                 <label for="is_featured">Featured</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_featured" id="is_featured" <?php echo (isset($post['is_featured']) && ! empty($post['is_featured'])) ? 'checked="checked"' : ''; ?>/>Yes
+                                        <input type="checkbox" value="1" name="is_featured" id="is_featured" <?php echo (isset($post['is_featured']) && !empty($post['is_featured'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
                                 <label for="is_header">Show in Header</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_header" id="is_header" <?php echo (isset($post['is_header']) && ! empty($post['is_header'])) ? 'checked="checked"' : ''; ?>/>Yes
+                                        <input type="checkbox" value="1" name="is_header" id="is_header" <?php echo (isset($post['is_header']) && !empty($post['is_header'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
                                 <label for="is_footer">Show in Footer</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_footer" id="is_footer" <?php echo (isset($post['is_footer']) && ! empty($post['is_footer'])) ? 'checked="checked"' : ''; ?>/>Yes
+                                        <input type="checkbox" value="1" name="is_footer" id="is_footer" <?php echo (isset($post['is_footer']) && !empty($post['is_footer'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>
@@ -152,8 +152,8 @@
                                 <label for="thumbnail_image">Thumbnail Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['thumbnail_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
+                                        <?php if (isset($post['thumbnail_image']) && $post['thumbnail_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['thumbnail_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['thumbnail_image']; ?>" id="post-image-thumbnail" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_page']; ?>" data-type="thumbnail">x</span>
                                         <?php endif; ?> 
                                     </div>
@@ -171,8 +171,8 @@
                                 <label for="primary_image">Primary Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['primary_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
+                                        <?php if (isset($post['primary_image']) && $post['primary_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['primary_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['primary_image']; ?>" id="post-image-primary" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_page']; ?>" data-type="primary">x</span>
                                         <?php endif; ?>
                                     </div>
@@ -190,8 +190,8 @@
                                 <label for="background_image">Background Image</label>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
                                     <div class="fileinput-new thumbnail fileinput-upload" style="width: 200px; height: 150px;">
-                                        <?php if (isset($post['background_image']) && $post['background_image'] != '' && file_exists(UPLOAD_DIR. $this->router->fetch_class(). '/'.$post['background_image'])): ?>
-                                            <img src="<?php echo RELATIVE_UPLOAD_DIR. $this->router->fetch_class(). '/tmb_'.$post['background_image']; ?>" id="post-image-primary" />
+                                        <?php if (isset($post['background_image']) && $post['background_image'] != '' && file_exists(UPLOAD_DIR.$this->router->fetch_class().'/'.$post['background_image'])): ?>
+                                            <img src="<?php echo RELATIVE_UPLOAD_DIR.$this->router->fetch_class().'/tmb_'.$post['background_image']; ?>" id="post-image-primary" />
                                             <span class="btn btn-danger btn-delete-photo delete-picture" id="delete-picture" data-id="<?php echo $post['id_page']; ?>" data-type="background">x</span>
                                         <?php endif; ?>
                                     </div>

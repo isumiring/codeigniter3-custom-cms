@@ -22,14 +22,14 @@
                                     <li role="presentation" <?php echo ($row == 0) ? 'class="active"' : ''?>>
                                         <a href="#<?php echo $local['iso_2'].'-'.$local['id_localization']; ?>" aria-controls="<?php echo $local['iso_2'].'-'.$local['id_localization']; ?>" role="tab" data-toggle="tab">
                                             <?php echo ucfirst($local['locale']); ?>
-                                            <?php echo ($local['locale_status'] == 1)?' (Default)' : ''; ?>
+                                            <?php echo ($local['locale_status'] == 1) ? ' (Default)' : ''; ?>
                                         </a>
                                     </li>
                                     <?php endforeach; ?>
                                 </ul><!-- Nav tabs -->
                                 <!-- /.tab content -->
                                 <div class="tab-content">
-                                    <?php foreach ($locales as $row => $local): ?>
+                                    <?php foreach ($locales as $row => $local) : ?>
                                     <div role="tabpanel" class="tab-pane fade <?php echo ($row == 0) ? 'in active' : ''; ?>" id="<?php echo $local['iso_2'].'-'.$local['id_localization']; ?>">
                                         <div class="form-group">
                                             <label for="title_<?php echo $local['iso_1']; ?>">Title (<?php echo ucfirst($local['locale']); ?>)</label>
@@ -66,7 +66,7 @@
 
 <script type="text/javascript">
     $(function() {
-        <?php if ( ! isset($post['id_article_category'])): ?>
+        <?php if (!isset($post['id_article_category'])): ?>
         $(".seodef").keyup(function() {
             $("#uri_path").val(convert_to_uri(this.value));
         });

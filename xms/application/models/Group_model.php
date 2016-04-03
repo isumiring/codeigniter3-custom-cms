@@ -10,14 +10,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * 
  */
 class Group_model extends CI_Model
 {
     /**
      * Class constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -29,7 +28,7 @@ class Group_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetAllGroupData($param = [])
+    public function GetAllGroupData($param = [])
     {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
@@ -76,9 +75,9 @@ class Group_model extends CI_Model
      *
      * @return int $total_records total records
      */
-    function CountAllGroup($param = [])
+    public function CountAllGroup($param = [])
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
@@ -110,7 +109,7 @@ class Group_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetGroup($id)
+    public function GetGroup($id)
     {
         $data = $this->db
                 ->where('id_auth_group', $id)
@@ -128,7 +127,7 @@ class Group_model extends CI_Model
      *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param)
+    public function InsertRecord($param)
     {
         $this->db->insert('auth_group', $param);
         $last_id = $this->db->insert_id();
@@ -142,7 +141,7 @@ class Group_model extends CI_Model
      * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param)
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_auth_group', $id)
@@ -154,7 +153,7 @@ class Group_model extends CI_Model
      *
      * @param int $id
      */
-    function DeleteRecord($id)
+    public function DeleteRecord($id)
     {
         $this->db
             ->where('id_auth_group', $id)
@@ -168,7 +167,7 @@ class Group_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function MenusData($id_group = 0, $id_parent = 0)
+    public function MenusData($id_group = 0, $id_parent = 0)
     {
         if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
@@ -179,8 +178,8 @@ class Group_model extends CI_Model
                         SELECT id_auth_menu as id_auth,id_auth_group 
                         FROM {$this->db->dbprefix('auth_menu_group')} 
                         WHERE id_auth_group = {$id_group}
-                    ) AS {$this->db->dbprefix('auth_menu_group')}", 
-                    'auth_menu_group.id_auth = auth_menu.id_auth_menu', 
+                    ) AS {$this->db->dbprefix('auth_menu_group')}",
+                    'auth_menu_group.id_auth = auth_menu.id_auth_menu',
                     'left'
                 )
                 ->where('parent_auth_menu', $id_parent)
@@ -206,7 +205,7 @@ class Group_model extends CI_Model
      * @param int   $id_group
      * @param array $data
      */
-    function UpdateAuth($id_group, $data = [])
+    public function UpdateAuth($id_group, $data = [])
     {
         $this->db
             ->where('id_auth_group', $id_group)
@@ -216,7 +215,7 @@ class Group_model extends CI_Model
             $insert = [];
             foreach ($data as $row => $val) {
                 $insert[$row]['id_auth_group'] = $id_group;
-                $insert[$row]['id_auth_menu']  = $val;
+                $insert[$row]['id_auth_menu'] = $val;
             }
             $this->db->insert_batch('auth_menu_group', $insert);
         }
@@ -230,7 +229,7 @@ class Group_model extends CI_Model
      *
      * @return string $return
      */
-    function PrintAuthMenu($menus = [], $prefix = '')
+    public function PrintAuthMenu($menus = [], $prefix = '')
     {
         $return = '';
         if ($menus) {

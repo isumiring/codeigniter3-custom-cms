@@ -42,8 +42,8 @@ class Group extends CI_Controller
      */
     public function index()
     {
-        $this->data['add_url']        = site_url($this->class_path_name.'/add');
-        $this->data['url_data']       = site_url($this->class_path_name.'/list_data');
+        $this->data['add_url'] = site_url($this->class_path_name.'/add');
+        $this->data['url_data'] = site_url($this->class_path_name.'/list_data');
         $this->data['record_perpage'] = SHOW_RECORDS_DEFAULT;
     }
 
@@ -59,22 +59,22 @@ class Group extends CI_Controller
             $param['search_field'] = $post['columns'];
             if (isset($post['order'])) {
                 $param['order_field'] = $post['columns'][$post['order'][0]['column']]['data'];
-                $param['order_sort']  = $post['order'][0]['dir'];
+                $param['order_sort'] = $post['order'][0]['dir'];
             }
-            $param['row_from']         = $post['start'];
-            $param['length']           = $post['length'];
-            $count_all_records         = $this->Group_model->CountAllGroup();
-            $count_filtered_records    = $this->Group_model->CountAllGroup($param);
-            $records                   = $this->Group_model->GetAllGroupData($param);
-            $return                    = [];
-            $return['draw']            = $post['draw'];
-            $return['recordsTotal']    = $count_all_records;
+            $param['row_from'] = $post['start'];
+            $param['length'] = $post['length'];
+            $count_all_records = $this->Group_model->CountAllGroup();
+            $count_filtered_records = $this->Group_model->CountAllGroup($param);
+            $records = $this->Group_model->GetAllGroupData($param);
+            $return = [];
+            $return['draw'] = $post['draw'];
+            $return['recordsTotal'] = $count_all_records;
             $return['recordsFiltered'] = $count_filtered_records;
-            $return['data']            = [];
+            $return['data'] = [];
             foreach ($records as $row => $record) {
-                $return['data'][$row]['DT_RowId']      = $record['id'];
-                $return['data'][$row]['actions']       = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
-                $return['data'][$row]['auth_group']    = $record['auth_group'];
+                $return['data'][$row]['DT_RowId'] = $record['id'];
+                $return['data'][$row]['actions'] = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+                $return['data'][$row]['auth_group'] = $record['auth_group'];
                 $return['data'][$row]['authorization'] = '<a href="'.site_url($this->class_path_name.'/authorization/'.$record['id']).'">Auth</a>';
             }
             json_exit($return);
@@ -87,9 +87,9 @@ class Group extends CI_Controller
      */
     public function add()
     {
-        $this->data['page_title']  = 'Add';
+        $this->data['page_title'] = 'Add';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
-        $this->data['cancel_url']  = site_url($this->class_path_name);
+        $this->data['cancel_url'] = site_url($this->class_path_name);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm()) {
@@ -132,13 +132,13 @@ class Group extends CI_Controller
         if (!$record) {
             redirect($this->class_path_name);
         }
-        if ($record['is_superadmin'] == 1 && ! is_superadmin()) {
+        if ($record['is_superadmin'] == 1 && !is_superadmin()) {
             $this->session->set_flashdata('flash_message', alert_box('You don\'t have rights to manage this record. Please contact Your Administrator', 'danger'));
             redirect($this->class_path_name);
         }
-        $this->data['page_title']  = 'Edit';
+        $this->data['page_title'] = 'Edit';
         $this->data['form_action'] = site_url($this->class_path_name.'/edit/'.$id);
-        $this->data['cancel_url']  = site_url($this->class_path_name);
+        $this->data['cancel_url'] = site_url($this->class_path_name);
         if ($this->input->post()) {
             $post = $this->input->post();
             if ($this->validateForm($id)) {
@@ -178,13 +178,13 @@ class Group extends CI_Controller
             redirect($this->class_path_name);
         }
         $this->data['form_action'] = site_url($this->class_path_name.'/authorization/'.$id);
-        $this->data['cancel_url']  = site_url($this->class_path_name);
-        $record                    = $this->Group_model->GetGroup($id);
+        $this->data['cancel_url'] = site_url($this->class_path_name);
+        $record = $this->Group_model->GetGroup($id);
         if (!$record) {
             redirect($this->class_path_name);
         }
-        $this->data['page_title']     = 'Auth: '.$record['auth_group'];
-        $menu_data                    = $this->Group_model->MenusData($record['id_auth_group']);
+        $this->data['page_title'] = 'Auth: '.$record['auth_group'];
+        $menu_data = $this->Group_model->MenusData($record['id_auth_group']);
         $this->data['auth_menu_html'] = $this->Group_model->PrintAuthMenu($menu_data);
 
         if ($this->input->post()) {

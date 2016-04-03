@@ -37,7 +37,7 @@
                                 <label for="locale_status">Status</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="locale_status" id="locale_status" <?php echo (isset($post['locale_status']) && ! empty($post['locale_status'])) ? 'checked="checked"' : ''; ?>/> Default
+                                        <input type="checkbox" value="1" name="locale_status" id="locale_status" <?php echo (isset($post['locale_status']) && !empty($post['locale_status'])) ? 'checked="checked"' : ''; ?>/> Default
                                     </label>
                                 </div>
                             </div>

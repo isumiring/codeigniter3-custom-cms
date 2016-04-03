@@ -4,39 +4,38 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Localization Model Class.
- * 
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- * 
+ *
  * @version 3.0
- * 
+ *
  * @category Model
- * 
  */
 class Localization_model extends CI_Model
 {
     /**
      * Class constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
-    
+
     /**
      * Get all data.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return array|bool $data
      */
-    function GetAllData($param = []) 
+    public function GetAllData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i=0;
+            $i = 0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i==0) {
+                    if ($i == 0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -65,22 +64,22 @@ class Localization_model extends CI_Model
 
         return $data;
     }
-    
+
     /**
      * Count records.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return int $total_records total records
      */
-    function CountAllData($param = []) 
+    public function CountAllData($param = [])
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i=0;
+            $i = 0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i==0) {
+                    if ($i == 0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -96,62 +95,62 @@ class Localization_model extends CI_Model
 
         return $total_records;
     }
-    
+
     /**
      * Get localization detail.
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array|bool $data
      */
-    function GetLocalization($id) 
+    public function GetLocalization($id)
     {
         $data = $this->db
                 ->where('id_localization', $id)
                 ->limit(1)
                 ->get('localization')
                 ->row_array();
-        
+
         return $data;
     }
-    
+
     /**
      * Insert new record.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param) 
+    public function InsertRecord($param)
     {
         $this->db->insert('localization', $param);
         $last_id = $this->db->insert_id();
 
         return $last_id;
     }
-    
+
     /**
      * Update record.
-     * 
-     * @param int $id
+     *
+     * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param) 
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_localization', $id)
             ->update('localization', $param);
     }
-    
+
     /**
      * Check exists path.
-     * 
+     *
      * @param string $path
-     * @param int $id
-     * 
-     * @return boolean
+     * @param int    $id
+     *
+     * @return bool
      */
-    function CheckExistsPath($path, $id = 0) 
+    public function CheckExistsPath($path, $id = 0)
     {
         $this->db->where('LCASE(locale_path)', strtolower($path));
         if ($id) {
@@ -165,15 +164,15 @@ class Localization_model extends CI_Model
 
         return true;
     }
-    
+
     /**
      * Check default status.
-     * 
+     *
      * @param int $id
-     * 
-     * @return boolean true/false
+     *
+     * @return bool true/false
      */
-    function CheckDefault($id = 0) 
+    public function CheckDefault($id = 0)
     {
         $this->db->where('locale_status', 1);
         /*if ($id) {
@@ -190,10 +189,10 @@ class Localization_model extends CI_Model
 
     /**
      * Update localization status.
-     * 
+     *
      * @param int $id_localization
      */
-    function UpdateDefault($id_localization)
+    public function UpdateDefault($id_localization)
     {
         // update all to standard first
         $this->db->update('localization', ['locale_status' => 0]);
@@ -209,13 +208,12 @@ class Localization_model extends CI_Model
      *
      * @param int $id
      */
-    function DeleteRecord($id)
+    public function DeleteRecord($id)
     {
         $this->db
             ->where('id_localization', $id)
             ->delete('localization');
     }
-    
 }
 /* End of file Localization_model.php */
 /* Location: ./application/models/Localization_model.php */

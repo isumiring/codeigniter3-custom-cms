@@ -4,26 +4,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Article Model Class.
- * 
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- * 
+ *
  * @version 3.0
- * 
+ *
  * @category Model
- * 
  */
 class Article_model extends CI_Model
 {
     /**
      * Current Date.
-     * 
+     *
      * @var string
      */
     protected $date_now;
 
     /**
      * Current Date Time.
-     * 
+     *
      * @var string
      */
     protected $date_time_now;
@@ -31,19 +30,19 @@ class Article_model extends CI_Model
     /**
      * Class constructor.
      */
-    function __construct() 
+    public function __construct()
     {
         parent::__construct();
-        $this->date_now      = date('Y-m-d');
+        $this->date_now = date('Y-m-d');
         $this->date_time_now = date('Y-m-d H:i:s');
     }
-    
+
     /**
      * Get categories.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetCategories() 
+    public function GetCategories()
     {
         $data = $this->db
                 ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
@@ -52,18 +51,18 @@ class Article_model extends CI_Model
                 ->group_by('article_category.id_article_category')
                 ->get('article_category')
                 ->result_array();
-        
+
         return $data;
     }
-    
+
     /**
      * Count total records.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return int $total_records total records
      */
-    function CountArticles($param = []) 
+    public function CountArticles($param = [])
     {
         if (isset($param['conditions'])) {
             foreach ($param['conditions'] as $key => $val) {
@@ -80,20 +79,20 @@ class Article_model extends CI_Model
                 ->where('article.is_delete', 0)
                 ->where('publish_date <=', $this->date_now)
                 ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
                 ->count_all_results();
 
         return $total_records;
     }
-    
+
     /**
      * Get articles.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return array|bool $data
      */
-    function GetArticles($param = []) 
+    public function GetArticles($param = [])
     {
         if (isset($param['conditions'])) {
             foreach ($param['conditions'] as $key => $val) {
@@ -115,7 +114,7 @@ class Article_model extends CI_Model
             }
         }
         if (isset($param['order'])) {
-            $sort    = 'desc';
+            $sort = 'desc';
             $sort_by = 'id_article';
             if (isset($param['order']['field'])) {
                 $sort_by = $param['order']['field'];
@@ -147,7 +146,7 @@ class Article_model extends CI_Model
                 ->where('article.is_delete', 0)
                 ->where('publish_date <=', $this->date_now)
                 ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
                 ->order_by('publish_date', 'desc')
                 ->order_by('article.id_article', 'desc')
@@ -156,41 +155,41 @@ class Article_model extends CI_Model
 
         return $data;
     }
-    
+
     /**
      * Get category by uri.
-     * 
+     *
      * @param string $uri_path
-     * 
+     *
      * @return array|bool $data
      */
-    function GetCatagoryByURI($uri_path = '') 
+    public function GetCatagoryByURI($uri_path = '')
     {
-        if (! $uri_path) {
+        if (!$uri_path) {
             return false;
         }
         $data = $this->db
                 ->join('article_category_detail', 'article_category_detail.id_article_category = article_category.id_article_category', 'left')
                 ->join('localization', 'localization.id_localization=article_category_detail.id_localization', 'left')
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
-                ->where("LCASE(uri_path)", strtolower($uri_path))
+                ->where('LCASE(uri_path)', strtolower($uri_path))
                 ->limit(1)
                 ->get('article_category')
                 ->row_array();
-        
+
         return $data;
     }
-    
+
     /**
      * Get article info by URI.
-     * 
+     *
      * @param string $uri_path
-     * 
+     *
      * @return array|bool $data
      */
-    function GetArticleByURI($uri_path = '') 
+    public function GetArticleByURI($uri_path = '')
     {
-        if ( ! $uri_path) {
+        if (!$uri_path) {
             return false;
         }
         $data = $this->db
@@ -212,7 +211,7 @@ class Article_model extends CI_Model
                 ->where('publish_date <=', $this->date_now)
                 ->where("(expire_date >= '{$this->date_now}' OR expire_date IS NULL || expire_date = '0000-00-00')")
                 ->where("LCASE({$this->db->dbprefix('article')}.uri_path)", strtolower($uri_path))
-                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", "publish")
+                ->where("LCASE({$this->db->dbprefix('status')}.status_text)", 'publish')
                 ->where("LCASE({$this->db->dbprefix('localization')}.iso_1)", $this->lang->get_active_uri_lang())
                 ->order_by('article.id_article', 'desc')
                 ->limit(1)

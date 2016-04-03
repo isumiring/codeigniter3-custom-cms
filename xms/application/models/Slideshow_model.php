@@ -3,32 +3,30 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Slideshow Model Class
- * 
+ * Slideshow Model Class.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
- * 
+ *
  * @version 3.0
- * 
+ *
  * @category Model
- * 
  */
 class Slideshow_model extends CI_Model
 {
     /**
      * Class constructor.
-     * 
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
-    
+
     /**
      * Get localization list.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetLocalization() 
+    public function GetLocalization()
     {
         $data = $this->db
                 ->order_by('locale_status', 'desc')
@@ -38,13 +36,13 @@ class Slideshow_model extends CI_Model
 
         return $data;
     }
-    
+
     /**
      * Get default localization.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetDefaultLocalization() 
+    public function GetDefaultLocalization()
     {
         $data = $this->db
                 ->where('locale_status', 1)
@@ -54,13 +52,13 @@ class Slideshow_model extends CI_Model
 
         return $data;
     }
-    
+
     /**
      * Get status.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetStatus() 
+    public function GetStatus()
     {
         $data = $this->db
                 ->order_by('id_status', 'asc')
@@ -72,10 +70,10 @@ class Slideshow_model extends CI_Model
 
     /**
      * Get maximum position.
-     * 
+     *
      * @return int $max maximum position
      */
-    function GetMaxPosition() 
+    public function GetMaxPosition()
     {
         $data = $this->db
                 ->select_max('position', 'max_pos')
@@ -85,22 +83,22 @@ class Slideshow_model extends CI_Model
 
         return $max;
     }
-    
+
     /**
      * Get all data.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return array|bool $data
      */
-    function GetAllSlideshowData($param = []) 
+    public function GetAllSlideshowData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i=0;
+            $i = 0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i==0) {
+                    if ($i == 0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -123,10 +121,10 @@ class Slideshow_model extends CI_Model
             $this->db->order_by('id', 'desc');
         }
         $data = $this->db
-                ->select("*, slideshow.id_slideshow as id")
+                ->select('*, slideshow.id_slideshow as id')
                 ->join('status', 'status.id_status = slideshow.id_status', 'left')
                 ->join('slideshow_detail', 'slideshow_detail.id_slideshow = slideshow.id_slideshow', 'left')
-                ->join('localization','localization.id_localization = slideshow_detail.id_localization', 'left')
+                ->join('localization', 'localization.id_localization = slideshow_detail.id_localization', 'left')
                 ->where('slideshow.is_delete', 0)
                 ->where('localization.locale_status', 1)
                 ->get('slideshow')
@@ -134,22 +132,22 @@ class Slideshow_model extends CI_Model
 
         return $data;
     }
-    
+
     /**
      * Count records.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return int $total_records total records
      */
-    function CountAllSlideshow($param = []) 
+    public function CountAllSlideshow($param = [])
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
-            $i=0;
+            $i = 0;
             foreach ($param['search_field'] as $row => $val) {
                 if ($val['searchable'] == 'true') {
-                    if ($i==0) {
+                    if ($i == 0) {
                         $this->db->like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
                     } else {
                         $this->db->or_like('LCASE(`'.$val['data'].'`)', strtolower($param['search_value']));
@@ -163,22 +161,22 @@ class Slideshow_model extends CI_Model
                 ->from('slideshow')
                 ->join('status', 'status.id_status = slideshow.id_status', 'left')
                 ->join('slideshow_detail', 'slideshow_detail.id_slideshow = slideshow.id_slideshow', 'left')
-                ->join('localization','localization.id_localization = slideshow_detail.id_localization', 'left')
+                ->join('localization', 'localization.id_localization = slideshow_detail.id_localization', 'left')
                 ->where('slideshow.is_delete', 0)
                 ->where('localization.locale_status', 1)
                 ->count_all_results();
 
         return $total_records;
     }
-    
+
     /**
      * Get detail by id.
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return array|bool $data
      */
-    function GetSlideshow($id) 
+    public function GetSlideshow($id)
     {
         $data = $this->db
                 ->where('id_slideshow', $id)
@@ -195,76 +193,75 @@ class Slideshow_model extends CI_Model
                         ->get('slideshow_detail')
                         ->result_array();
             foreach ($locales as $row => $local) {
-                $data['locales'][$local['id_localization']]['title']   = $local['title'];
+                $data['locales'][$local['id_localization']]['title'] = $local['title'];
                 $data['locales'][$local['id_localization']]['caption'] = $local['caption'];
             }
         }
 
         return $data;
     }
-    
+
     /**
      * Insert new record.
-     * 
+     *
      * @param array $param
-     * 
+     *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param) 
+    public function InsertRecord($param)
     {
         $this->db->insert('slideshow', $param);
         $last_id = $this->db->insert_id();
 
         return $last_id;
     }
-    
+
     /**
      * Insert detail record.
-     * 
+     *
      * @param array $param
      */
-    function InsertDetailRecord($param) 
+    public function InsertDetailRecord($param)
     {
         $this->db->insert_batch('slideshow_detail', $param);
     }
-    
+
     /**
      * Update record.
-     * 
-     * @param int $id
+     *
+     * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param) 
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_slideshow', $id)
             ->update('slideshow', $param);
     }
-    
+
     /**
      * Delete record.
-     * 
+     *
      * @param int $id
      */
-    function DeleteRecord($id) 
+    public function DeleteRecord($id)
     {
         $this->db
             ->where('id_slideshow', $id)
             ->update('slideshow', ['is_delete' => 1]);
     }
-    
+
     /**
      * Delete detail record.
-     * 
+     *
      * @param int $id
      */
-    function DeleteDetailRecordByID($id) 
+    public function DeleteDetailRecordByID($id)
     {
         $this->db
             ->where('id_slideshow', $id)
             ->delete('slideshow_detail');
     }
-    
 }
 /* End of file Slideshow_model.php */
 /* Location: ./application/models/Slideshow_model.php */
