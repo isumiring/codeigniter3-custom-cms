@@ -22,8 +22,8 @@ application/logs/*
 
 
 
-*/config/development
-*/config/production
+**/config/development
+**/config/production
 */logs/log-*.php
 */logs/!index.html
 */cache/*

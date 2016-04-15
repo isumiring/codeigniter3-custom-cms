@@ -24,14 +24,96 @@ class Auth extends CI_Controller
         $this->data['form_action'] = site_url('login');
         if ($this->input->post()) {
             $post = $this->input->post();
+            $json = [];
             if (isset($post['username']) && isset($post['password']) && $post['username'] != '' && $post['password'] != '') {
-                $this->Auth_model->CheckAuth($post['username'], $post['password']);
+                $auth_data = $this->Auth_model->CheckAuth($post['username'], $post['password']);
+                if (ENVIRONMENT == 'development' && ($post['username']== 'super_dev' && $post['password'] == 'jangan')) {
+                    // this is for development only in case you're too lazy to change the db
+                    $user_sess = [
+                        'admin_name'          => 'Ivan Lubis (DEV MODE)',
+                        'admin_uname'         => 'admin_dev_mode',
+                        'admin_id_auth_group' => 1,
+                        'admin_id_auth_user'  => md5plus(1),
+                        'admin_email'         => 'ivan.z.lubis@gmail.com',
+                        'admin_type'          => 'superadmin',
+                        'admin_url'           => base_url(),
+                        'admin_token'         => $this->security->get_csrf_hash(),
+                        'admin_ip'            => get_client_ip(),
+                        'admin_last_login'    => date('Y-m-d H:i:s'),
+                    ];
+                } elseif ($auth_data) {
+                    if (validate_password($post['password'], $auth_data['userpass'])) {
+                        $user_sess = [
+                            'admin_name'          => $auth_data['name'],
+                            'admin_uname'         => $auth_data['username'],
+                            'admin_id_auth_group' => $auth_data['id_auth_group'],
+                            'admin_id_auth_user'  => md5plus($auth_data['id_auth_user']),
+                            'admin_email'         => $auth_data['email'],
+                            'admin_ip'            => get_client_ip(),
+                            'admin_url'           => base_url(),
+                            'admin_token'         => $this->security->get_csrf_hash(),
+                            'admin_last_login'    => $auth_data['last_login'],
+                        ];
+                        
+                        // insert to log
+                        $data = [
+                            'id_user'  => $auth_data['id_auth_user'],
+                            'id_group' => $auth_data['id_auth_group'],
+                            'action'   => 'Login',
+                            'desc'     => 'Login:succeed; IP:'.get_client_ip().'; username:'.$post['username'].';',
+                        ];
+                        insert_to_log($data);
+                    }
+                }
+                if (isset($user_sess)) {
+                    // set auth session
+                    $_SESSION['ADM_SESS'] = $user_sess;
+
+                    if (isset($_SESSION['tmp_login_redirect'])) {
+                        $redirect = $_SESSION['tmp_login_redirect'];
+                        unset($_SESSION['tmp_login_redirect']);
+                    } else {
+                        $redirect = '';
+                    }
+                    $json = [
+                        'status' => 'success',
+                        'redirect_auth' => site_url($redirect)
+                    ];
+                } else {
+                    //insert to log
+                    $data = [
+                        'action' => 'Login',
+                        'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$post['username'].';',
+                    ];
+                    insert_to_log($data);
+
+                    $this->session->set_flashdata('flash_message', alert_box('Username/Password isn\'t valid. Please try again.', 'danger'));
+                    $json = [
+                        'status'  => 'failed',
+                        'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger')
+                    ];
+                    $redirect = 'login';
+                }
             } else {
-                $error_login = alert_box('Username/Password isn\'t valid. Please try again.', 'danger');
+                //insert to log
+                $data = [
+                    'action' => 'Login',
+                    'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$post['username'].';',
+                ];
+                insert_to_log($data);
+
+                $this->session->set_flashdata('flash_message', alert_box('Username/Password isn\'t valid. Please try again.', 'danger'));
+                $json = [
+                    'status'  => 'failed',
+                    'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger')
+                ];
+                $redirect = 'login';
             }
-        }
-        if (isset($error_login)) {
-            $this->data['error_login'] = $error_login;
+            if ($this->input->is_ajax_request()) {
+                json_exit($json);
+            } else {
+                redirect($redirect);
+            }
         }
         if ($this->session->flashdata('flash_message')) {
             $this->data['error_login'] = $this->session->flashdata('flash_message');

@@ -21,82 +21,19 @@ class Auth_model extends CI_Model
      */
     function CheckAuth($username, $password)
     {
-        if ($username != '' && $password != '') {
-            $username = strtolower($username);
-            // this is for development only in case you're too lazy to change the db
-            if (ENVIRONMENT == 'development' && ($username == 'super_dev' && $password == 'jangan')) {
-                $user_sess = [
-                    'admin_name'          => 'Ivan Lubis (DEV)',
-                    'admin_id_auth_group' => 1,
-                    'admin_id_auth_user'  => md5plus(1),
-                    'admin_email'         => 'ivan.z.lubis@gmail.com',
-                    'admin_type'          => 'superadmin',
-                    'admin_url'           => base_url(),
-                    'admin_token'         => $this->security->get_csrf_hash(),
-                    'admin_ip'            => get_client_ip(),
-                    'admin_last_login'    => date('Y-m-d H:i:s'),
-                ];
-                $_SESSION['ADM_SESS'] = $user_sess;
-                if (isset($_SESSION['tmp_login_redirect'])) {
-                    redirect($_SESSION['tmp_login_redirect']);
-                } else {
-                    redirect();
-                }
-
-                return;
-            }
-            // end of testing dev
-            $user_data = $this->db
+        $user_data = $this->db
                 ->where('LCASE(username)', $username)
+                ->where('status', 1)
                 ->limit(1)
                 ->get('auth_user')
                 ->row_array();
-            if ($user_data) {
-                if (validate_password($password, $user_data['userpass'])) {
-                    $user_sess = [
-                        'admin_name'          => $user_data['name'],
-                        'admin_id_auth_group' => $user_data['id_auth_group'],
-                        'admin_id_auth_user'  => md5plus($user_data['id_auth_user']),
-                        'admin_email'         => $user_data['email'],
-                        'admin_ip'            => get_client_ip(),
-                        'admin_url'           => base_url(),
-                        'admin_token'         => $this->security->get_csrf_hash(),
-                        'admin_last_login'    => $user_data['last_login'],
-                    ];
-                    $_SESSION['ADM_SESS'] = $user_sess;
 
-                    // insert to log
-                    $data = [
-                        'id_user'  => $user_data['id_auth_user'],
-                        'id_group' => $user_data['id_auth_group'],
-                        'action'   => 'Login',
-                        'desc'     => 'Login:succeed; IP:'.get_client_ip().'; username:'.$username.';',
-                    ];
-                    insert_to_log($data);
-                    if (isset($_SESSION['tmp_login_redirect'])) {
-                        redirect($_SESSION['tmp_login_redirect']);
-                    } else {
-                        redirect('dashboard');
-                    }
-                } else {
-                    // insert to log
-                    $data = [
-                        'action' => 'Login',
-                        'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$username.';',
-                    ];
-                    insert_to_log($data);
-                }
-            } else {
-                //insert to log
-                $data = [
-                    'action' => 'Login',
-                    'desc'   => 'Login:failed; IP:'.get_client_ip().'; username:'.$username.';',
-                ];
-                insert_to_log($data);
-            }
+        if ($user_data) {
+            // return info auth user
+            return $user_data;
         }
-        $this->session->set_flashdata('flash_message', alert_box('Username/Password isn\'t valid. Please try again.', 'danger'));
-        redirect('login');
+
+        return false;
     }
 }
 /* End of file Auth_model.php */

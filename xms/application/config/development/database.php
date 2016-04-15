@@ -62,11 +62,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group  = 'default';
 $query_builder = TRUE;
 
-$db['default'] = array(
+$db['default'] = [
 	'dsn'          => '',
 	'hostname'     => 'localhost',
-	'username'     => 'fatty',
-	'password'     => 'anukan123',
+	'username'     => 'root',
+	'password'     => '',
 	'database'     => 'fat_cms',
 	'dbdriver'     => 'mysqli',
 	'dbprefix'     => 'fat_',
@@ -80,6 +80,6 @@ $db['default'] = array(
 	'encrypt'      => FALSE,
 	'compress'     => FALSE,
 	'stricton'     => FALSE,
-	'failover'     => array(),
+	'failover'     => [],
 	'save_queries' => TRUE
-);
+];

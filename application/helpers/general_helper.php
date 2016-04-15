@@ -520,7 +520,7 @@ function check_image_type($source_pic)
         'image/wbmp',
     ];
 
-    if ($image_info && in_array($allowed_type, $image_info)) {
+    if ($image_info && in_array($image_info, $allowed_type)) {
         return true;
     }
 
@@ -556,7 +556,7 @@ function check_file_type($source)
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
 
-    if ($file_info && in_array($allowed_type, $file_info)) {
+    if ($file_info && in_array($file_info, $allowed_type)) {
         return true;
     }
 

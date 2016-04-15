@@ -34,6 +34,23 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+        <!-- jQuery -->
+        <script src="<?php echo $GLOBAL_JS_URL; ?>jquery.min.js"></script>
+
+        <!-- global var js -->
+        <script type="text/javascript">
+            var base_url         = '<?php echo base_url(); ?>';
+            var current_ctrl     = '<?php echo current_controller(); ?>';
+            var current_url      = '<?php echo current_url(); ?>';
+            var assets_url       = '<?php echo $ASSETS_URL; ?>';
+            var token_name       = '<?php echo $this->security->get_csrf_token_name(); ?>';
+            var token_key        = '<?php echo $this->security->get_csrf_hash(); ?>';
+            var objToken         = {};
+            objToken[token_name] = token_key;
+        </script>
+
+        <script src="<?php echo $GLOBAL_JS_URL; ?>custom.js"></script>
+
     </head>
 
     <body>
@@ -49,17 +66,20 @@
             </div>
         </div>
 
-        <!-- jQuery -->
-        <script src="<?php echo $GLOBAL_JS_URL; ?>jquery.min.js"></script>
-
         <!-- Bootstrap Core JavaScript -->
         <script src="<?php echo $JS_URL; ?>bootstrap.min.js"></script>
-
-        <!-- Metis Menu Plugin JavaScript -->
-        <script src="<?php echo $JS_URL; ?>metisMenu.min.js"></script>
-
+        
         <!-- Custom Theme JavaScript -->
         <script src="<?php echo $JS_URL; ?>sb-admin-2.js"></script>
+
+        <script type="text/javascript">
+            $(document).ajaxSuccess(function( event, request, settings, data) {
+                if (data['redirect_auth']) {
+                    window.location = data['redirect_auth'];
+                    return;
+                }
+            });
+        </script>
 
     </body>
 
