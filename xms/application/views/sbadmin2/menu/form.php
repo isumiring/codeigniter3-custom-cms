@@ -41,7 +41,7 @@
                                 <label for="is_superadmin">Super Administrator</label>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?php echo (isset($post['is_superadmin']) && ! empty($post['is_superadmin'])) ? 'checked="checked"' : ''; ?>/>Yes
+                                        <input type="checkbox" value="1" name="is_superadmin" id="is_superadmin" <?php echo (isset($post['is_superadmin']) && !empty($post['is_superadmin'])) ? 'checked="checked"' : ''; ?>/>Yes
                                     </label>
                                 </div>
                             </div>

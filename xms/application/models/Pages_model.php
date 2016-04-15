@@ -10,54 +10,55 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @version 3.0
  *
  * @category Model
- * 
  */
 class Pages_model extends CI_Model
 {
     /**
      * constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
-    
+
     /**
      * Get localization list.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetLocalization() 
+    public function GetLocalization()
     {
         $data = $this->db
                 ->order_by('locale_status', 'desc')
                 ->order_by('id_localization', 'asc')
                 ->get('localization')
                 ->result_array();
+
         return $data;
     }
-    
+
     /**
      * Get default localization.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetDefaultLocalization() 
+    public function GetDefaultLocalization()
     {
         $data = $this->db
                 ->where('locale_status', 1)
                 ->limit(1)
                 ->get('localization')
                 ->row_array();
+
         return $data;
     }
 
     /**
      * Get status.
-     * 
+     *
      * @return array|bool $data
      */
-    function GetStatus()
+    public function GetStatus()
     {
         $data = $this->db
                 ->order_by('id_status', 'asc')
@@ -72,7 +73,7 @@ class Pages_model extends CI_Model
      *
      * @return int $max maximum position
      */
-    function GetMaxPosition()
+    public function GetMaxPosition()
     {
         $data = $this->db
                 ->select_max('position', 'max_pos')
@@ -87,10 +88,10 @@ class Pages_model extends CI_Model
      * Get all data.
      *
      * @param array $param
-     * 
+     *
      * @return array|bool $data
      */
-    function GetAllData($param = [])
+    public function GetAllData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -144,7 +145,7 @@ class Pages_model extends CI_Model
      *
      * @return int $total_records total records
      */
-    function CountAllData($param = [])
+    public function CountAllData($param = [])
     {
         if (is_array($param) && isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -182,10 +183,10 @@ class Pages_model extends CI_Model
      * Get detail by id.
      *
      * @param int $id
-     * 
+     *
      * @return array|bool $data
      */
-    function GetPages($id)
+    public function GetPages($id)
     {
         $data = $this->db
                 ->where('id_page', $id)
@@ -201,11 +202,12 @@ class Pages_model extends CI_Model
                         ->get('pages_detail')
                         ->result_array();
             foreach ($locales as $row => $local) {
-                $data['locales'][$local['id_localization']]['title']       = $local['title'];
-                $data['locales'][$local['id_localization']]['teaser']      = $local['teaser'];
+                $data['locales'][$local['id_localization']]['title'] = $local['title'];
+                $data['locales'][$local['id_localization']]['teaser'] = $local['teaser'];
                 $data['locales'][$local['id_localization']]['description'] = $local['description'];
             }
         }
+
         return $data;
     }
 
@@ -216,20 +218,20 @@ class Pages_model extends CI_Model
      *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param)
+    public function InsertRecord($param)
     {
         $this->db->insert('pages', $param);
         $last_id = $this->db->insert_id();
 
         return $last_id;
     }
-    
+
     /**
      * Insert detail record.
-     * 
+     *
      * @param array $param
      */
-    function InsertDetailRecord($param) 
+    public function InsertDetailRecord($param)
     {
         $this->db->insert_batch('pages_detail', $param);
     }
@@ -240,7 +242,7 @@ class Pages_model extends CI_Model
      * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param)
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_page', $id)
@@ -252,19 +254,19 @@ class Pages_model extends CI_Model
      *
      * @param int $id
      */
-    function DeleteRecord($id)
+    public function DeleteRecord($id)
     {
         $this->db
             ->where('id_page', $id)
             ->update('pages', ['is_delete' => 1]);
     }
-    
+
     /**
      * Delete detail records by id.
-     * 
+     *
      * @param int $id
      */
-    function DeleteDetailRecordByID($id) 
+    public function DeleteDetailRecordByID($id)
     {
         $this->db
             ->where('id_page', $id)
@@ -275,10 +277,10 @@ class Pages_model extends CI_Model
      * Get parent menu data hierarcy.
      *
      * @param int $id_parent
-     * 
+     *
      * @return array|bool $data
      */
-    function MenusData($id_parent = 0)
+    public function MenusData($id_parent = 0)
     {
         $data = $this->db
                 ->select('id_page as id, parent_page as parent_id, page_name as menu')
@@ -305,7 +307,7 @@ class Pages_model extends CI_Model
      *
      * @return string $return
      */
-    function PrintMenu($menus = [], $prefix = '', $selected = '', $disabled = [])
+    public function PrintMenu($menus = [], $prefix = '', $selected = '', $disabled = [])
     {
         $return = '';
         if ($menus) {
@@ -337,7 +339,7 @@ class Pages_model extends CI_Model
      *
      * @return array $return
      */
-    function MenusIdChildrenTaxonomy($id_menu)
+    public function MenusIdChildrenTaxonomy($id_menu)
     {
         $return = [];
         $data = $this->db
@@ -349,7 +351,7 @@ class Pages_model extends CI_Model
         foreach ($data as $row) {
             $return[] = $row['id_page'];
             $children = $this->MenusIdChildrenTaxonomy($row['id_page']);
-            $return   = array_merge($return, $children);
+            $return = array_merge($return, $children);
         }
 
         $return[] = $id_menu;

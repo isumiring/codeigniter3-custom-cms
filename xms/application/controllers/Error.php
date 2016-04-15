@@ -4,8 +4,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Error Class.
- *     Error Controller, this is just redirect from error handler so you can customize
- *     
+ *     Error Controller, this is just redirect from error handler so you can customize.
+ *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
  * @version 3.0

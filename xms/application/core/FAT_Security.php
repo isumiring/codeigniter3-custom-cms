@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Security Class Extension.
- *     extension of security class
+ *     extension of security class.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *

@@ -19,15 +19,15 @@ class Auth extends CI_Controller
     public function login()
     {
         $this->load->model('Auth_model');
-        $this->layout              = 'login';
-        $this->data['page_title']  = 'Login';
+        $this->layout = 'login';
+        $this->data['page_title'] = 'Login';
         $this->data['form_action'] = site_url('login');
         if ($this->input->post()) {
             $post = $this->input->post();
             $json = [];
             if (isset($post['username']) && isset($post['password']) && $post['username'] != '' && $post['password'] != '') {
                 $auth_data = $this->Auth_model->CheckAuth($post['username'], $post['password']);
-                if (ENVIRONMENT == 'development' && ($post['username']== 'super_dev' && $post['password'] == 'jangan')) {
+                if (ENVIRONMENT == 'development' && ($post['username'] == 'super_dev' && $post['password'] == 'jangan')) {
                     // this is for development only in case you're too lazy to change the db
                     $user_sess = [
                         'admin_name'          => 'Ivan Lubis (DEV MODE)',
@@ -54,7 +54,7 @@ class Auth extends CI_Controller
                             'admin_token'         => $this->security->get_csrf_hash(),
                             'admin_last_login'    => $auth_data['last_login'],
                         ];
-                        
+
                         // insert to log
                         $data = [
                             'id_user'  => $auth_data['id_auth_user'],
@@ -76,8 +76,8 @@ class Auth extends CI_Controller
                         $redirect = '';
                     }
                     $json = [
-                        'status' => 'success',
-                        'redirect_auth' => site_url($redirect)
+                        'status'        => 'success',
+                        'redirect_auth' => site_url($redirect),
                     ];
                 } else {
                     //insert to log
@@ -90,7 +90,7 @@ class Auth extends CI_Controller
                     $this->session->set_flashdata('flash_message', alert_box('Username/Password isn\'t valid. Please try again.', 'danger'));
                     $json = [
                         'status'  => 'failed',
-                        'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger')
+                        'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger'),
                     ];
                     $redirect = 'login';
                 }
@@ -105,7 +105,7 @@ class Auth extends CI_Controller
                 $this->session->set_flashdata('flash_message', alert_box('Username/Password isn\'t valid. Please try again.', 'danger'));
                 $json = [
                     'status'  => 'failed',
-                    'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger')
+                    'message' => alert_box('Username/Password isn\'t valid. Please try again.', 'danger'),
                 ];
                 $redirect = 'login';
             }

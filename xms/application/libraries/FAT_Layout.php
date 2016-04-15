@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Layout Class.
- *     library class that load to display layouts
+ *     library class that load to display layouts.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
@@ -15,8 +15,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class FAT_Layout
 {
     /**
-     * Load Codeigniter Super Object
-     * 
+     * Load Codeigniter Super Object.
+     *
      * @var object
      */
     protected $CI;
@@ -35,35 +35,35 @@ class FAT_Layout
         }
 
         // set data
-        $dir                        = $this->CI->router->directory;
-        $class                      = $this->CI->router->fetch_class();
-        $method                     = $this->CI->router->fetch_method();
-        $method                     = ($method == 'index') ? $class : $method;
-        $data                       = (isset($this->CI->data)) ? $this->CI->data : [];
+        $dir = $this->CI->router->directory;
+        $class = $this->CI->router->fetch_class();
+        $method = $this->CI->router->fetch_method();
+        $method = ($method == 'index') ? $class : $method;
+        $data = (isset($this->CI->data)) ? $this->CI->data : [];
         $data['current_controller'] = base_url().$dir.$class.'/';
         if (isset($data['current_path'])) {
             $current_path = str_replace(base_url().$dir, '', current_url());
         } else {
             $current_path = $class;
         }
-        $page_info           = $this->GetPageInfoByFile($class);
-        $id_auth_menu        = $page_info['id_auth_menu'];
-        $data['base_url']    = base_url();
+        $page_info = $this->GetPageInfoByFile($class);
+        $id_auth_menu = $page_info['id_auth_menu'];
+        $data['base_url'] = base_url();
         $data['current_url'] = current_url();
         if (isset($_SESSION['ADM_SESS'])) {
             $data['ADM_SESSION'] = $_SESSION['ADM_SESS'];
         }
-        $data['flash_message']      = $this->CI->session->flashdata('flash_message');
+        $data['flash_message'] = $this->CI->session->flashdata('flash_message');
         $data['persistent_message'] = (isset($_SESSION['persistent_message'])) ? $_SESSION['persistent_message'] : '';
-        
-        $data['auth_sess']          = (isset($_SESSION['ADM_SESS'])) ? $_SESSION['ADM_SESS'] : [];
-        $data['site_setting']       = get_sitesetting();
-        $data['site_info']          = get_site_info();
-        $data['page_title']         = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
-        
-        $menus                      = $this->MenusData();
-        $ids[]                      = $id_auth_menu;
-        $menus_ids                  = [];
+
+        $data['auth_sess'] = (isset($_SESSION['ADM_SESS'])) ? $_SESSION['ADM_SESS'] : [];
+        $data['site_setting'] = get_sitesetting();
+        $data['site_info'] = get_site_info();
+        $data['page_title'] = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
+
+        $menus = $this->MenusData();
+        $ids[] = $id_auth_menu;
+        $menus_ids = [];
         if (isset($page_info['parent_auth_menu'])) {
             $menus_ids = $this->ActiveMenuIds($page_info['parent_auth_menu'], $ids);
         }
@@ -85,18 +85,18 @@ class FAT_Layout
         $template_dir = getActiveThemes();
         // default
         $data['GLOBAL_ASSETS_URL'] = PATH_CMS.'assets/default/';
-        $data['GLOBAL_IMG_URL']    = $data['GLOBAL_ASSETS_URL'].'img/';
-        $data['GLOBAL_CSS_URL']    = $data['GLOBAL_ASSETS_URL'].'css/';
-        $data['GLOBAL_JS_URL']     = $data['GLOBAL_ASSETS_URL'].'js/';
+        $data['GLOBAL_IMG_URL'] = $data['GLOBAL_ASSETS_URL'].'img/';
+        $data['GLOBAL_CSS_URL'] = $data['GLOBAL_ASSETS_URL'].'css/';
+        $data['GLOBAL_JS_URL'] = $data['GLOBAL_ASSETS_URL'].'js/';
         $data['GLOBAL_VENDOR_URL'] = $data['GLOBAL_ASSETS_URL'].'vendor/';
-        $data['GLOBAL_LIBS_URL']   = $data['GLOBAL_ASSETS_URL'].'libs/';
+        $data['GLOBAL_LIBS_URL'] = $data['GLOBAL_ASSETS_URL'].'libs/';
         // active template
         $data['ASSETS_URL'] = PATH_CMS.'assets/'.$template_dir.'/';
-        $data['IMG_URL']    = $data['ASSETS_URL'].'img/';
-        $data['CSS_URL']    = $data['ASSETS_URL'].'css/';
-        $data['JS_URL']     = $data['ASSETS_URL'].'js/';
+        $data['IMG_URL'] = $data['ASSETS_URL'].'img/';
+        $data['CSS_URL'] = $data['ASSETS_URL'].'css/';
+        $data['JS_URL'] = $data['ASSETS_URL'].'js/';
         $data['VENDOR_URL'] = $data['ASSETS_URL'].'vendor/';
-        $data['LIBS_URL']   = $data['ASSETS_URL'].'libs/';
+        $data['LIBS_URL'] = $data['ASSETS_URL'].'libs/';
 
         if (isset($data['template'])) {
             $data['content'] = $this->CI->load->view($template_dir.'/'.$data['template'], $data, true);
@@ -156,7 +156,7 @@ class FAT_Layout
     {
         $i = 0;
         $id_group = id_auth_group();
-        if ( ! $id_group) {
+        if (!$id_group) {
             return;
         }
         $this->CI = &get_instance();
@@ -178,10 +178,10 @@ class FAT_Layout
     }
 
     /**
-     * Active Menu Ids 
-     *     return array for listing hierarcy active menu
-     *     
-     * @param int $id_parent
+     * Active Menu Ids
+     *     return array for listing hierarcy active menu.
+     *
+     * @param int   $id_parent
      * @param array &$ids
      *
      * @return array $ids;
@@ -190,7 +190,7 @@ class FAT_Layout
     {
         $this->CI = &get_instance();
         $this->CI->load->database();
-        if ( ! $id_parent) {
+        if (!$id_parent) {
             return $ids;
         }
         $data = $this->CI->db

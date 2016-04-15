@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Profile Class.
- *     Profile page for every admin user
+ *     Profile page for every admin user.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *
@@ -45,25 +45,25 @@ class Profile extends CI_Controller
     {
         $id = id_auth_user();
         $id_group = id_auth_group();
-        if ( ! $id || ! $id_group) {
+        if (!$id || !$id_group) {
             redirect();
         }
-        $this->data['page_title']      = 'Profile';
-        $this->data['form_action']     = site_url($this->class_path_name);
+        $this->data['page_title'] = 'Profile';
+        $this->data['form_action'] = site_url($this->class_path_name);
         $this->data['changepass_form'] = site_url($this->class_path_name.'/change_pass');
-        $detail                        = $this->Admin_model->GetAdmin($id);
-        $post                          = $detail;
+        $detail = $this->Admin_model->GetAdmin($id);
+        $post = $detail;
 
         if ($this->input->post()) {
             if ($this->validateForm()) {
-                $post      = $this->input->post();
-                $now       = date('Y-m-d H:i:s');
+                $post = $this->input->post();
+                $now = date('Y-m-d H:i:s');
                 $data_post = [
-                    'name'        => $post['name'],
-                    'email'       => strtolower($post['email']),
-                    'phone'       => $post['phone'],
+                    'name'         => $post['name'],
+                    'email'        => strtolower($post['email']),
+                    'phone'        => $post['phone'],
                     'address'      => $post['address'],
-                    'modify_date' => $now,
+                    'modify_date'  => $now,
                 ];
 
                 // update data
@@ -84,10 +84,10 @@ class Profile extends CI_Controller
                     $this->Admin_model->UpdateRecord($id, ['image' => $picture_db]);
                 }
 
-                $user_session                = $_SESSION['ADM_SESS'];
-                $user_session['admin_name']  = $post['name'];
+                $user_session = $_SESSION['ADM_SESS'];
+                $user_session['admin_name'] = $post['name'];
                 $user_session['admin_email'] = strtolower($post['email']);
-                
+
                 $_SESSION['ADM_SESS'] = $user_session;
 
                 // insert to log
@@ -121,14 +121,14 @@ class Profile extends CI_Controller
     {
         $this->layout = 'none';
         if ($this->input->is_ajax_request() && $this->input->post()) {
-            $json   = [];
-            $post   = $this->input->post();
-            $id     = id_auth_user();
+            $json = [];
+            $post = $this->input->post();
+            $id = id_auth_user();
             $detail = $this->Admin_model->GetAdmin($id);
-            if ( ! $id || ! $detail) {
+            if (!$id || !$detail) {
                 $json['location'] = site_url('home');
             }
-            if ( ! $this->validatePassword($detail)) {
+            if (!$this->validatePassword($detail)) {
                 $json['error'] = $this->error;
             }
             if (!$json) {
@@ -147,7 +147,7 @@ class Profile extends CI_Controller
                 ];
                 insert_to_log($data_log);
                 // end insert to log
-                $json['success']  = alert_box('Your Password has been changed.', 'success');
+                $json['success'] = alert_box('Your Password has been changed.', 'success');
                 $json['redirect'] = site_url('profile');
                 $this->session->set_flashdata('form_message', $json['success']);
             }
@@ -163,7 +163,7 @@ class Profile extends CI_Controller
      */
     private function validateForm()
     {
-        $id   = id_auth_user();
+        $id = id_auth_user();
         $post = $this->input->post();
         $config = [
             [
@@ -204,7 +204,7 @@ class Profile extends CI_Controller
      */
     private function validatePassword($user_data)
     {
-        $post   = $this->input->post();
+        $post = $this->input->post();
         $config = [
             [
                 'field' => 'old_password',
@@ -228,7 +228,7 @@ class Profile extends CI_Controller
 
             return false;
         } else {
-            if ( ! validate_password($post['old_password'], $user_data['userpass']) && $user_data['userpass'] != '') {
+            if (!validate_password($post['old_password'], $user_data['userpass']) && $user_data['userpass'] != '') {
                 $this->error = alert_box('Your Old Password is incorrect.', 'danger');
 
                 return false;
@@ -248,7 +248,7 @@ class Profile extends CI_Controller
      */
     public function check_email_exists($string, $id = 0)
     {
-        if ( ! $this->Admin_model->checkExistsEmail($string, $id)) {
+        if (!$this->Admin_model->checkExistsEmail($string, $id)) {
             $this->form_validation->set_message('check_email_exists', '{field} is already exists. Please use different {field}');
 
             return false;
