@@ -16,7 +16,7 @@ class Admin_model extends CI_Model
     /**
      * Class constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -26,9 +26,9 @@ class Admin_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetGroups()
+    public function GetGroups()
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('is_superadmin', 0);
         }
         $data = $this->db
@@ -46,9 +46,9 @@ class Admin_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetAllData($param = [])
+    public function GetAllData($param = [])
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('auth_user.is_superadmin', 0);
             $this->db->where('auth_group.is_superadmin', 0);
         }
@@ -95,9 +95,9 @@ class Admin_model extends CI_Model
      *
      * @return int $total_records total records
      */
-    function CountAllData($param = [])
+    public function CountAllData($param = [])
     {
-        if ( ! is_superadmin()) {
+        if (!is_superadmin()) {
             $this->db->where('auth_user.is_superadmin', 0);
             $this->db->where('auth_group.is_superadmin', 0);
         }
@@ -131,7 +131,7 @@ class Admin_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetAdmin($id)
+    public function GetAdmin($id)
     {
         $data = $this->db
                 ->where('id_auth_user', $id)
@@ -149,7 +149,7 @@ class Admin_model extends CI_Model
      *
      * @return int $last_id last inserted id
      */
-    function InsertRecord($param)
+    public function InsertRecord($param)
     {
         $this->db->insert('auth_user', $param);
         $last_id = $this->db->insert_id();
@@ -163,7 +163,7 @@ class Admin_model extends CI_Model
      * @param int   $id
      * @param array $param
      */
-    function UpdateRecord($id, $param)
+    public function UpdateRecord($id, $param)
     {
         $this->db
             ->where('id_auth_user', $id)
@@ -175,7 +175,7 @@ class Admin_model extends CI_Model
      *
      * @param int $id
      */
-    function DeleteRecord($id)
+    public function DeleteRecord($id)
     {
         $this->db
             ->where('id_auth_user', $id)
@@ -190,7 +190,7 @@ class Admin_model extends CI_Model
      *
      * @return bool true/false
      */
-    function checkExistsEmail($email, $id = 0)
+    public function checkExistsEmail($email, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);
@@ -214,7 +214,7 @@ class Admin_model extends CI_Model
      *
      * @return bool true/false
      */
-    function checkExistsUsername($username, $id = 0)
+    public function checkExistsUsername($username, $id = 0)
     {
         if ($id != '' && $id != 0) {
             $this->db->where('id_auth_user !=', $id);

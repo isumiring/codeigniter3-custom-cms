@@ -70,6 +70,7 @@ function get_sitesetting()
     foreach ($query as $row => $val) {
         $return[$val['type']] = $val['value'];
     }
+
     return $return;
 }
 
@@ -83,8 +84,8 @@ function get_sitesetting()
 function current_controller($param = '')
 {
     $param = '/'.$param;
-    $CI    = &get_instance();
-    $dir   = $CI->router->directory;
+    $CI = &get_instance();
+    $dir = $CI->router->directory;
     $class = $CI->router->fetch_class();
 
     return base_url().$dir.$class.$param;
@@ -111,10 +112,10 @@ function md5plus($string)
  */
 function generate_token()
 {
-    $rand          = md5(sha1('reg'.date('Y-m-d H:i:s')));
+    $rand = md5(sha1('reg'.date('Y-m-d H:i:s')));
     $acceptedChars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    $max           = strlen($acceptedChars) - 1;
-    $tmp_code      = null;
+    $max = strlen($acceptedChars) - 1;
+    $tmp_code = null;
     for ($i = 0; $i < 8; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -133,8 +134,8 @@ function generate_token()
 function random_code($loop = 5)
 {
     $acceptedChars = 'abcdefghijklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    $max           = strlen($acceptedChars) - 1;
-    $tmp_code      = null;
+    $max = strlen($acceptedChars) - 1;
+    $tmp_code = null;
     for ($i = 0; $i < $loop; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -153,8 +154,8 @@ function random_code($loop = 5)
 function random_number($loop = 3)
 {
     $acceptedChars = '23456789';
-    $max           = strlen($acceptedChars) - 1;
-    $tmp_code      = null;
+    $max = strlen($acceptedChars) - 1;
+    $tmp_code = null;
     for ($i = 0; $i < $loop; $i++) {
         $tmp_code .= $acceptedChars{mt_rand(0, $max)};
     }
@@ -165,7 +166,6 @@ function random_number($loop = 3)
 
 /**
  * Clear browser cache.
- * 
  */
 function clear_cache()
 {
@@ -226,7 +226,7 @@ function get_value($field, $table, $where)
  * Retrieve setting value by key.
  *
  * @param string $config_key field key
- * @param int $id_site (optional) site id
+ * @param int    $id_site    (optional) site id
  *
  * @return string $val value
  */
@@ -264,7 +264,7 @@ function get_site_info($id_site = 1)
 {
     // load ci instance
     $CI = &get_instance();
-    if ( ! $return = $CI->cache->get('siteInfo')) {
+    if (!$return = $CI->cache->get('siteInfo')) {
         $CI->load->database();
 
         $return = $CI->db
@@ -371,7 +371,7 @@ function mycheck_isodate($str)
 
 /**
  * Form validation : check email.
- * 
+ *
  * @param string $str value to check
  *
  * @return bool true or false
@@ -400,8 +400,8 @@ function mycheck_phone($string)
 }
 
 /**
- * Convert number/decimal to default price
- * 
+ * Convert number/decimal to default price.
+ *
  * @param string $string
  * @param int    $decimal
  * @param string $thousands_sep
@@ -430,14 +430,14 @@ function xss_clean_data($string)
 /**
  * Check validation file size of upload file.
  *
- * @param array|object|string $str file to check
- * @param int $max_size (optional) set maximum of file size, default is 4 MB
+ * @param array|object|string $str      file to check
+ * @param int                 $max_size (optional) set maximum of file size, default is 4 MB
  *
  * @return bool
  */
 function check_file_size($str, $max_size = 0)
 {
-    if ( ! $max_size) {
+    if (!$max_size) {
         $max_size = IMG_UPLOAD_MAX_SIZE;
     }
     $file_size = $str['size'];
@@ -489,7 +489,6 @@ function check_mime_type($source)
     $ext = strtolower($ext);
     //$ext = strtolower(array_pop(explode(".", $source['name'])));
     if (array_key_exists($ext, $mime_types)) {
-
         return $mime_types[$ext];
     } elseif (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME);
@@ -564,7 +563,7 @@ function check_file_type($source)
 }
 
 /**
- * Validate upload image
+ * Validate upload image.
  *
  * @param string $fieldname fieldname of input file form
  *
@@ -606,7 +605,7 @@ function validatePicture($fieldname)
         $error = 'Upload maximum file is '.number_format(IMG_UPLOAD_MAX_SIZE / 1024, 2).' MB.';
     } else {
         $cekfileformat = check_image_type($_FILES[$fieldname]);
-        if ( ! $cekfileformat) {
+        if (!$cekfileformat) {
             $error = 'Upload Picture only allow (jpg, gif, png)';
         }
     }
@@ -615,7 +614,7 @@ function validatePicture($fieldname)
 }
 
 /**
- * Validation for file upload from form
+ * Validation for file upload from form.
  *
  * @param string $fieldname fieldname of input file form
  *
@@ -658,7 +657,7 @@ function validateFile($fieldname)
     } else {
         //$get_ext = substr($_FILES[$fieldname]['name'],strlen($_FILES[$fieldname]['name'])-3,3);
         $cekfileformat = check_file_type($_FILES[$fieldname]);
-        if ( ! $cekfileformat) {
+        if (!$cekfileformat) {
             $error = 'Upload File only allow (jpg, gif, png, pdf, doc, xls, xlsx, docx)';
         }
     }
@@ -705,9 +704,9 @@ function rupiah($angka)
 /**
  * Upload file to destination folder, return file name.
  *
- * @param array|object $source_file source file
- * @param string $destination_folder destination upload folder
- * @param sreing $filename file name
+ * @param array|object $source_file        source file
+ * @param string       $destination_folder destination upload folder
+ * @param sreing       $filename           file name
  *
  * @return string $ret filename
  */
@@ -733,21 +732,21 @@ function file_copy_to_folder($source_file, $destination_folder, $filename)
 /**
  * Upload multiple (array) file to destination folder, return array of file name.
  *
- * @param array|object $source_file source file
- * @param string $destination_folder destination upload folder
- * @param string $filename file name
+ * @param array|object $source_file        source file
+ * @param string       $destination_folder destination upload folder
+ * @param string       $filename           file name
  *
  * @return string $ret filename
  */
 function file_arr_copy_to_folder($source_file, $destination_folder, $filename)
 {
     $tmp_destination = $destination_folder;
-    $ret             = [];
+    $ret = [];
     for ($index = 0; $index < count($source_file['tmp_name']); $index++) {
-        $arrext             = explode('.', $source_file['name'][$index]);
-        $jml                = count($arrext) - 1;
-        $ext                = $arrext[$jml];
-        $ext                = strtolower($ext);
+        $arrext = explode('.', $source_file['name'][$index]);
+        $jml = count($arrext) - 1;
+        $ext = $arrext[$jml];
+        $ext = strtolower($ext);
         $destination_folder = $tmp_destination.$filename[$index].'.'.$ext;
 
         if (@move_uploaded_file($source_file['tmp_name'][$index], $destination_folder)) {
@@ -761,22 +760,22 @@ function file_arr_copy_to_folder($source_file, $destination_folder, $filename)
 /**
  * Upload image to destination folder, return file name.
  *
- * @param array|object $source_file source file
- * @param string $destination_folder destination upload folder
- * @param string $filename file name
- * @param int $max_width maximum image width
- * @param int $max_height maximum image height
+ * @param array|object $source_file        source file
+ * @param string       $destination_folder destination upload folder
+ * @param string       $filename           file name
+ * @param int          $max_width          maximum image width
+ * @param int          $max_height         maximum image height
  *
  * @return string $callback_filename file name
  */
 function image_resize_to_folder($source_pic, $destination_folder, $filename, $max_width, $max_height)
 {
-    $image_info         = getimagesize($source_pic['tmp_name']);
-    $source_pic_name    = $source_pic['name'];
+    $image_info = getimagesize($source_pic['tmp_name']);
+    $source_pic_name = $source_pic['name'];
     $source_pic_tmpname = $source_pic['tmp_name'];
-    $source_pic_size    = $source_pic['size'];
-    $source_pic_width   = $image_info[0];
-    $source_pic_height  = $image_info[1];
+    $source_pic_size = $source_pic['size'];
+    $source_pic_width = $image_info[0];
+    $source_pic_height = $image_info[1];
     if (!is_dir($destination_folder)) {
         mkdir($destination_folder, 0755);
     }
@@ -785,13 +784,13 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
     $y_ratio = $max_height / $source_pic_height;
 
     if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-        $tn_width  = $source_pic_width;
+        $tn_width = $source_pic_width;
         $tn_height = $source_pic_height;
     } elseif (($x_ratio * $source_pic_height) < $max_height) {
         $tn_height = ceil($x_ratio * $source_pic_height);
-        $tn_width  = $max_width;
+        $tn_width = $max_width;
     } else {
-        $tn_width  = ceil($y_ratio * $source_pic_width);
+        $tn_width = ceil($y_ratio * $source_pic_width);
         $tn_height = $max_height;
     }
 
@@ -800,7 +799,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_GIF) {
                 $src = imagecreatefromgif($source_pic['tmp_name']);
                 $destination_folder .= "$filename.gif";
-                $callback_filename  = "$filename.gif";
+                $callback_filename = "$filename.gif";
             }
             break;
 
@@ -808,7 +807,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_pic['tmp_name']);
                 $destination_folder .= "$filename.jpg";
-                $callback_filename  = "$filename.jpg";
+                $callback_filename = "$filename.jpg";
             }
             break;
 
@@ -816,7 +815,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_pic['tmp_name']);
                 $destination_folder .= "$filename.jpg";
-                $callback_filename  = "$filename.jpg";
+                $callback_filename = "$filename.jpg";
             }
             break;
 
@@ -824,7 +823,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_PNG) {
                 $src = imagecreatefrompng($source_pic['tmp_name']);
                 $destination_folder .= "$filename.png";
-                $callback_filename  = "$filename.png";
+                $callback_filename = "$filename.png";
             }
             break;
 
@@ -832,7 +831,7 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
             if (imagetypes() & IMG_WBMP) {
                 $src = imagecreatefromwbmp($source_pic['tmp_name']);
                 $destination_folder .= "$filename.bmp";
-                $callback_filename  = "$filename.bmp";
+                $callback_filename = "$filename.bmp";
             }
             break;
     }
@@ -869,30 +868,30 @@ function image_resize_to_folder($source_pic, $destination_folder, $filename, $ma
  * @param string $source_file
  * @param string $destination_folder
  * @param string $filename
- * @param int $max_width
- * @param int $max_height
- * @param int $quality image quality
- * @param bool $ext get the extension
+ * @param int    $max_width
+ * @param int    $max_height
+ * @param int    $quality            image quality
+ * @param bool   $ext                get the extension
  *
  * @return string $callback_filename file name
  */
 function copy_image_resize_to_folder($source_file, $destination_folder, $filename, $max_width, $max_height, $quality = 100, $ext = true)
 {
-    $image_info        = getimagesize($source_file);
-    $source_pic_width  = $image_info[0];
+    $image_info = getimagesize($source_file);
+    $source_pic_width = $image_info[0];
     $source_pic_height = $image_info[1];
 
     $x_ratio = $max_width / $source_pic_width;
     $y_ratio = $max_height / $source_pic_height;
 
     if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-        $tn_width  = $source_pic_width;
+        $tn_width = $source_pic_width;
         $tn_height = $source_pic_height;
     } elseif (($x_ratio * $source_pic_height) < $max_height) {
         $tn_height = ceil($x_ratio * $source_pic_height);
-        $tn_width  = $max_width;
+        $tn_width = $max_width;
     } else {
-        $tn_width  = ceil($y_ratio * $source_pic_width);
+        $tn_width = ceil($y_ratio * $source_pic_width);
         $tn_height = $max_height;
     }
 
@@ -904,40 +903,40 @@ function copy_image_resize_to_folder($source_file, $destination_folder, $filenam
         case 'image/gif':
             if (imagetypes() & IMG_GIF) {
                 $src = imagecreatefromgif($source_file);
-                $destination_folder .= ($ext == true) ? $filename .'.gif' : $filename;
-                $callback_filename  = ($ext == true) ? $filename .'.gif' : $filename;
+                $destination_folder .= ($ext == true) ? $filename.'.gif' : $filename;
+                $callback_filename = ($ext == true) ? $filename.'.gif' : $filename;
             }
             break;
 
         case 'image/jpeg':
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_file);
-                $destination_folder .= ($ext == true) ? $filename .'.jpg' : $filename;
-                $callback_filename  = ($ext == true) ? $filename .".jpg" : $filename;
+                $destination_folder .= ($ext == true) ? $filename.'.jpg' : $filename;
+                $callback_filename = ($ext == true) ? $filename.'.jpg' : $filename;
             }
             break;
 
         case 'image/pjpeg':
             if (imagetypes() & IMG_JPG) {
                 $src = imagecreatefromjpeg($source_file);
-                $destination_folder .= ($ext == true) ? $filename .'.jpg' : $filename;
-                $callback_filename  = ($ext == true) ? $filename .".jpg" : $filename;
+                $destination_folder .= ($ext == true) ? $filename.'.jpg' : $filename;
+                $callback_filename = ($ext == true) ? $filename.'.jpg' : $filename;
             }
             break;
 
         case 'image/png':
             if (imagetypes() & IMG_PNG) {
                 $src = imagecreatefrompng($source_file);
-                $destination_folder .= ($ext == true) ? $filename .'.png' : $filename;
-                $callback_filename  = ($ext == true) ? $filename .".png" : $filename;
+                $destination_folder .= ($ext == true) ? $filename.'.png' : $filename;
+                $callback_filename = ($ext == true) ? $filename.'.png' : $filename;
             }
             break;
 
         case 'image/wbmp':
             if (imagetypes() & IMG_WBMP) {
                 $src = imagecreatefromwbmp($source_file);
-                $destination_folder .= ($ext == true) ? $filename .'.bmp' : $filename;
-                $callback_filename  = ($ext == true) ? $filename .".bmp" : $filename;
+                $destination_folder .= ($ext == true) ? $filename.'.bmp' : $filename;
+                $callback_filename = ($ext == true) ? $filename.'.bmp' : $filename;
             }
             break;
     }
@@ -979,10 +978,10 @@ function copy_image_resize_to_folder($source_file, $destination_folder, $filenam
 function move_file_to_folder($source_file, $destination_folder, $filename)
 {
     $arrext = explode('.', $source_file);
-    $jml    = count($arrext) - 1;
-    $ext    = $arrext[$jml];
-    $ext    = strtolower($ext);
-    $ret    = false;
+    $jml = count($arrext) - 1;
+    $ext = $arrext[$jml];
+    $ext = strtolower($ext);
+    $ret = false;
     if (!is_dir($destination_folder)) {
         mkdir($destination_folder, 0755);
     }
@@ -998,78 +997,78 @@ function move_file_to_folder($source_file, $destination_folder, $filename)
 /**
  * Upload image (array) to destination folder, return file name.
  *
- * @param array|object $source_pic source file
- * @param string $destination_folder destination upload folder
- * @param string $filename file name
- * @param int $max_width maximum image width
- * @param int $max_height maximum image height
+ * @param array|object $source_pic         source file
+ * @param string       $destination_folder destination upload folder
+ * @param string       $filename           file name
+ * @param int          $max_width          maximum image width
+ * @param int          $max_height         maximum image height
  *
  * @return array|string $return file name
  */
 function image_arr_resize_to_folder($source_pic, $destination_folder, $filename, $max_width, $max_height)
 {
     $tmp_dest = $destination_folder;
-    $return   = [];
+    $return = [];
     for ($index = 0; $index < count($source_pic['tmp_name']); $index++) {
         $destination_folder = $tmp_dest;
-        $image_info         = getimagesize($source_pic['tmp_name'][$index]);
-        $source_pic_name    = $source_pic['name'][$index];
+        $image_info = getimagesize($source_pic['tmp_name'][$index]);
+        $source_pic_name = $source_pic['name'][$index];
         $source_pic_tmpname = $source_pic['tmp_name'][$index];
-        $source_pic_size    = $source_pic['size'][$index];
-        $source_pic_width   = $image_info[0];
-        $source_pic_height  = $image_info[1];
-        $x_ratio            = $max_width / $source_pic_width;
-        $y_ratio            = $max_height / $source_pic_height;
+        $source_pic_size = $source_pic['size'][$index];
+        $source_pic_width = $image_info[0];
+        $source_pic_height = $image_info[1];
+        $x_ratio = $max_width / $source_pic_width;
+        $y_ratio = $max_height / $source_pic_height;
 
         if (($source_pic_width <= $max_width) && ($source_pic_height <= $max_height)) {
-            $tn_width  = $source_pic_width;
+            $tn_width = $source_pic_width;
             $tn_height = $source_pic_height;
         } elseif (($x_ratio * $source_pic_height) < $max_height) {
             $tn_height = ceil($x_ratio * $source_pic_height);
-            $tn_width  = $max_width;
+            $tn_width = $max_width;
         } else {
-            $tn_width  = ceil($y_ratio * $source_pic_width);
+            $tn_width = ceil($y_ratio * $source_pic_width);
             $tn_height = $max_height;
         }
 
         switch ($image_info['mime']) {
             case 'image/gif':
                 if (imagetypes() & IMG_GIF) {
-                    $src                = imagecreatefromgif($source_pic['tmp_name'][$index]);
+                    $src = imagecreatefromgif($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].gif";
-                    $callback_filename  = "$filename[$index].gif";
+                    $callback_filename = "$filename[$index].gif";
                 }
                 break;
 
             case 'image/jpeg':
                 if (imagetypes() & IMG_JPG) {
-                    $src                = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
+                    $src = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].jpg";
-                    $callback_filename  = "$filename[$index].jpg";
+                    $callback_filename = "$filename[$index].jpg";
                 }
                 break;
 
             case 'image/pjpeg':
                 if (imagetypes() & IMG_JPG) {
-                    $src                = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
+                    $src = imagecreatefromjpeg($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].jpg";
-                    $callback_filename  = "$filename[$index].jpg";
+                    $callback_filename = "$filename[$index].jpg";
                 }
                 break;
 
             case 'image/png':
                 if (imagetypes() & IMG_PNG) {
-                    $src                = imagecreatefrompng($source_pic['tmp_name'][$index]);
+                    $src = imagecreatefrompng($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].png";
-                    $callback_filename  = "$filename[$index].png";
+                    $callback_filename = "$filename[$index].png";
                 }
                 break;
 
             case 'image/wbmp':
                 if (imagetypes() & IMG_WBMP) {
-                    $src                = imagecreatefromwbmp($source_pic['tmp_name'][$index]);
+                    $src = imagecreatefromwbmp($source_pic['tmp_name'][$index]);
                     $destination_folder .= "$filename[$index].bmp";
-                    $callback_filename  = "$filename[$index].bmp";
+                    $callback_filename = "$filename[$index].bmp";
                 }
                 break;
         }
@@ -1105,16 +1104,16 @@ function image_arr_resize_to_folder($source_pic, $destination_folder, $filename,
 /**
  * Crop image.
  *
- * @param string|int $nw new width
- * @param string|int $nh new height
- * @param string $source source file
- * @param string $dest destination folder
+ * @param string|int $nw     new width
+ * @param string|int $nh     new height
+ * @param string     $source source file
+ * @param string     $dest   destination folder
  */
 function cropImage($nw, $nh, $source, $dest)
 {
     $image_info = getimagesize($source);
-    $w          = $image_info[0];
-    $h          = $image_info[1];
+    $w = $image_info[0];
+    $h = $image_info[1];
 
     switch ($image_info['mime']) {
         case 'image/gif':
@@ -1131,22 +1130,22 @@ function cropImage($nw, $nh, $source, $dest)
             break;
     }
 
-    $dimg     = imagecreatetruecolor($nw, $nh);
-    $wm       = $w / $nw;
-    $hm       = $h / $nh;
+    $dimg = imagecreatetruecolor($nw, $nh);
+    $wm = $w / $nw;
+    $hm = $h / $nh;
     $h_height = $nh / 2;
     $w_height = $nw / 2;
 
     if ($w > $h) {
         $adjusted_width = $w / $hm;
-        $half_width     = $adjusted_width / 2;
-        $int_width      = $half_width - $w_height;
+        $half_width = $adjusted_width / 2;
+        $int_width = $half_width - $w_height;
 
         imagecopyresampled($dimg, $simg, -$int_width, 0, 0, 0, $adjusted_width, $nh, $w, $h);
     } elseif (($w < $h) || ($w == $h)) {
         $adjusted_height = $h / $wm;
-        $half_height     = $adjusted_height / 2;
-        $int_height      = $half_height - $h_height;
+        $half_height = $adjusted_height / 2;
+        $int_height = $half_height - $h_height;
 
         imagecopyresampled($dimg, $simg, 0, -$int_height, 0, 0, $nw, $adjusted_height, $w, $h);
     } else {
@@ -1158,10 +1157,10 @@ function cropImage($nw, $nh, $source, $dest)
 /**
  * Get option list.
  *
- * @param array $options
+ * @param array      $options
  * @param string|int $selected
- * @param string $type
- * @param string $name
+ * @param string     $type
+ * @param string     $name
  *
  * @return string $temp_list list
  */
@@ -1202,8 +1201,8 @@ function get_lang_key($key)
  * Simple bug fix for array_keys when returning key is 0.
  *
  * @param string $needle
- * @param array $haystack
- * 
+ * @param array  $haystack
+ *
  * @return int|bool $current_key key of array or false
  */
 function recursive_array_search($needle, $haystack)
@@ -1279,17 +1278,17 @@ function check_exist_value($table, $field, $value, $id = 0)
 
 /**
  * Get message by language.
- * 
+ *
  * @param string $type
  * @param string $key
  * @param string $lang
- * 
+ *
  * @return string message
  */
-function get_lang_text($type, $key, $lang = '') 
+function get_lang_text($type, $key, $lang = '')
 {
-    $CI =& get_instance();
-    if ( ! $lang) {
+    $CI = &get_instance();
+    if (!$lang) {
         $lang = $CI->config->item('language');
     }
     $CI->lang->load($type, $lang);
@@ -1299,12 +1298,12 @@ function get_lang_text($type, $key, $lang = '')
 
 /**
  * Get language by uri.
- * 
+ *
  * @return string language
  */
-function get_lang_url() 
+function get_lang_url()
 {
-    $CI =& get_instance();
+    $CI = &get_instance();
     if ($CI->uri->segment(1)) {
         return $CI->uri->segment(1);
     }
@@ -1372,16 +1371,15 @@ function json_exit($params)
 
 /**
  * Customize sending email using default library.
- * 
- * @param mixed $from
- * @param mixed $to
+ *
+ * @param mixed  $from
+ * @param mixed  $to
  * @param string $subject
  * @param string $body
- * @param mixed $attachment
+ * @param mixed  $attachment
  * @param string $method
- * 
  */
-function custom_send_email_ci($from, $to, $subject, $body, $attachment = '', $method = 'smtp') 
+function custom_send_email_ci($from, $to, $subject, $body, $attachment = '', $method = 'smtp')
 {
     $CI = &get_instance();
     $CI->load->library('email');
@@ -1389,11 +1387,11 @@ function custom_send_email_ci($from, $to, $subject, $body, $attachment = '', $me
     $config['useragent'] = '';
     // smtp
     if ($method == 'smtp') {
-        $config['protocol']     = 'smtp';
-        $config['smtp_host']    = '';
-        $config['smtp_port']    = '';
-        $config['smtp_user']    = '';
-        $config['smtp_pass']    = '';
+        $config['protocol'] = 'smtp';
+        $config['smtp_host'] = '';
+        $config['smtp_port'] = '';
+        $config['smtp_user'] = '';
+        $config['smtp_pass'] = '';
     }
     $CI->email->initialize($config);
     if (is_array($from)) {
@@ -1416,43 +1414,43 @@ function custom_send_email_ci($from, $to, $subject, $body, $attachment = '', $me
     $CI->email->message($body);
     $CI->email->send();
     log_message('info', $CI->email->print_debugger());
-    $CI->email->clear(TRUE);
+    $CI->email->clear(true);
 }
 
 /**
  * Customizing pagination (w/ bootstrap template).
- * 
- * @param  array  $param parameters
- * 
+ *
+ * @param array $param parameters
+ *
  * @return string $return print pagination
  */
-function custom_pagination($param = []) 
+function custom_pagination($param = [])
 {
     $CI = &get_instance();
     $CI->load->library('pagination');
-    $paging                         = [];
-    $paging['num_links']            = 4;
+    $paging = [];
+    $paging['num_links'] = 4;
     $paging['enable_query_strings'] = true;
-    $paging['page_query_string']    = true;
+    $paging['page_query_string'] = true;
     $paging['query_string_segment'] = 'perpage';
-    $paging['first_link']           = false;
-    $paging['last_link']            = false;
-    $paging['attributes']           = ['class' => 'paging-number'];
-    $paging['full_tag_open']        = '<ul class="pagination">';
-    $paging['full_tag_close']       = '</ul>';
-    $paging['num_tag_open']         = '<li>';
-    $paging['num_tag_close']        = '</li>';
-    $paging['cur_tag_open']         = '<li class="active"><a class="current">';
-    $paging['cur_tag_close']        = '</a></li>';
-    $paging['prev_link']            = '<span aria-hidden="true">&laquo;</span>';
-    $paging['prev_tag_open']        = '<li class="button btn-page-arrow">';
-    $paging['prev_tag_close']       = '</li>';
-    $paging['next_link']            = '<span aria-hidden="true">&raquo;</span>';
-    $paging['next_tag_open']        = '<li class="button btn-page-arrow">';
-    $paging['next_tag_close']       = '</li>';
-    $paging['display_prev_link']    = false;
-    $paging['display_next_link']    = false;
-    $paging['data_page_attr']       = 'data-page';
+    $paging['first_link'] = false;
+    $paging['last_link'] = false;
+    $paging['attributes'] = ['class' => 'paging-number'];
+    $paging['full_tag_open'] = '<ul class="pagination">';
+    $paging['full_tag_close'] = '</ul>';
+    $paging['num_tag_open'] = '<li>';
+    $paging['num_tag_close'] = '</li>';
+    $paging['cur_tag_open'] = '<li class="active"><a class="current">';
+    $paging['cur_tag_close'] = '</a></li>';
+    $paging['prev_link'] = '<span aria-hidden="true">&laquo;</span>';
+    $paging['prev_tag_open'] = '<li class="button btn-page-arrow">';
+    $paging['prev_tag_close'] = '</li>';
+    $paging['next_link'] = '<span aria-hidden="true">&raquo;</span>';
+    $paging['next_tag_open'] = '<li class="button btn-page-arrow">';
+    $paging['next_tag_close'] = '</li>';
+    $paging['display_prev_link'] = false;
+    $paging['display_next_link'] = false;
+    $paging['data_page_attr'] = 'data-page';
     foreach ($param as $key => $value) {
         $paging[$key] = $value;
     }
@@ -1463,29 +1461,30 @@ function custom_pagination($param = [])
 
 /**
  * Get the client IP address.
- * 
+ *
  * @return string $ipaddress
  */
-function get_client_ip() 
+function get_client_ip()
 {
     $ipaddress = '';
-    if (getenv('HTTP_CLIENT_IP'))
+    if (getenv('HTTP_CLIENT_IP')) {
         $ipaddress = getenv('HTTP_CLIENT_IP');
-    else if(getenv('HTTP_X_FORWARDED_FOR'))
+    } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
         $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-    else if(getenv('HTTP_X_FORWARDED'))
+    } elseif (getenv('HTTP_X_FORWARDED')) {
         $ipaddress = getenv('HTTP_X_FORWARDED');
-    else if(getenv('HTTP_FORWARDED_FOR'))
+    } elseif (getenv('HTTP_FORWARDED_FOR')) {
         $ipaddress = getenv('HTTP_FORWARDED_FOR');
-    else if(getenv('HTTP_FORWARDED'))
-       $ipaddress = getenv('HTTP_FORWARDED');
-    else if(getenv('REMOTE_ADDR'))
+    } elseif (getenv('HTTP_FORWARDED')) {
+        $ipaddress = getenv('HTTP_FORWARDED');
+    } elseif (getenv('REMOTE_ADDR')) {
         $ipaddress = getenv('REMOTE_ADDR');
-    else
+    } else {
         $ipaddress = 'UNKNOWN';
+    }
+
     return $ipaddress;
 }
 
 /* End of file general_helper.php */
 /* Location: ./application/helpers/general_helper.php */
-

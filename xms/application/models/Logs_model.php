@@ -16,7 +16,7 @@ class Logs_model extends CI_Model
     /**
      * Class constructor.
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -28,7 +28,7 @@ class Logs_model extends CI_Model
      *
      * @return array|bool $data
      */
-    function GetAllLogsData($param = [])
+    public function GetAllLogsData($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -74,7 +74,7 @@ class Logs_model extends CI_Model
      *
      * @return int $total_records total records
      */
-    function CountAllLogs($param = [])
+    public function CountAllLogs($param = [])
     {
         if (isset($param['search_value']) && $param['search_value'] != '') {
             $this->db->group_start();
@@ -105,7 +105,7 @@ class Logs_model extends CI_Model
      *
      * @param mixed $ids array or int of id
      */
-    function DeleteRecords($ids)
+    public function DeleteRecords($ids)
     {
         if (is_array($ids)) {
             $this->db->where_in('id_logs', $ids);

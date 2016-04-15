@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Router Class Extension.
- *      extended of router class
+ *      extended of router class.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *

@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Custom class form validation.
- *     override/extend form validation library
+ *     override/extend form validation library.
  *
  * @author ivan lubis <ivan.z.lubis@gmail.com>
  *

@@ -19,7 +19,7 @@ class Auth_model extends CI_Model
      * @param string $username
      * @param string $password
      */
-    function CheckAuth($username, $password)
+    public function CheckAuth($username, $password)
     {
         $user_data = $this->db
                 ->where('LCASE(username)', $username)
