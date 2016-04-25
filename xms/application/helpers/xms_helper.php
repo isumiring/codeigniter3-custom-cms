@@ -256,7 +256,7 @@ function id_auth_group()
  * 
  * @return string $return themes
  */
-function getActiveThemes($default = 'sbadmin2')
+function getActiveThemes($default = 'adminlte2')
 {
     $user = getAdminLoggedInfo();
     $return = ($user) ? $user['themes'] : $default;

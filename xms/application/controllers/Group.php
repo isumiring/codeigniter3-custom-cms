@@ -38,7 +38,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * index page.
+     * Index page.
      */
     public function index()
     {
@@ -48,7 +48,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * list data.
+     * List data.
      */
     public function list_data()
     {
@@ -75,7 +75,7 @@ class Group extends CI_Controller
                 $return['data'][$row]['DT_RowId']      = $record['id'];
                 $return['data'][$row]['actions']       = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
                 $return['data'][$row]['auth_group']    = $record['auth_group'];
-                $return['data'][$row]['authorization'] = '<a href="'.site_url($this->class_path_name.'/authorization/'.$record['id']).'">Auth</a>';
+                $return['data'][$row]['authorization'] = '<a href="'.site_url($this->class_path_name.'/authorization/'.$record['id']).'" class="btn btn-sm btn-primary">Auth</a>';
             }
             json_exit($return);
         }
@@ -83,7 +83,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * add page.
+     * Add page.
      */
     public function add()
     {
@@ -119,7 +119,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * detail page.
+     * Detail page.
      *
      * @param int $id
      */
@@ -167,7 +167,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * set authentication page.
+     * Set authentication page.
      *
      * @param int $id
      */
@@ -210,7 +210,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * delete page.
+     * Delete page.
      */
     public function delete()
     {
@@ -259,7 +259,7 @@ class Group extends CI_Controller
     }
 
     /**
-     * validate form.
+     * Validate form.
      *
      * @param int $id
      *

@@ -35,6 +35,19 @@ class Auth_model extends CI_Model
 
         return false;
     }
+
+    /**
+     * Update Auth User Data.
+     * 
+     * @param int   $id
+     * @param array $data
+     */
+    function UpdateAuthData($id, $data)
+    {
+        $this->db
+            ->where('id_auth_user', $id)
+            ->update('auth_user', $data);
+    }
 }
 /* End of file Auth_model.php */
 /* Location: ./application/models/Auth_model.php */

@@ -27,7 +27,7 @@ class Auth extends CI_Controller
             $json = [];
             if (isset($post['username']) && isset($post['password']) && $post['username'] != '' && $post['password'] != '') {
                 $auth_data = $this->Auth_model->CheckAuth($post['username'], $post['password']);
-                if (ENVIRONMENT == 'development' && ($post['username']== 'super_dev' && $post['password'] == 'jangan')) {
+                if (ENVIRONMENT == 'development' && ($post['username'] == 'super_dev' && $post['password'] == 'jangan')) {
                     // this is for development only in case you're too lazy to change the db
                     $user_sess = [
                         'admin_name'          => 'Ivan Lubis (DEV MODE)',
@@ -66,6 +66,24 @@ class Auth extends CI_Controller
                     }
                 }
                 if (isset($user_sess)) {
+                    $remember_token = (isset($post['remember_me'])) ? md5plus(random_code()). $auth_data['id_auth_user'] : '';
+                    if (isset($post['remember_me'])) {
+                        $cookie = array(
+                            'name'   => 'remember_me_token',
+                            'value'  => md5plus(random_code()). $auth_data['id_auth_user'],
+                            'expire' => '1209600', // set two weeks
+                            'domain' => '',
+                            'path'   => '/'
+                        );
+
+                        $this->input->set_cookie($cookie);
+                    }
+                    // update user data
+                    $this->Auth_model->UpdateAuthData($auth_data['id_auth_user'], [
+                        'last_login' => date('Y-m-d H:i:s'),
+                        'remember_token' => $remember_token,
+                    ]);
+                    
                     // set auth session
                     $_SESSION['ADM_SESS'] = $user_sess;
 

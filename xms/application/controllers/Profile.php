@@ -126,7 +126,7 @@ class Profile extends CI_Controller
             $id     = id_auth_user();
             $detail = $this->Admin_model->GetAdmin($id);
             if ( ! $id || ! $detail) {
-                $json['location'] = site_url('home');
+                $json['location'] = site_url();
             }
             if ( ! $this->validatePassword($detail)) {
                 $json['error'] = $this->error;
@@ -214,7 +214,7 @@ class Profile extends CI_Controller
             [
                 'field' => 'password',
                 'label' => 'Password',
-                'rules' => 'required|min_lenght[8]',
+                'rules' => 'required|min_length[8]',
             ],
             [
                 'field' => 'conf_password',

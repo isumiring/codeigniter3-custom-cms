@@ -40,6 +40,30 @@ class FAT_Authentication
             // allow to access error page
             return;
         }
+
+        // check remember me cookie
+        if ($this->CI->input->cookie($this->CI->config->item('cookie_prefix'). 'remember_me_token')) {
+            $remember_token = $this->CI->input->cookie($this->CI->config->item('cookie_prefix'). 'remember_me_token');
+            $token_data = $this->CheckAuthByRememberToken($remember_token);
+            if ($token_data) {
+                if ( ! isset($_SESSION['ADM_SESS'])) {
+                    // create new session
+                    $user_sess = [
+                        'admin_name'          => $token_data['name'],
+                        'admin_uname'         => $token_data['username'],
+                        'admin_id_auth_group' => $token_data['id_auth_group'],
+                        'admin_id_auth_user'  => md5plus($token_data['id_auth_user']),
+                        'admin_email'         => $token_data['email'],
+                        'admin_ip'            => get_client_ip(),
+                        'admin_url'           => base_url(),
+                        'admin_token'         => $this->security->get_csrf_hash(),
+                        'admin_last_login'    => $token_data['last_login'],
+                    ];
+                    $_SESSION['ADM_SESS'] = $user_sess;
+                }
+            }
+        }
+
         if ($fetch_class == 'auth') {
             if ($fetch_method == 'login') {
                 if (isset($_SESSION['ADM_SESS']) && $_SESSION['ADM_SESS'] != '') {
@@ -80,6 +104,27 @@ class FAT_Authentication
                 }
             }
         }
+    }
+
+    private function CheckAuthByRememberToken($token = '')
+    {
+        if ( ! $token) {
+            return false;
+        }
+
+        $data = $this->CI->db
+                ->where('remember_token', $token)
+                ->where('status', 1)
+                ->limit(1)
+                ->order_by('id_auth_user', 'desc')
+                ->get('auth_user')
+                ->row_array();
+
+        if ($data) {
+            return $data;
+        }
+
+        return false;
     }
 
     /**

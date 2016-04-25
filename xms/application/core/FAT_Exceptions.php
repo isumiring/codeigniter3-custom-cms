@@ -55,6 +55,7 @@ class FAT_Exceptions extends CI_Exceptions
             $data['current_url'] = current_url();
             if (isset($_SESSION['ADM_SESS'])) {
                 $data['ADM_SESSION'] = $_SESSION['ADM_SESS'];
+                $data['user_data'] = $this->GetAuthUserData($_SESSION['ADM_SESS']['admin_uname']);
             }
             $data['flash_message']      = $this->CI->session->flashdata('flash_message');
             $data['persistent_message'] = (isset($_SESSION['persistent_message'])) ? $_SESSION['persistent_message'] : '';
@@ -65,9 +66,12 @@ class FAT_Exceptions extends CI_Exceptions
             $data['error_heading']      = $heading;
             $data['error_message']      = $message;
             
+            // template
+            $template_dir = getActiveThemes();
+
             $menus                      = $this->MenusData();
             $menus_ids                  = [];
-            $data['main_menu']          = $this->PrintMainMenu($menus, $menus_ids);
+            $data['main_menu']          = $this->PrintMainMenu($menus, $menus_ids, $template_dir);
 
             // breadcrumbs
             $data['breadcrumbs'][] = [
@@ -81,8 +85,6 @@ class FAT_Exceptions extends CI_Exceptions
                 'class' => 'active',
             ];
 
-            // template
-            $template_dir = getActiveThemes();
 
             // default
             $data['GLOBAL_ASSETS_URL'] = PATH_CMS.'assets/default/';
@@ -110,7 +112,7 @@ class FAT_Exceptions extends CI_Exceptions
         {
             log_message('error', $heading.': '.$page);
         }
-        set_status_header(404);
+        // set_status_header(404);
         // echo $this->show_error($heading, $message, 'error_404', 404);
         exit(4); // EXIT_UNKNOWN_FILE
     }
@@ -190,13 +192,30 @@ class FAT_Exceptions extends CI_Exceptions
     }
 
     /**
-     * Print left menu.
+     * print left menu.
      *
      * @param array $menus
      *
      * @return string $return left menu html
      */
-    private function PrintMainMenu($menus = [], $active_menus = [])
+    private function PrintMainMenu($menus = [], $active_menus = [], $themes = 'adminlte2')
+    {
+        if ($themes == 'adminlte2') {
+            return $this->PrintMenuAdminLTE2($menus, $active_menus);
+        } else {
+            return $this->PrintMenuSBAdmin2($menus, $active_menus);
+        }
+    }
+
+    /**
+     * Print SBAdmin2 Menu in html.
+     * 
+     * @param array $menus
+     * @param array $active_menus
+     *
+     * @return string $return html 
+     */
+    private function PrintMenuSBAdmin2($menus = [], $active_menus = [])
     {
         $return = '';
         if ($menus) {
@@ -227,6 +246,74 @@ class FAT_Exceptions extends CI_Exceptions
         }
 
         return $return;
+    }
+
+    /**
+     * Print AdminLTE2 Menu in html.
+     * 
+     * @param array $menus
+     * @param array $active_menus
+     *
+     * @return string $return html 
+     */
+    private function PrintMenuAdminLTE2($menus = [], $active_menus = [])
+    {
+        $return = '';
+        if ($menus) {
+            foreach ($menus as $row => $menu) {
+                $style = $set_active = $height = '';
+                if (strlen($menu['menu']) > 25) {
+                    $style = 'style="font-size:12px;"';
+                }
+                if (is_array($active_menus) && count($active_menus) > 0) {
+                    if (in_array($menu['id_auth_menu'], $active_menus)) {
+                        $set_active = ' active';
+                    }
+                }
+                if ($menu['parent_auth_menu'] == 0) {
+                    $return .= '<li class="treeview'.$set_active.'">';
+                } else {
+                    $return .= '<li class="'.$set_active.'">';
+                }
+                $return .= '<a href="'.(($menu['file'] == '#' || $menu['file'] == '') ? '#' : site_url($menu['file'])).'" '.$style.' '.$set_active.'>';
+                $return .= '<i class="'.((isset($menu['icon_tags']) && $menu['icon_tags'] != '') ? $menu['icon_tags'] : 'fa fa-circle-o').'"></i>';
+                $return .= '<span>'.$menu['menu'].'</span>';
+                if (isset($menu['children']) && count($menu['children']) > 0) {
+                    $return .= '<i class="fa fa-angle-left pull-right"></i>';
+                }
+                $return .= '</a>';
+                if (isset($menu['children']) && count($menu['children']) > 0) {
+                    $return .= '<ul class="treeview-menu">';
+                    $return .= $this->PrintMainMenu($menu['children'], $active_menus);
+                    $return .= '</ul>';
+                }
+                $return .= '</li>';
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get Auth User Data.
+     * 
+     * @param string $username
+     * @param string $field
+     *
+     * @return array|bool $data
+     */
+    private function GetAuthUserData($username, $field = '')
+    {
+        if ($field != '') {
+            $this->CI->db->select($field);
+        }
+        $data = $this->CI->db
+                ->where("LCASE(username)", strtolower($username))
+                ->limit(1)
+                ->get('auth_user')
+                ->row_array();
+
+        return $data;
     }
 
 }

@@ -52,6 +52,7 @@ class FAT_Layout
         $data['current_url'] = current_url();
         if (isset($_SESSION['ADM_SESS'])) {
             $data['ADM_SESSION'] = $_SESSION['ADM_SESS'];
+            $data['user_data'] = $this->GetAuthUserData($_SESSION['ADM_SESS']['admin_uname']);
         }
         $data['flash_message']      = $this->CI->session->flashdata('flash_message');
         $data['persistent_message'] = (isset($_SESSION['persistent_message'])) ? $_SESSION['persistent_message'] : '';
@@ -59,15 +60,18 @@ class FAT_Layout
         $data['auth_sess']          = (isset($_SESSION['ADM_SESS'])) ? $_SESSION['ADM_SESS'] : [];
         $data['site_setting']       = get_sitesetting();
         $data['site_info']          = get_site_info();
-        $data['page_title']         = (isset($data['page_title'])) ? $data['page_title'] : $page_info['menu'];
+        $data['page_title']         = (isset($data['page_title'])) ? ( ($page_info['menu'] != '') ? $page_info['menu']. ' - '. $data['page_title'] : $data['page_title']) : $page_info['menu'];
         
+        // template
+        $template_dir = getActiveThemes();
+
         $menus                      = $this->MenusData();
         $ids[]                      = $id_auth_menu;
         $menus_ids                  = [];
         if (isset($page_info['parent_auth_menu'])) {
             $menus_ids = $this->ActiveMenuIds($page_info['parent_auth_menu'], $ids);
         }
-        $data['main_menu'] = $this->PrintMainMenu($menus, $menus_ids);
+        $data['main_menu'] = $this->PrintMainMenu($menus, $menus_ids, $template_dir);
 
         $breadcrumbs = $this->Breadcrumbs($id_auth_menu);
         $breadcrumbs[] = [
@@ -81,8 +85,6 @@ class FAT_Layout
         }
         $data['breadcrumbs'] = $breadcrumbs;
 
-        // template
-        $template_dir = getActiveThemes();
         // default
         $data['GLOBAL_ASSETS_URL'] = PATH_CMS.'assets/default/';
         $data['GLOBAL_IMG_URL']    = $data['GLOBAL_ASSETS_URL'].'img/';
@@ -214,7 +216,24 @@ class FAT_Layout
      *
      * @return string $return left menu html
      */
-    private function PrintMainMenu($menus = [], $active_menus = [])
+    private function PrintMainMenu($menus = [], $active_menus = [], $themes = 'adminlte2')
+    {
+        if ($themes == 'adminlte2') {
+            return $this->PrintMenuAdminLTE2($menus, $active_menus);
+        } else {
+            return $this->PrintMenuSBAdmin2($menus, $active_menus);
+        }
+    }
+
+    /**
+     * Print SBAdmin2 Menu in html.
+     * 
+     * @param array $menus
+     * @param array $active_menus
+     *
+     * @return string $return html 
+     */
+    private function PrintMenuSBAdmin2($menus = [], $active_menus = [])
     {
         $return = '';
         if ($menus) {
@@ -248,6 +267,52 @@ class FAT_Layout
     }
 
     /**
+     * Print AdminLTE2 Menu in html.
+     * 
+     * @param array $menus
+     * @param array $active_menus
+     *
+     * @return string $return html 
+     */
+    private function PrintMenuAdminLTE2($menus = [], $active_menus = [])
+    {
+        $return = '';
+        if ($menus) {
+            foreach ($menus as $row => $menu) {
+                $style = $set_active = $height = '';
+                if (strlen($menu['menu']) > 25) {
+                    $style = 'style="font-size:12px;"';
+                }
+                if (is_array($active_menus) && count($active_menus) > 0) {
+                    if (in_array($menu['id_auth_menu'], $active_menus)) {
+                        $set_active = ' active';
+                    }
+                }
+                if ($menu['parent_auth_menu'] == 0) {
+                    $return .= '<li class="treeview'.$set_active.'">';
+                } else {
+                    $return .= '<li class="'.$set_active.'">';
+                }
+                $return .= '<a href="'.(($menu['file'] == '#' || $menu['file'] == '') ? '#' : site_url($menu['file'])).'" '.$style.' '.$set_active.'>';
+                $return .= '<i class="'.((isset($menu['icon_tags']) && $menu['icon_tags'] != '') ? $menu['icon_tags'] : 'fa fa-circle-o').'"></i>';
+                $return .= '<span>'.$menu['menu'].'</span>';
+                if (isset($menu['children']) && count($menu['children']) > 0) {
+                    $return .= '<i class="fa fa-angle-left pull-right"></i>';
+                }
+                $return .= '</a>';
+                if (isset($menu['children']) && count($menu['children']) > 0) {
+                    $return .= '<ul class="treeview-menu">';
+                    $return .= $this->PrintMainMenu($menu['children'], $active_menus);
+                    $return .= '</ul>';
+                }
+                $return .= '</li>';
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Breadcrumbs.
      *
      * @param int   $id_auth_menu
@@ -263,14 +328,14 @@ class FAT_Layout
             return;
         }
         $data = $this->CI->db
-                ->select('id_auth_menu,parent_auth_menu,menu,file')
+                ->select('id_auth_menu, parent_auth_menu, menu, file, icon_tags')
                 ->where('id_auth_menu', $id_auth_menu)
                 ->limit(1)
                 ->get('auth_menu')
                 ->row_array();
         if ($data) {
             $breadcrumbs[] = [
-                'text'  => $data['menu'],
+                'text'  => (($data['icon_tags'] != '') ? '<i class="'.$data['icon_tags'].'"></i> ' : ''). $data['menu'],
                 'url'   => ($data['file'] != '' && $data['file'] != '#') ? site_url($data['file']) : '#',
                 'class' => '',
             ];
@@ -288,6 +353,28 @@ class FAT_Layout
         }
 
         return $breadcrumbs;
+    }
+
+    /**
+     * Get Auth User Data.
+     * 
+     * @param string $username
+     * @param string $field
+     *
+     * @return array|bool $data
+     */
+    private function GetAuthUserData($username, $field = '')
+    {
+        if ($field != '') {
+            $this->CI->db->select($field);
+        }
+        $data = $this->CI->db
+                ->where("LCASE(username)", strtolower($username))
+                ->limit(1)
+                ->get('auth_user')
+                ->row_array();
+
+        return $data;
     }
 }
 

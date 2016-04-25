@@ -27,7 +27,7 @@ class FAT_Hooks
     public function set_profiler()
     {
         $this->CI = &get_instance();
-        $this->CI->output->enable_profiler(TRUE);
+        // $this->CI->output->enable_profiler(TRUE);
     }
 
     public function set_cache()

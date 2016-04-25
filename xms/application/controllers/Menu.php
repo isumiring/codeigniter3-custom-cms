@@ -76,6 +76,7 @@ class Menu extends CI_Controller
                 $return['data'][$row]['actions']     = '<a href="'.site_url($this->class_path_name.'/edit/'.$record['id']).'" class="btn btn-sm btn-info"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
                 $return['data'][$row]['menu']        = $record['menu'];
                 $return['data'][$row]['parent_menu'] = ($record['parent_menu'] != '') ? $record['parent_menu'] : 'ROOT';
+                $return['data'][$row]['file']        = $record['file'];
                 $return['data'][$row]['position']    = $record['position'];
             }
             json_exit($return);
@@ -191,7 +192,7 @@ class Menu extends CI_Controller
     }
 
     /**
-     * delete page.
+     * Delete page.
      */
     public function delete()
     {

@@ -6,12 +6,38 @@
 .login-panel {
     margin-top: 50% ;
 }
+.adminlte2 .main-header .app-title {
+    display: block;
+    float: left;
+    color: #fff;
+    font-size: 15px;
+    line-height: 50px;
+    font-weight: bold;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.adminlte2 .main-header img.user-image {
+    max-width: 160px;
+    max-height: 160px;
+}
+.box-dttables {
+    padding: 20px;
+}
 
-table#dataTables-list thead {
+.sbadmin2 table#dataTables-list thead {
     font-size: 12px;
 }
-table#dataTables-list tbody {
+table#dataTables-list thead tr {
+    background-color: #222D32;
+}
+table#dataTables-list thead tr th, table#dataTables-list thead tr td {
+    color: #fff;
+}
+.sbadmin2 table#dataTables-list tbody {
     font-size: 11px;
+}
+table#dataTables-list tbody tr {
+    background-color: #f5f5f5;
 }
 table#dataTables-list>tbody>tr>td, table#dataTables-list>tbody>tr>th, table#dataTables-list>tfoot>tr>td, table#dataTables-list>tfoot>tr>th, table#dataTables-list>thead>tr>td, table#dataTables-list>thead>tr>th {
     vertical-align: middle;
@@ -60,6 +86,9 @@ img.img-sitelogo {
    color: #c2c2c2 !important; /* The important overrides the settings from bootstrap */
    cursor: not-allowed !important;
 }
+.button-row {
+    margin-top: 40px;
+}
 
 .control-label.text-left {
     text-align: left !important;
@@ -103,7 +132,21 @@ table.gallery-info, table.option-info, table.extra-info {
 .amcharts-chart-div a {
     display: none !important;
 }
-.footer {
+.row-submit {
+    margin-top: 40px;
+}
+.adminlte2 .footer {
     margin-top: 20px;
     margin-bottom: 40px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: block;
+}
+.sbadmin2 .footer {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+.mce-widget.mce-tooltip {
+    display: none !important;
 }

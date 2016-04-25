@@ -232,23 +232,17 @@ class Pages extends CI_Controller
                     unset($post['locales']);
                 }
                 if ($post['page_type'] == 1) {
-                    unset(
-                        $post['module'],
-                        $post['ext_link']
-                    );
+                    $post['module']   = '';
+                    $post['ext_link'] = '';
                 } elseif ($post['page_type'] == 2) {
-                    unset(
-                        $post['uri_path'],
-                        $post['ext_link']
-                    );
+                    $post['uri_path'] = '';
+                    $post['ext_link'] = '';
                 } elseif ($post['page_type'] == 3) {
                     if ($post['ext_link'] != '#' && $post['ext_link'] != '') {
                         $post['ext_link'] = prep_url($post['ext_link']);
                     }
-                    unset(
-                        $post['uri_path'],
-                        $post['module']
-                    );
+                    $post['uri_path'] = '';
+                    $post['module']   = '';
                 }
                 // update data
                 $this->Pages_model->UpdateRecord($id, $post);

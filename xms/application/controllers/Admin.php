@@ -95,7 +95,7 @@ class Admin extends CI_Controller
     public function add()
     {
         $this->data['groups']      = $this->Admin_model->GetGroups();
-        $this->data['page_title']  = 'Add';
+        // $this->data['page_title']  = 'Add';
         $this->data['form_action'] = site_url($this->class_path_name.'/add');
         $this->data['cancel_url']  = site_url($this->class_path_name);
         if ($this->input->post()) {
@@ -162,7 +162,7 @@ class Admin extends CI_Controller
             redirect($this->class_path_name);
         }
         $this->data['groups']             = $this->Admin_model->GetGroups();
-        $this->data['page_title']         = 'Edit';
+        // $this->data['page_title']         = 'Edit';
         $this->data['form_action']        = site_url($this->class_path_name.'/edit/'.$id);
         $this->data['delete_picture_url'] = site_url($this->class_path_name.'/delete_picture/'.$id);
         $this->data['cancel_url']         = site_url($this->class_path_name);
@@ -363,7 +363,7 @@ class Admin extends CI_Controller
                 [
                     'field' => 'password',
                     'label' => 'Password',
-                    'rules' => 'required|min_lenght[8]',
+                    'rules' => 'required|min_length[8]',
                 ],
                 [
                     'field' => 'conf_password',
@@ -376,7 +376,7 @@ class Admin extends CI_Controller
                     [
                         'field' => 'password',
                         'label' => 'Password',
-                        'rules' => 'required|min_lenght[8]',
+                        'rules' => 'min_length[8]',
                     ],
                     [
                         'field' => 'conf_password',

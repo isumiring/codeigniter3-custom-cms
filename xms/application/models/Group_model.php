@@ -236,6 +236,7 @@ class Group_model extends CI_Model
         if ($menus) {
             foreach ($menus as $row => $menu) {
                 $return .= '<div class="checkbox">';
+                $return .= '<label>';
                 if ($menu['parent_auth_menu'] != 0) {
                     $return .= $prefix;
                     $return .= '<img src="'.PATH_CMS.'assets/default/img/tree-taxo.png"/>&nbsp;&nbsp;';
@@ -243,11 +244,10 @@ class Group_model extends CI_Model
                     $prefix = '';
                 }
                 $checked = '';
-                $return .= '<label>';
                 if ($menu['checked'] == true) {
                     $checked = 'checked="checked"';
                 }
-                $return .= '<input type="checkbox" value="'.$menu['id_auth_menu'].'" name="auth_menu_group[]" id="auth-'.$menu['id_auth_menu'].'" class="auth-menu checkauth" '.$checked.'/><label for="auth-'.$menu['id_auth_menu'].'" class="auth-menu">'.$menu['menu'].'</label>';
+                $return .= '<input type="checkbox" value="'.$menu['id_auth_menu'].'" name="auth_menu_group[]" id="auth-'.$menu['id_auth_menu'].'" class="auth-menu checkauth" '.$checked.'/> '.$menu['menu'];
                 $return .= '</label>';
                 $return .= '</div>';
                 if (isset($menu['children']) && count($menu['children']) > 0) {
