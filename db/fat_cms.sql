@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.9-MariaDB, for osx10.6 (i386)
+-- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: fat_cms
 -- ------------------------------------------------------
--- Server version	10.1.9-MariaDB
+-- Server version	5.5.46-0ubuntu0.14.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `fat_article`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fat_article` (
   `id_article` int(11) NOT NULL AUTO_INCREMENT,
-  `id_article_category` int(11) NOT NULL,
+  `id_article_category` int(4) DEFAULT NULL,
   `publish_date` date NOT NULL,
   `expire_date` date DEFAULT NULL,
   `primary_image` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `fat_article` (
   KEY `is_delete` (`is_delete`),
   KEY `publish_date` (`publish_date`),
   KEY `end_date` (`expire_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,7 +50,7 @@ CREATE TABLE `fat_article` (
 
 LOCK TABLES `fat_article` WRITE;
 /*!40000 ALTER TABLE `fat_article` DISABLE KEYS */;
-INSERT INTO `fat_article` VALUES (1,1,'2016-04-02',NULL,'this_is_just_another_article.jpg','this_is_just_another_article-thumb.jpg','this-is-just-another-article',1,0,0,'2016-04-02 12:02:54','2016-04-01 17:24:56');
+INSERT INTO `fat_article` VALUES (1,3,'2017-02-02',NULL,'et-eaque-non-deserunt-fuga-lorem-molestiasa.jpg','et-eaque-non-deserunt-fuga-lorem-molestiasa-thumb.jpg','et-eaque-non-deserunt-fuga-lorem-molestiasa',1,1,0,'2017-02-02 02:50:25','2017-02-01 19:48:11'),(2,2,'2017-02-02',NULL,'alias-aut-anim-aut-laudantium-eius-autea.jpg','alias-aut-anim-aut-laudantium-eius-autea-thumb.jpg','alias-aut-anim-aut-laudantium-eius-autea',1,1,0,'2017-02-02 20:01:39','2017-02-02 12:59:30');
 /*!40000 ALTER TABLE `fat_article` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,9 +63,10 @@ DROP TABLE IF EXISTS `fat_article_category`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fat_article_category` (
   `id_article_category` int(11) NOT NULL AUTO_INCREMENT,
+  `primary_image` varchar(250) COLLATE utf8_bin DEFAULT NULL,
   `uri_path` varchar(200) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_article_category`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,7 +75,7 @@ CREATE TABLE `fat_article_category` (
 
 LOCK TABLES `fat_article_category` WRITE;
 /*!40000 ALTER TABLE `fat_article_category` DISABLE KEYS */;
-INSERT INTO `fat_article_category` VALUES (1,'whats-new');
+INSERT INTO `fat_article_category` VALUES (1,NULL,'sport'),(2,NULL,'travelling'),(3,NULL,'foods');
 /*!40000 ALTER TABLE `fat_article_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,8 +91,9 @@ CREATE TABLE `fat_article_category_detail` (
   `id_article_category` int(11) NOT NULL,
   `id_localization` int(11) NOT NULL,
   `title` varchar(200) COLLATE utf8_bin NOT NULL,
+  `description` text COLLATE utf8_bin,
   PRIMARY KEY (`id_article_category_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +102,7 @@ CREATE TABLE `fat_article_category_detail` (
 
 LOCK TABLES `fat_article_category_detail` WRITE;
 /*!40000 ALTER TABLE `fat_article_category_detail` DISABLE KEYS */;
-INSERT INTO `fat_article_category_detail` VALUES (1,1,1,'Whats New'),(2,1,2,'Terbaru');
+INSERT INTO `fat_article_category_detail` VALUES (15,3,1,'Foods','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(16,3,2,'Makanan','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(17,2,1,'Travelling','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(18,2,2,'Jalan Jalan','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(19,1,1,'Sport','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(20,1,2,'Olahraga','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>');
 /*!40000 ALTER TABLE `fat_article_category_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +121,7 @@ CREATE TABLE `fat_article_detail` (
   `teaser` text COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_article_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +130,7 @@ CREATE TABLE `fat_article_detail` (
 
 LOCK TABLES `fat_article_detail` WRITE;
 /*!40000 ALTER TABLE `fat_article_detail` DISABLE KEYS */;
-INSERT INTO `fat_article_detail` VALUES (7,1,1,'This is just another article','ENG Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ENG</p>\r\n'),(8,1,2,'Ini adalah sebuah artikel','IDN Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. IDN</p>\r\n');
+INSERT INTO `fat_article_detail` VALUES (3,1,1,'Et eaque non deserunt fuga Lorem molestiasa','Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.','<p>Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.</p>'),(8,2,1,'Alias aut anim aut laudantium eius autea','Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.','<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.</p>\r\n<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.</p>'),(9,2,2,'Quia a magni voluptas','Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.','<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.</p>\r\n<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.</p>');
 /*!40000 ALTER TABLE `fat_article_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +146,7 @@ CREATE TABLE `fat_auth_group` (
   `auth_group` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `is_superadmin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_auth_group`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,7 +155,7 @@ CREATE TABLE `fat_auth_group` (
 
 LOCK TABLES `fat_auth_group` WRITE;
 /*!40000 ALTER TABLE `fat_auth_group` DISABLE KEYS */;
-INSERT INTO `fat_auth_group` VALUES (1,'Super Administrator',1);
+INSERT INTO `fat_auth_group` VALUES (1,'Super Administrator',1),(4,'Administrator',1);
 /*!40000 ALTER TABLE `fat_auth_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,10 +171,11 @@ CREATE TABLE `fat_auth_menu` (
   `parent_auth_menu` int(11) NOT NULL DEFAULT '0',
   `menu` varchar(255) COLLATE utf8_bin NOT NULL,
   `file` varchar(255) COLLATE utf8_bin NOT NULL,
+  `icon_tags` varchar(50) COLLATE utf8_bin DEFAULT NULL,
   `position` tinyint(4) DEFAULT '1',
   `is_superadmin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_auth_menu`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +184,7 @@ CREATE TABLE `fat_auth_menu` (
 
 LOCK TABLES `fat_auth_menu` WRITE;
 /*!40000 ALTER TABLE `fat_auth_menu` DISABLE KEYS */;
-INSERT INTO `fat_auth_menu` VALUES (1,0,'Settings','#',2,0),(2,1,'Admin User','admin',21,0),(3,83,'Back End Menu (Module)','menu',12,1),(4,1,'Admin User Group & Authorization','group',22,0),(5,83,'Front End Menu','pages',11,0),(24,1,'Site Management','site',23,1),(36,1,'Logs Record (Admin)','logs',24,0),(50,0,'Slideshow','slideshow',3,0),(68,1,'Localization','localization',55,1),(70,0,'Article','#',4,0),(71,70,'Article Category','article_category',41,0),(72,70,'Article','article',42,0),(83,0,'Menu','#',1,0),(84,0,'Event','event',5,0);
+INSERT INTO `fat_auth_menu` VALUES (1,0,'Settings','#','fa fa-gears',2,0),(2,1,'Admin User','admin','fa fa-user',21,0),(3,83,'Back End Menu (Module)','menu','fa fa-align-left',12,1),(4,1,'Admin User Group & Authorization','group','fa fa-users',22,0),(5,83,'Front End Menu (Static Page)','pages','fa fa-align-left',11,0),(24,1,'Site Management','site','fa fa-ban',23,1),(36,1,'Logs Record (Admin)','logs','fa fa-archive',24,0),(68,1,'Localization','localization','fa fa-flag-checkered',55,1),(83,0,'Menu','#','fa fa-bars',1,0),(110,0,'Slideshow','slideshow','fa fa-picture-o',3,0),(111,0,'Articles','#','fa fa-newspaper-o',4,0),(112,111,'Article Category','category','fa fa-newspaper-o',41,0),(113,111,'Articles','article','fa fa-newspaper-o',42,0);
 /*!40000 ALTER TABLE `fat_auth_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +200,7 @@ CREATE TABLE `fat_auth_menu_group` (
   `id_auth_group` int(11) NOT NULL DEFAULT '0',
   `id_auth_menu` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_auth_menu_group`)
-) ENGINE=MyISAM AUTO_INCREMENT=860 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=976 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +209,7 @@ CREATE TABLE `fat_auth_menu_group` (
 
 LOCK TABLES `fat_auth_menu_group` WRITE;
 /*!40000 ALTER TABLE `fat_auth_menu_group` DISABLE KEYS */;
-INSERT INTO `fat_auth_menu_group` VALUES (855,1,68),(856,1,84),(854,1,36),(853,1,24),(852,1,4),(851,1,2),(850,1,1),(771,3,50),(849,1,72),(797,2,50),(848,1,71),(847,1,70),(846,1,50),(845,1,5),(789,2,36),(787,2,2),(786,2,1),(763,3,36),(762,3,24),(761,3,5),(760,3,3),(758,3,2),(757,3,1),(844,1,3),(843,1,83);
+INSERT INTO `fat_auth_menu_group` VALUES (757,3,1),(758,3,2),(760,3,3),(761,3,5),(762,3,24),(763,3,36),(786,2,1),(787,2,2),(789,2,36),(933,1,83),(934,1,5),(935,1,3),(936,1,1),(937,1,2),(938,1,4),(939,1,24),(940,1,36),(941,1,68),(952,1,110),(953,3,83),(954,3,5),(955,3,3),(956,3,1),(957,3,2),(958,3,4),(959,3,24),(960,3,36),(961,3,68),(962,3,110),(963,4,83),(964,4,5),(965,4,3),(966,4,1),(967,4,2),(968,4,4),(969,4,24),(970,4,36),(971,4,68),(972,4,110),(973,1,111),(974,1,112),(975,1,113);
 /*!40000 ALTER TABLE `fat_auth_menu_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,12 +234,13 @@ CREATE TABLE `fat_auth_user` (
   `modify_date` datetime DEFAULT NULL,
   `create_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `last_login` datetime DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8_bin DEFAULT NULL,
   `activation` varchar(200) COLLATE utf8_bin DEFAULT NULL,
   `status` tinyint(2) NOT NULL,
   `is_superadmin` tinyint(1) NOT NULL DEFAULT '0',
-  `themes` varchar(100) COLLATE utf8_bin DEFAULT 'sbadmin2',
+  `themes` enum('adminlte2','sbadmin2') COLLATE utf8_bin DEFAULT 'adminlte2',
   PRIMARY KEY (`id_auth_user`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,129 +249,34 @@ CREATE TABLE `fat_auth_user` (
 
 LOCK TABLES `fat_auth_user` WRITE;
 /*!40000 ALTER TABLE `fat_auth_user` DISABLE KEYS */;
-INSERT INTO `fat_auth_user` VALUES (1,1,1,'admin','$2y$10$keTaq9.qfb0ca/Xo33UeKuOXdH9Q77MBWbm4CtGgoRM7mcAvDqFfi','Ivan Lubis','ivan.z.lubis@gmail.com','adm_ivan_lubis_c4ca4238a0b923820dcc509a6f75849b.jpg','','','2016-04-02 08:39:21','2014-01-02 10:58:55','2014-01-02 17:58:55',NULL,1,1,'sbadmin2');
+INSERT INTO `fat_auth_user` VALUES (1,1,1,'admin','$2a$12$K3lcuQSGceMztnMSrsL/Wey1dDt6Q.sAUN32eMFZ8N9xnDBwFRuNa','Ivan Lubis','ivan.z.lubis@gmail.com','adm_ivan_lubis_c4ca4238a0b923820dcc509a6f75849b.jpg','','','2017-02-01 18:40:48','2014-01-02 03:58:55','2017-02-02 14:59:10','',NULL,1,1,''),(2,1,1,'super_admin','$2a$12$1NGZogETgKmEp0/f1rDRoOU./8MqsUS/23re5jY2M/aTTNvSsDgzK','Super Admin','ihate.haters@yahoo.com','adm_super_admin_c81e728d9d4c2f636f067f89cc14862c.jpg','','081311124565','2017-01-31 15:06:07','2017-01-31 07:32:22',NULL,NULL,NULL,1,1,'adminlte2');
 /*!40000 ALTER TABLE `fat_auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_auth_user_group`
+-- Table structure for table `fat_front_session`
 --
 
-DROP TABLE IF EXISTS `fat_auth_user_group`;
+DROP TABLE IF EXISTS `fat_front_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_auth_user_group` (
-  `id_auth_user_group` int(11) NOT NULL AUTO_INCREMENT,
-  `auth_user_group` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `is_superadmin` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id_auth_user_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_auth_user_group`
---
-
-LOCK TABLES `fat_auth_user_group` WRITE;
-/*!40000 ALTER TABLE `fat_auth_user_group` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fat_auth_user_group` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_event`
---
-
-DROP TABLE IF EXISTS `fat_event`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_event` (
-  `id_event` int(11) NOT NULL AUTO_INCREMENT,
-  `location` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `publish_date` date NOT NULL,
-  `expire_date` date DEFAULT NULL,
-  `start_date` datetime NOT NULL,
-  `end_date` datetime DEFAULT NULL,
-  `primary_image` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `thumbnail_image` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `uri_path` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `id_status` int(11) NOT NULL,
-  `is_featured` tinyint(1) NOT NULL DEFAULT '0',
-  `is_delete` tinyint(1) NOT NULL DEFAULT '0',
-  `modify_date` datetime DEFAULT NULL,
-  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_event`),
-  KEY `uri_path` (`uri_path`),
-  KEY `id_status` (`id_status`),
-  KEY `is_delete` (`is_delete`),
-  KEY `publish_date` (`publish_date`),
-  KEY `expire_date` (`expire_date`),
-  KEY `start_date` (`start_date`),
-  KEY `end_date` (`end_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_event`
---
-
-LOCK TABLES `fat_event` WRITE;
-/*!40000 ALTER TABLE `fat_event` DISABLE KEYS */;
-INSERT INTO `fat_event` VALUES (1,'Jakarta','2016-04-02',NULL,'2016-04-02 11:49:00',NULL,'genuino_day_2016.jpg','genuino_day_2016-thumb.jpg','genuino-day-2016',1,0,0,'2016-04-03 09:39:21','2016-04-02 04:56:46');
-/*!40000 ALTER TABLE `fat_event` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_event_detail`
---
-
-DROP TABLE IF EXISTS `fat_event_detail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_event_detail` (
-  `id_event_detail` int(11) NOT NULL AUTO_INCREMENT,
-  `id_event` int(11) NOT NULL,
-  `id_localization` int(11) NOT NULL,
-  `title` varchar(250) COLLATE utf8_bin NOT NULL,
-  `teaser` text COLLATE utf8_bin NOT NULL,
-  `description` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id_event_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_event_detail`
---
-
-LOCK TABLES `fat_event_detail` WRITE;
-/*!40000 ALTER TABLE `fat_event_detail` DISABLE KEYS */;
-INSERT INTO `fat_event_detail` VALUES (23,1,1,'GENUINO DAY 2016','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG</p>\r\n'),(24,1,2,'GENUINO DAY 2016','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>\r\n');
-/*!40000 ALTER TABLE `fat_event_detail` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_front_sessions`
---
-
-DROP TABLE IF EXISTS `fat_front_sessions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_front_sessions` (
-  `id` varchar(40) COLLATE utf8_bin NOT NULL,
+CREATE TABLE `fat_front_session` (
+  `id` varchar(128) COLLATE utf8_bin NOT NULL,
   `ip_address` varchar(45) COLLATE utf8_bin NOT NULL,
   `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
   `data` blob NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `ci_sessions_timestamp` (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_front_sessions`
+-- Dumping data for table `fat_front_session`
 --
 
-LOCK TABLES `fat_front_sessions` WRITE;
-/*!40000 ALTER TABLE `fat_front_sessions` DISABLE KEYS */;
-INSERT INTO `fat_front_sessions` VALUES ('dee7373203e6f455da284eecf5a1d2d44ca9d990','127.0.0.1',1445427857,'__ci_last_regenerate|i:1445427750;'),('2bde0e3d793ed79273b411f4322cca446fcbc591','127.0.0.1',1445512071,'__ci_last_regenerate|i:1445512010;'),('122cce41aea5f5184b60d009f84f866324f6f728','127.0.0.1',1445583167,'__ci_last_regenerate|i:1445582873;'),('1118bf82df256d89e39f716a345e305a824e066b','::1',1459651354,'__ci_last_regenerate|i:1459651344;'),('4d1f645c5b9806c7f3cb8a17017169c3c7e1f015','::1',1459667149,'__ci_last_regenerate|i:1459667149;');
-/*!40000 ALTER TABLE `fat_front_sessions` ENABLE KEYS */;
+LOCK TABLES `fat_front_session` WRITE;
+/*!40000 ALTER TABLE `fat_front_session` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fat_front_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -394,57 +303,29 @@ CREATE TABLE `fat_localization` (
 
 LOCK TABLES `fat_localization` WRITE;
 /*!40000 ALTER TABLE `fat_localization` DISABLE KEYS */;
-INSERT INTO `fat_localization` VALUES (1,'english','en','eng','english',1),(2,'indonesia','id','idn','indonesia',0);
+INSERT INTO `fat_localization` VALUES (1,'English','en','eng','english',1),(2,'Indonesia','id','ina','indonesia',0);
 /*!40000 ALTER TABLE `fat_localization` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_logs`
+-- Table structure for table `fat_page`
 --
 
-DROP TABLE IF EXISTS `fat_logs`;
+DROP TABLE IF EXISTS `fat_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_logs` (
-  `id_logs` bigint(20) NOT NULL AUTO_INCREMENT,
-  `id_user` bigint(15) NOT NULL DEFAULT '0',
-  `id_group` bigint(15) NOT NULL DEFAULT '0',
-  `ip_address` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `action` varchar(255) COLLATE utf8_bin NOT NULL,
-  `desc` text CHARACTER SET utf8,
-  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_logs`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_logs`
---
-
-LOCK TABLES `fat_logs` WRITE;
-/*!40000 ALTER TABLE `fat_logs` DISABLE KEYS */;
-INSERT INTO `fat_logs` VALUES (1,1,1,NULL,'Localization','Set Default Localization; ID: 2;','2016-03-29 14:17:14'),(2,1,1,NULL,'Localization','Set Default Localization; ID: 1;','2016-03-29 14:17:46'),(3,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-29 17:32:28'),(4,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-30 12:04:00'),(5,0,0,NULL,'Login','Login:failed; IP:::1; username:admin;','2016-03-31 12:13:47'),(6,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:13:55'),(7,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:14:51'),(8,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:20:01'),(9,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:20:11'),(10,0,0,NULL,'Login','Login:failed; IP:::1; username:admin;','2016-03-31 12:20:36'),(11,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:20:39'),(12,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubisa\",\"email\":\"aivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:22:10'),(13,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:24:12'),(14,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-03-31 12:25:54'),(15,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:25:59'),(16,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.coma\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:26:04'),(17,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:26:07'),(18,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubisa\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:28:41'),(19,1,1,NULL,'Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"themes\":\"sbadmin2\"}','2016-03-31 12:28:45'),(20,1,1,NULL,'Article Category','Add Article Category; ID: 1; Data: {\"uri_path\":\"whats-new\",\"locales\":[{\"id_article_category\":1,\"title\":\"Whats New\",\"id_localization\":1},{\"id_article_category\":1,\"title\":\"Terbaru\",\"id_localization\":2}]}','2016-03-31 12:51:24'),(21,0,0,NULL,'Login','Login:failed; IP:::1; username: admin;','2016-04-01 04:11:40'),(22,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-04-01 04:11:44'),(23,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-04-01 17:18:48'),(24,1,1,NULL,'Article','Add Article; ID: 1; Data: {\"id_article_category\":\"1\",\"uri_path\":\"this-is-just-another-article\",\"id_status\":\"1\",\"is_featured\":\"1\",\"publish_date\":\"2016-04-02\",\"expire_date\":null,\"locales\":[{\"id_article\":1,\"title\":\"This is just another article\",\"teaser\":\"ENG Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_article\":1,\"title\":\"Ini adalah sebuah artikel\",\"teaser\":\"IDN Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. IDN<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-01 17:24:56'),(25,1,1,NULL,'Article','Edit Article; ID: 1; Data: {\"id_article_category\":\"1\",\"uri_path\":\"this-is-just-another-article\",\"id_status\":\"1\",\"is_featured\":\"1\",\"publish_date\":\"2016-04-02\",\"modify_date\":\"2016-04-02 00:33:11\",\"expire_date\":null,\"locales\":[{\"id_article\":\"1\",\"title\":\"This is just another article\",\"teaser\":\"ENG Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_article\":\"1\",\"title\":\"Ini adalah sebuah artikel\",\"teaser\":\"IDN Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. IDN<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-01 17:33:11'),(26,1,1,NULL,'Article','Edit Article; ID: 1; Data: {\"id_article_category\":\"1\",\"uri_path\":\"this-is-just-another-article\",\"id_status\":\"1\",\"is_featured\":\"1\",\"publish_date\":\"2016-04-02\",\"modify_date\":\"2016-04-02 00:34:32\",\"expire_date\":null,\"locales\":[{\"id_article\":\"1\",\"title\":\"This is just another article\",\"teaser\":\"ENG Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_article\":\"1\",\"title\":\"Ini adalah sebuah artikel\",\"teaser\":\"IDN Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. IDN<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-01 17:34:32'),(27,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-04-02 01:38:59'),(28,1,1,NULL,'User Admin','Edit User Admin; ID: 1; Data: {\"username\":\"admin\",\"id_auth_group\":\"1\",\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"status\":true,\"is_superadmin\":true,\"themes\":\"sbadmin2\",\"modify_date\":\"2016-04-02 08:39:21\"}','2016-04-02 01:39:21'),(29,1,1,NULL,'Event','Add Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"end_date\":null,\"locales\":[{\"id_event\":1,\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":1,\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 04:56:46'),(30,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-02 12:00:49\",\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:00:49'),(31,1,1,NULL,'Article','Edit Article; ID: 1; Data: {\"id_article_category\":\"1\",\"uri_path\":\"this-is-just-another-article\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"modify_date\":\"2016-04-02 12:02:54\",\"is_featured\":0,\"expire_date\":null,\"locales\":[{\"id_article\":\"1\",\"title\":\"This is just another article\",\"teaser\":\"ENG Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_article\":\"1\",\"title\":\"Ini adalah sebuah artikel\",\"teaser\":\"IDN Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. IDN<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:02:54'),(32,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-02 12:03:08\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:03:08'),(33,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-02 12:03:25\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:03:25'),(34,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"is_featured\":true,\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-02 12:03:46\",\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:03:46'),(35,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-02 12:03:51\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-02 05:03:51'),(36,1,1,NULL,'Login','Login:succeed; IP:::1; username:admin;','2016-04-02 09:39:33'),(37,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"location\":\"Jakarta\",\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-03 09:37:17\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-03 02:37:17'),(38,1,1,NULL,'Event','Edit Event; ID: 1; Data: {\"location\":\"Jakarta\",\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-03 09:37:23\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-03 02:37:23'),(39,1,1,'::1','Event','Edit Event; ID: 1; Data: {\"location\":\"Jakarta\",\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-03 09:39:16\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-03 02:39:16'),(40,1,1,'::1','Event','Edit Event; ID: 1; Data: {\"location\":\"Jakarta\",\"uri_path\":\"genuino-day-2016\",\"id_status\":\"1\",\"publish_date\":\"2016-04-02\",\"start_date\":\"2016-04-02 11:49\",\"modify_date\":\"2016-04-03 09:39:21\",\"is_featured\":0,\"end_date\":null,\"locales\":[{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum ENG<\\/p>\\r\\n\",\"id_localization\":1},{\"id_event\":\"1\",\"title\":\"GENUINO DAY 2016\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n\",\"id_localization\":2}]}','2016-04-03 02:39:21'),(41,1,1,'::1','Login','Login:succeed; IP:::1; username:admin;','2016-04-03 07:08:32'),(42,1,1,'::1','Login','Login:succeed; IP:::1; username:admin;','2016-04-08 23:21:42'),(43,1,1,'::1','Login','Login:succeed; IP:::1; username:admin;','2016-04-09 09:14:10'),(44,0,0,'::1','Login','Login:failed; IP:::1; username:asfafs;','2016-04-09 09:14:38'),(45,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:27:09'),(46,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:28:51'),(47,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:30:03'),(48,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:30:05'),(49,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:30:07'),(50,0,0,'::1','Login','Login:failed; IP:::1; username:admin_pritynat;','2016-04-09 09:31:16'),(51,0,0,'::1','Login','Login:failed; IP:::1; username:admin_pritynat;','2016-04-09 09:31:24'),(52,1,1,'::1','Login','Login:succeed; IP:::1; username:admin;','2016-04-09 09:31:29'),(53,1,1,'::1','Login','Login:succeed; IP:::1; username:admin;','2016-04-09 09:32:43'),(54,0,0,'::1','Login','Login:failed; IP:::1; username:;','2016-04-09 09:32:51');
-/*!40000 ALTER TABLE `fat_logs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_pages`
---
-
-DROP TABLE IF EXISTS `fat_pages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_pages` (
+CREATE TABLE `fat_page` (
   `id_page` int(11) NOT NULL AUTO_INCREMENT,
   `parent_page` int(11) NOT NULL,
   `page_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `page_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1=static pages; 2=module; 3=external link',
+  `page_type` enum('static_page','module','external_link') COLLATE utf8_bin NOT NULL DEFAULT 'static_page',
   `uri_path` varchar(200) COLLATE utf8_bin NOT NULL,
   `module` varchar(150) COLLATE utf8_bin NOT NULL,
   `ext_link` varchar(220) COLLATE utf8_bin DEFAULT NULL,
   `primary_image` varchar(200) COLLATE utf8_bin DEFAULT NULL,
   `thumbnail_image` varchar(200) COLLATE utf8_bin DEFAULT NULL,
   `background_image` varchar(200) COLLATE utf8_bin DEFAULT NULL,
+  `icon_image` varchar(200) COLLATE utf8_bin DEFAULT NULL,
   `position` smallint(6) NOT NULL,
   `id_status` int(11) NOT NULL DEFAULT '0',
   `is_featured` tinyint(1) NOT NULL DEFAULT '0',
@@ -454,27 +335,27 @@ CREATE TABLE `fat_pages` (
   `modify_date` datetime DEFAULT NULL,
   `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_page`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_pages`
+-- Dumping data for table `fat_page`
 --
 
-LOCK TABLES `fat_pages` WRITE;
-/*!40000 ALTER TABLE `fat_pages` DISABLE KEYS */;
-INSERT INTO `fat_pages` VALUES (1,0,'Home',2,'','home',NULL,NULL,NULL,NULL,1,1,0,1,0,0,NULL,'2015-10-21 11:05:58'),(2,0,'Article',2,'','article',NULL,NULL,NULL,NULL,2,1,0,1,0,0,'2015-10-22 13:58:19','2015-10-21 11:06:26'),(3,0,'About Us',1,'about-us','',NULL,NULL,NULL,NULL,3,1,0,1,0,0,'2015-10-22 15:51:22','2015-10-22 08:31:11'),(4,0,'Privacy',1,'privacy','',NULL,NULL,NULL,NULL,4,1,0,0,1,0,NULL,'2015-10-23 06:29:12'),(5,0,'Terms',1,'terms','',NULL,NULL,NULL,NULL,5,1,0,0,1,0,NULL,'2015-10-23 06:29:44');
-/*!40000 ALTER TABLE `fat_pages` ENABLE KEYS */;
+LOCK TABLES `fat_page` WRITE;
+/*!40000 ALTER TABLE `fat_page` DISABLE KEYS */;
+INSERT INTO `fat_page` VALUES (1,0,'Home','module','','home','',NULL,NULL,NULL,NULL,1,1,0,0,0,0,'2017-02-02 16:21:22','2017-02-02 07:21:42'),(2,0,'About','static_page','about','','',NULL,NULL,NULL,NULL,2,1,1,1,1,0,NULL,'2017-02-02 09:23:26'),(3,0,'Article','module','article','article','',NULL,NULL,NULL,NULL,3,1,1,1,1,0,NULL,'2017-02-02 11:47:54');
+/*!40000 ALTER TABLE `fat_page` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_pages_detail`
+-- Table structure for table `fat_page_detail`
 --
 
-DROP TABLE IF EXISTS `fat_pages_detail`;
+DROP TABLE IF EXISTS `fat_page_detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_pages_detail` (
+CREATE TABLE `fat_page_detail` (
   `id_page_detail` int(11) NOT NULL AUTO_INCREMENT,
   `id_page` int(11) NOT NULL,
   `id_localization` int(11) NOT NULL,
@@ -482,27 +363,27 @@ CREATE TABLE `fat_pages_detail` (
   `teaser` text COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id_page_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_pages_detail`
+-- Dumping data for table `fat_page_detail`
 --
 
-LOCK TABLES `fat_pages_detail` WRITE;
-/*!40000 ALTER TABLE `fat_pages_detail` DISABLE KEYS */;
-INSERT INTO `fat_pages_detail` VALUES (1,1,1,'Home','',''),(2,1,2,'Beranda','',''),(7,2,1,'Article','',''),(8,2,2,'Artikel','',''),(11,3,1,'About Us','','<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>\r\n'),(12,3,2,'Tentang Kami','','<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>\r\n'),(13,4,1,'Privacy','','<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>\r\n'),(14,4,2,'Privacy','',''),(15,5,1,'Terms','','<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>\r\n'),(16,5,2,'Terms','','');
-/*!40000 ALTER TABLE `fat_pages_detail` ENABLE KEYS */;
+LOCK TABLES `fat_page_detail` WRITE;
+/*!40000 ALTER TABLE `fat_page_detail` DISABLE KEYS */;
+INSERT INTO `fat_page_detail` VALUES (2,1,1,'Home','',''),(3,1,2,'Beranda','',''),(4,2,1,'About','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>\r\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(5,2,2,'Tentang Kami','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.','<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>\r\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'),(6,3,1,'Article','',''),(7,3,2,'Artikel','','');
+/*!40000 ALTER TABLE `fat_page_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_pages_image`
+-- Table structure for table `fat_page_image`
 --
 
-DROP TABLE IF EXISTS `fat_pages_image`;
+DROP TABLE IF EXISTS `fat_page_image`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_pages_image` (
+CREATE TABLE `fat_page_image` (
   `id_page_image` int(11) NOT NULL AUTO_INCREMENT,
   `id_page` int(11) NOT NULL,
   `image` varchar(200) COLLATE utf8_bin NOT NULL,
@@ -513,81 +394,27 @@ CREATE TABLE `fat_pages_image` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_pages_image`
+-- Dumping data for table `fat_page_image`
 --
 
-LOCK TABLES `fat_pages_image` WRITE;
-/*!40000 ALTER TABLE `fat_pages_image` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fat_pages_image` ENABLE KEYS */;
+LOCK TABLES `fat_page_image` WRITE;
+/*!40000 ALTER TABLE `fat_page_image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fat_page_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_pages_image_caption`
+-- Table structure for table `fat_site`
 --
 
-DROP TABLE IF EXISTS `fat_pages_image_caption`;
+DROP TABLE IF EXISTS `fat_site`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_pages_image_caption` (
-  `id_page_image_caption` int(11) NOT NULL AUTO_INCREMENT,
-  `id_page` int(11) NOT NULL,
-  `id_page_image` int(11) NOT NULL,
-  `id_localization` int(11) NOT NULL,
-  `caption` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id_page_image_caption`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_pages_image_caption`
---
-
-LOCK TABLES `fat_pages_image_caption` WRITE;
-/*!40000 ALTER TABLE `fat_pages_image_caption` DISABLE KEYS */;
-/*!40000 ALTER TABLE `fat_pages_image_caption` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_setting`
---
-
-DROP TABLE IF EXISTS `fat_setting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_setting` (
-  `id_setting` int(11) NOT NULL AUTO_INCREMENT,
-  `id_site` int(11) NOT NULL DEFAULT '0',
-  `type` varchar(150) COLLATE utf8_bin NOT NULL,
-  `value` text COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id_setting`),
-  KEY `is_site` (`id_site`)
-) ENGINE=InnoDB AUTO_INCREMENT=493 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fat_setting`
---
-
-LOCK TABLES `fat_setting` WRITE;
-/*!40000 ALTER TABLE `fat_setting` DISABLE KEYS */;
-INSERT INTO `fat_setting` VALUES (476,1,'app_footer','© Copyright Ivan Lubis 2016'),(477,1,'app_title','FAT CMS'),(478,1,'email_contact','ivan.z.lubis@gmail.com'),(479,1,'email_contact_name','FAT CMS Admin'),(480,1,'facebook_url','#'),(481,1,'ip_approved','::1;127.0.0.1'),(482,1,'mail_host','mail.test.com'),(483,1,'mail_pass','mail27'),(484,1,'mail_port','25'),(485,1,'mail_protocol','smtp'),(486,1,'mail_user','smtp@test.com'),(487,1,'maintenance_message','<p>This site currently on maintenance, please check again later.</p>\r\n'),(488,1,'maintenance_mode','0'),(489,1,'twitter_url','#'),(490,1,'web_description','This is website description'),(491,1,'web_keywords',''),(492,1,'welcome_message','');
-/*!40000 ALTER TABLE `fat_setting` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fat_sites`
---
-
-DROP TABLE IF EXISTS `fat_sites`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_sites` (
+CREATE TABLE `fat_site` (
   `id_site` int(11) NOT NULL AUTO_INCREMENT,
   `site_name` varchar(255) COLLATE utf8_bin NOT NULL,
   `site_url` varchar(255) COLLATE utf8_bin NOT NULL,
   `site_path` varchar(255) COLLATE utf8_bin NOT NULL,
   `site_logo` varchar(255) COLLATE utf8_bin NOT NULL,
-  `id_ref_publish` tinyint(4) NOT NULL,
   `site_address` text COLLATE utf8_bin NOT NULL,
   `site_longitude` varchar(255) COLLATE utf8_bin NOT NULL,
   `site_latitude` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -601,13 +428,40 @@ CREATE TABLE `fat_sites` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_sites`
+-- Dumping data for table `fat_site`
 --
 
-LOCK TABLES `fat_sites` WRITE;
-/*!40000 ALTER TABLE `fat_sites` DISABLE KEYS */;
-INSERT INTO `fat_sites` VALUES (1,'FAT CMS','/','/','xms.png',1,'','','',1,1,0,'2016-03-27 19:01:58','2012-07-11 00:00:00');
-/*!40000 ALTER TABLE `fat_sites` ENABLE KEYS */;
+LOCK TABLES `fat_site` WRITE;
+/*!40000 ALTER TABLE `fat_site` DISABLE KEYS */;
+INSERT INTO `fat_site` VALUES (1,'FAT XMS','/','/','','','','',1,1,0,'2017-02-02 15:03:03','2012-07-11 00:00:00');
+/*!40000 ALTER TABLE `fat_site` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fat_site_setting`
+--
+
+DROP TABLE IF EXISTS `fat_site_setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fat_site_setting` (
+  `id_site_setting` int(11) NOT NULL AUTO_INCREMENT,
+  `id_site` int(11) NOT NULL DEFAULT '0',
+  `type` varchar(150) COLLATE utf8_bin NOT NULL,
+  `value` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id_site_setting`),
+  KEY `id_site` (`id_site`)
+) ENGINE=InnoDB AUTO_INCREMENT=731 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fat_site_setting`
+--
+
+LOCK TABLES `fat_site_setting` WRITE;
+/*!40000 ALTER TABLE `fat_site_setting` DISABLE KEYS */;
+INSERT INTO `fat_site_setting` VALUES (714,1,'app_footer','© 2017 All rights reserved.'),(715,1,'app_title','FAT CMS'),(716,1,'email_contact','ivan.z.lubis@gmail.com'),(717,1,'email_contact_name','FAT Admin'),(718,1,'facebook_url','#'),(719,1,'ip_approved','::1;127.0.0.1'),(720,1,'mail_host','mail.test.com'),(721,1,'mail_pass','mail27'),(722,1,'mail_port','25'),(723,1,'mail_protocol','smtp'),(724,1,'mail_user','smtp@test.com'),(725,1,'maintenance_message','<p>This site currently on maintenance, please check again later.</p>\r\n'),(726,1,'maintenance_mode','0'),(727,1,'twitter_url','#'),(728,1,'web_description',''),(729,1,'web_keywords',''),(730,1,'welcome_message','You can go to https://github.com/isumiring/codeigniter3-custom-cms for detail info');
+/*!40000 ALTER TABLE `fat_site_setting` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -628,7 +482,7 @@ CREATE TABLE `fat_slideshow` (
   `modify_date` datetime DEFAULT NULL,
   `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_slideshow`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -637,7 +491,7 @@ CREATE TABLE `fat_slideshow` (
 
 LOCK TABLES `fat_slideshow` WRITE;
 /*!40000 ALTER TABLE `fat_slideshow` DISABLE KEYS */;
-INSERT INTO `fat_slideshow` VALUES (1,'slideshow_1.jpg','',1,'',1,0,NULL,'2015-10-22 07:40:07'),(2,'slideshow_2.jpg','',2,'',1,0,NULL,'2015-10-22 07:40:37'),(3,'slideshow_3.jpg','',3,'',1,0,NULL,'2015-10-22 07:41:02');
+INSERT INTO `fat_slideshow` VALUES (1,'ipsum_mollitia_nulla_est_amet_sunt_nostrud_c4ca4238a0b923820dcc509a6f75849b.jpg',NULL,1,'http://google.com',1,0,NULL,'2017-02-02 06:31:45');
 /*!40000 ALTER TABLE `fat_slideshow` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -655,7 +509,7 @@ CREATE TABLE `fat_slideshow_detail` (
   `title` varchar(200) COLLATE utf8_bin NOT NULL,
   `caption` text COLLATE utf8_bin,
   PRIMARY KEY (`id_slideshow_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -664,7 +518,7 @@ CREATE TABLE `fat_slideshow_detail` (
 
 LOCK TABLES `fat_slideshow_detail` WRITE;
 /*!40000 ALTER TABLE `fat_slideshow_detail` DISABLE KEYS */;
-INSERT INTO `fat_slideshow_detail` VALUES (1,1,1,'Slideshow 1',''),(2,1,2,'Slideshow 1',''),(3,2,1,'Slideshow 2',''),(4,2,2,'Slideshow 2',''),(5,3,1,'Slideshow 3',''),(6,3,2,'Slideshow 3','');
+INSERT INTO `fat_slideshow_detail` VALUES (1,1,1,'Ipsum mollitia nulla est amet sunt nostrud','<p>Ipsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrud</p>\r\n<p>Ipsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrud</p>');
 /*!40000 ALTER TABLE `fat_slideshow_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -693,29 +547,58 @@ INSERT INTO `fat_status` VALUES (1,'Publish'),(2,'Draft');
 UNLOCK TABLES;
 
 --
--- Table structure for table `fat_xms_sessions`
+-- Table structure for table `fat_xms_log`
 --
 
-DROP TABLE IF EXISTS `fat_xms_sessions`;
+DROP TABLE IF EXISTS `fat_xms_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fat_xms_sessions` (
-  `id` varchar(40) COLLATE utf8_bin NOT NULL,
+CREATE TABLE `fat_xms_log` (
+  `id_log` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id_auth_user` bigint(15) NOT NULL DEFAULT '0',
+  `id_auth_group` bigint(15) NOT NULL DEFAULT '0',
+  `ip_address` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `action` varchar(255) COLLATE utf8_bin NOT NULL,
+  `desc` text CHARACTER SET utf8,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_log`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fat_xms_log`
+--
+
+LOCK TABLES `fat_xms_log` WRITE;
+/*!40000 ALTER TABLE `fat_xms_log` DISABLE KEYS */;
+INSERT INTO `fat_xms_log` VALUES (1,0,0,'192.168.33.1','Login','Login:failed; IP:192.168.33.1; username:asfasf;','2017-01-30 08:24:28'),(2,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 08:25:25'),(3,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 104;','2017-01-30 08:26:49'),(4,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 102;','2017-01-30 08:26:49'),(5,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 09:47:40'),(6,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 101;','2017-01-30 09:47:57'),(7,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 107;','2017-01-30 09:50:51'),(8,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 09:53:01'),(9,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 108;','2017-01-30 09:53:12'),(10,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 100;','2017-01-30 09:54:38'),(11,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 10:05:28'),(12,1,1,'192.168.33.1','Delete Admin Menu','Delete Admin Menu; ID: 109;','2017-01-30 10:09:25'),(13,0,0,'192.168.33.1','Login','Login:failed; IP:192.168.33.1; username:admin;','2017-01-30 15:38:04'),(14,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 15:38:08'),(15,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 15:48:23'),(16,1,1,'192.168.33.1','Menu Admin','Add Menu Admin; ID: 110; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Slideshow\",\"file\":\"slideshow\",\"icon_tags\":\"fa fa-image-o\",\"position\":\"3\",\"is_superadmin\":0}','2017-01-30 15:48:41'),(17,1,1,'192.168.33.1','Menu Admin','Edit Menu Admin; ID: 110; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Slideshow\",\"file\":\"slideshow\",\"icon_tags\":\"fa fa-picture-o\",\"position\":\"3\",\"is_superadmin\":0}','2017-01-30 15:49:37'),(18,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 15:56:45'),(19,1,1,'192.168.33.1','Menu Admin','Edit Menu Admin; ID: 110; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Slideshow\",\"file\":\"slideshow\",\"icon_tags\":\"ion-images\",\"position\":\"3\",\"is_superadmin\":0}','2017-01-30 15:56:50'),(20,1,1,'192.168.33.1','Menu Admin','Edit Menu Admin; ID: 110; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Slideshow\",\"file\":\"slideshow\",\"icon_tags\":\"fa fa-picture-o\",\"position\":\"3\",\"is_superadmin\":0}','2017-01-30 15:57:15'),(21,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 16:51:08'),(22,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-30 17:34:49'),(23,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 07:18:58'),(24,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 07:19:44'),(25,1,1,'192.168.33.1','User Admin','Edit User Admin; ID: 1; Data: {\"id_auth_group\":\"1\",\"username\":\"admina\",\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"status\":true,\"is_superadmin\":true,\"themes\":\"adminlte2\",\"modify_date\":\"2017-01-31 14:21:51\"}','2017-01-31 07:21:51'),(26,1,1,'192.168.33.1','User Admin','Edit User Admin; ID: 1; Data: {\"id_auth_group\":\"1\",\"username\":\"admin\",\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"status\":true,\"is_superadmin\":true,\"themes\":\"adminlte2\",\"modify_date\":\"2017-01-31 14:22:01\"}','2017-01-31 07:22:01'),(27,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 07:22:11'),(28,0,0,'192.168.33.1','Login','Login:failed; IP:192.168.33.1; username:admin;','2017-01-31 07:31:23'),(29,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 07:31:27'),(30,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 08:03:00'),(31,1,1,'192.168.33.1','User Admin','Edit User Admin; ID: 1; Data: {\"id_auth_group\":\"1\",\"username\":\"admin\",\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"status\":true,\"is_superadmin\":true,\"themes\":\"adminlte2\",\"modify_date\":\"2017-01-31 15:05:29\"}','2017-01-31 08:05:29'),(32,1,1,'192.168.33.1','User Admin','Delete Picture User Admin; ID: 1;','2017-01-31 08:05:44'),(33,1,1,'192.168.33.1','User Admin','Edit User Admin; ID: 1; Data: {\"id_auth_group\":\"1\",\"username\":\"admin\",\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"address\":\"\",\"phone\":\"\",\"status\":true,\"is_superadmin\":true,\"themes\":\"adminlte2\",\"modify_date\":\"2017-01-31 15:05:57\"}','2017-01-31 08:05:57'),(34,1,1,'192.168.33.1','User Admin','Edit User Admin; ID: 2; Data: {\"id_auth_group\":\"1\",\"username\":\"super_admin\",\"name\":\"Super Admin\",\"email\":\"ihate.haters@yahoo.com\",\"address\":\"\",\"phone\":\"081311124565\",\"status\":true,\"is_superadmin\":true,\"themes\":\"adminlte2\",\"modify_date\":\"2017-01-31 15:06:07\"}','2017-01-31 08:06:07'),(35,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 08:12:38'),(36,0,0,'192.168.33.1','Login','Login:failed; IP:192.168.33.1; username:admin;','2017-01-31 08:53:28'),(37,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 08:53:30'),(38,1,1,'192.168.33.1','Admin Group','Edit Admin Group; ID: 1; Data: {\"auth_group\":\"Super Administratora\",\"is_superadmin\":true}','2017-01-31 08:53:37'),(39,1,1,'192.168.33.1','Admin Group','Edit Admin Group; ID: 1; Data: {\"auth_group\":\"Super Administrator\",\"is_superadmin\":true}','2017-01-31 08:53:42'),(40,1,1,'192.168.33.1','Group Admin','Add Group Admin; ID: 2; Data: {\"auth_group\":\"Administrator\",\"is_superadmin\":true}','2017-01-31 08:53:59'),(41,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 08:59:49'),(42,1,1,'192.168.33.1','Group Admin','Add Group Admin; ID: 3; Data: {\"auth_group\":\"Administrator\",\"is_superadmin\":true}','2017-01-31 09:00:02'),(43,1,1,'192.168.33.1','Admin Group','Edit Admin Group Authentication; ID: 3; Data: {\"auth_menu_group\":[\"83\",\"5\",\"3\",\"1\",\"2\",\"4\",\"24\",\"36\",\"68\",\"110\"]}','2017-01-31 09:00:10'),(44,1,1,'192.168.33.1','Group Admin','Add Group Admin; ID: 4; Data: {\"auth_group\":\"Administrator\",\"is_superadmin\":true}','2017-01-31 09:00:26'),(45,1,1,'192.168.33.1','Admin Group','Edit Admin Group Authentication; ID: 4; Data: {\"auth_menu_group\":[\"83\",\"5\",\"3\",\"1\",\"2\",\"4\",\"24\",\"36\",\"68\",\"110\"]}','2017-01-31 09:00:31'),(46,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 09:20:16'),(47,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 09:30:00'),(48,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 09:50:34'),(49,1,1,'192.168.33.1','Site Setting','Edit Site Setting; ID: 1; Data: {\"site_name\":\"FAT XMSA\",\"site_url\":\"\\/\",\"site_path\":\"\\/\",\"site_address\":\"\",\"is_default\":true,\"modify_date\":\"2017-01-31 16:50:39\"}','2017-01-31 09:50:39'),(50,1,1,'192.168.33.1','Site Setting','Edit Site Setting; ID: 1; Data: {\"site_name\":\"FAT XMS\",\"site_url\":\"\\/\",\"site_path\":\"\\/\",\"site_address\":\"\",\"is_default\":true,\"modify_date\":\"2017-01-31 16:51:01\"}','2017-01-31 09:51:01'),(51,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 11:05:09'),(52,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-01-31 12:00:17'),(53,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 05:41:53'),(54,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 05:58:42'),(55,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 10:46:41'),(56,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 11:21:40'),(57,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 11:39:03'),(58,1,1,'192.168.33.1','Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"phone\":\"\",\"address\":\"\",\"themes\":\"\",\"modify_date\":\"2017-02-01 18:40:40\"}','2017-02-01 11:40:40'),(59,1,1,'192.168.33.1','Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubisa\",\"email\":\"ivan.z.lubis@gmail.com\",\"phone\":\"\",\"address\":\"\",\"themes\":\"\",\"modify_date\":\"2017-02-01 18:40:45\"}','2017-02-01 11:40:45'),(60,1,1,'192.168.33.1','Profile','Edit Profile; ID: 1; Data: {\"name\":\"Ivan Lubis\",\"email\":\"ivan.z.lubis@gmail.com\",\"phone\":\"\",\"address\":\"\",\"themes\":\"\",\"modify_date\":\"2017-02-01 18:40:48\"}','2017-02-01 11:40:48'),(61,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 17:53:00'),(62,1,1,'192.168.33.1','Menu Admin','Add Menu Admin; ID: 111; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Articles\",\"file\":\"#\",\"icon_tags\":\"\",\"position\":\"4\",\"is_superadmin\":0}','2017-02-01 17:53:24'),(63,1,1,'192.168.33.1','Menu Admin','Edit Menu Admin; ID: 111; Data: {\"parent_auth_menu\":\"0\",\"menu\":\"Articles\",\"file\":\"#\",\"icon_tags\":\"fa fa-newspaper-o\",\"position\":\"4\",\"is_superadmin\":0}','2017-02-01 17:54:58'),(64,1,1,'192.168.33.1','Menu Admin','Add Menu Admin; ID: 112; Data: {\"parent_auth_menu\":\"111\",\"menu\":\"Article Category\",\"file\":\"category\",\"icon_tags\":\"fa fa-newspaper-o\",\"position\":\"41\",\"is_superadmin\":0}','2017-02-01 17:55:27'),(65,1,1,'192.168.33.1','Menu Admin','Add Menu Admin; ID: 113; Data: {\"parent_auth_menu\":\"111\",\"menu\":\"Articles\",\"file\":\"article\",\"icon_tags\":\"fa fa-newspaper-o\",\"position\":\"42\",\"is_superadmin\":0}','2017-02-01 17:55:43'),(66,1,1,'192.168.33.1','Category','Add Category; ID: 1; Data: {\"uri_path\":\"sport\",\"locales\":[{\"id_article_category\":1,\"title\":\"Sport\",\"id_localization\":1}]}','2017-02-01 17:57:28'),(67,1,1,'192.168.33.1','Category','Edit Category; ID: 1; Data: {\"uri_path\":\"sporta\",\"locales\":[{\"id_article_category\":\"1\",\"title\":\"Sporta\",\"id_localization\":1}]}','2017-02-01 17:57:37'),(68,1,1,'192.168.33.1','Category','Edit Category; ID: 1; Data: {\"uri_path\":\"sport\",\"locales\":[{\"id_article_category\":\"1\",\"title\":\"Sport\",\"id_localization\":1}]}','2017-02-01 17:57:43'),(69,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 18:03:32'),(70,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 18:18:06'),(71,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 18:28:22'),(72,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-01 18:34:51'),(73,1,1,'192.168.33.1','Article','Add Article; ID: 1; Data: {\"id_article_category\":\"3\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"et-eaque-non-deserunt-fuga-lorem-molestiasa\",\"id_status\":\"1\",\"is_featured\":true,\"locales\":[{\"id_article\":1,\"title\":\"Et eaque non deserunt fuga Lorem molestiasa\",\"teaser\":\"Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.\",\"description\":\"<p>Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.<\\/p>\",\"id_localization\":1}]}','2017-02-01 19:48:11'),(74,1,1,'192.168.33.1','Article','Delete Thumbnail Picture Article; ID: 1;','2017-02-01 19:48:21'),(75,1,1,'192.168.33.1','Article','Delete Primary Picture Article; ID: 1;','2017-02-01 19:48:22'),(76,1,1,'192.168.33.1','Article','Edit Article; ID: 1; Data: {\"id_article_category\":\"3\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"et-eaque-non-deserunt-fuga-lorem-molestiasa\",\"id_status\":\"1\",\"is_featured\":true,\"modify_date\":\"2017-02-02 02:48:57\",\"locales\":[{\"id_article\":\"1\",\"title\":\"Et eaque non deserunt fuga Lorem molestiasa\",\"teaser\":\"Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.\",\"description\":\"<p>Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.<\\/p>\",\"id_localization\":1}]}','2017-02-01 19:48:57'),(77,1,1,'192.168.33.1','Article','Delete Thumbnail Picture Article; ID: 1;','2017-02-01 19:49:25'),(78,1,1,'192.168.33.1','Article','Delete Primary Picture Article; ID: 1;','2017-02-01 19:49:26'),(79,1,1,'192.168.33.1','Article','Edit Article; ID: 1; Data: {\"id_article_category\":\"3\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"et-eaque-non-deserunt-fuga-lorem-molestiasa\",\"id_status\":\"1\",\"is_featured\":true,\"modify_date\":\"2017-02-02 02:50:25\",\"locales\":[{\"id_article\":\"1\",\"title\":\"Et eaque non deserunt fuga Lorem molestiasa\",\"teaser\":\"Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.\",\"description\":\"<p>Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.Deleniti autem esse ea sunt, non quidem rerum quaerat animi, sunt nobis corporis nulla cillum commodo.<\\/p>\",\"id_localization\":1}]}','2017-02-01 19:50:25'),(80,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-02 06:30:34'),(81,1,1,'192.168.33.1','Slideshow','Add Slideshow; ID: 1; Data: {\"position\":\"1\",\"url_link\":\"http:\\/\\/google.com\",\"id_status\":\"1\",\"locales\":[{\"id_slideshow\":1,\"title\":\"Ipsum mollitia nulla est amet sunt nostrud\",\"caption\":\"<p>Ipsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrud<\\/p>\\r\\n<p>Ipsum mollitia nulla est amet sunt nostrudIpsum mollitia nulla est amet sunt nostrud<\\/p>\",\"id_localization\":1}]}','2017-02-02 06:31:45'),(82,1,1,'192.168.33.1','Pages','Add Pages; ID: 1; Data: {\"parent_page\":\"0\",\"page_name\":\"Home\",\"page_type\":\"2\",\"module\":\"home\",\"position\":\"1\",\"id_status\":\"1\",\"is_featured\":true,\"is_header\":true,\"is_footer\":true,\"locales\":[{\"id_page\":1,\"title\":\"Home\",\"teaser\":\"\",\"description\":\"\",\"id_localization\":1}]}','2017-02-02 07:21:42'),(83,0,0,'192.168.33.1','Login','Login:succeed; IP:192.168.33.1; username:admin;','2017-02-02 07:59:10'),(84,1,1,'192.168.33.1','Site Setting','Edit Site Setting; ID: 1; Data: {\"site_name\":\"FAT XMS\",\"site_url\":\"\\/\",\"site_path\":\"\\/\",\"site_address\":\"\",\"is_default\":true,\"modify_date\":\"2017-02-02 15:03:03\"}','2017-02-02 08:03:03'),(85,1,1,'192.168.33.1','Category','Edit Category; ID: 1; Data: {\"uri_path\":\"sport\",\"locales\":[{\"id_article_category\":\"1\",\"title\":\"Sport\",\"id_localization\":1}]}','2017-02-02 08:06:34'),(86,1,1,'192.168.33.1','Localization','Add Localization; ID: 2; Data: {\"locale\":\"Indonesia\",\"iso_1\":\"id\",\"iso_2\":\"ina\",\"locale_path\":\"id\",\"locale_status\":true}','2017-02-02 08:07:10'),(87,1,1,'192.168.33.1','Pages','Edit Pages; ID: 1; Data: {\"parent_page\":\"0\",\"page_name\":\"Home\",\"page_type\":\"module\",\"uri_path\":\"\",\"module\":\"home\",\"ext_link\":\"\",\"position\":\"1\",\"id_status\":\"1\",\"is_featured\":0,\"is_header\":0,\"is_footer\":0,\"modify_date\":\"2017-02-02 16:21:22\",\"locales\":[{\"id_page\":\"1\",\"title\":\"Home\",\"teaser\":\"\",\"description\":\"\",\"id_localization\":1},{\"id_page\":\"1\",\"title\":\"Beranda\",\"teaser\":\"\",\"description\":\"\",\"id_localization\":2}]}','2017-02-02 09:21:22'),(88,1,1,'192.168.33.1','Pages','Add Pages; ID: 2; Data: {\"parent_page\":\"0\",\"page_name\":\"About\",\"page_type\":\"static_page\",\"uri_path\":\"about\",\"module\":\"\",\"ext_link\":\"\",\"position\":\"2\",\"id_status\":\"1\",\"is_featured\":true,\"is_header\":true,\"is_footer\":true,\"locales\":[{\"id_page\":2,\"title\":\"About\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_page\":2,\"title\":\"Tentang Kami\",\"teaser\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\\r\\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":2}]}','2017-02-02 09:23:26'),(89,1,1,'192.168.33.1','Category','Edit Category; ID: 1; Data: {\"uri_path\":\"sport\",\"locales\":[{\"id_article_category\":\"1\",\"title\":\"Sport\",\"id_localization\":1},{\"id_article_category\":\"1\",\"title\":\"Olahraga\",\"id_localization\":2}]}','2017-02-02 09:42:14'),(90,1,1,'192.168.33.1','Category','Add Category; ID: 2; Data: {\"uri_path\":\"travelling\",\"locales\":[{\"id_article_category\":2,\"title\":\"Travelling\",\"id_localization\":1},{\"id_article_category\":2,\"title\":\"Jalan Jalan\",\"id_localization\":2}]}','2017-02-02 09:42:44'),(91,1,1,'192.168.33.1','Category','Add Category; ID: 3; Data: {\"uri_path\":\"foods\",\"locales\":[{\"id_article_category\":3,\"title\":\"Foods\",\"id_localization\":1},{\"id_article_category\":3,\"title\":\"Makanan\",\"id_localization\":2}]}','2017-02-02 09:43:02'),(92,1,1,'192.168.33.1','Category','Edit Category; ID: 3; Data: {\"uri_path\":\"foods\",\"locales\":[{\"id_article_category\":\"3\",\"title\":\"Foods\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_article_category\":\"3\",\"title\":\"Makanan\",\"description\":\"\",\"id_localization\":2}]}','2017-02-02 11:02:33'),(93,1,1,'192.168.33.1','Category','Edit Category; ID: 3; Data: {\"uri_path\":\"foods\",\"locales\":[{\"id_article_category\":\"3\",\"title\":\"Foods\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_article_category\":\"3\",\"title\":\"Makanan\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":2}]}','2017-02-02 11:02:43'),(94,1,1,'192.168.33.1','Category','Edit Category; ID: 3; Data: {\"uri_path\":\"foods\",\"locales\":[{\"id_article_category\":\"3\",\"title\":\"Foods\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_article_category\":\"3\",\"title\":\"Makanan\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":2}]}','2017-02-02 11:03:35'),(95,1,1,'192.168.33.1','Category','Edit Category; ID: 2; Data: {\"uri_path\":\"travelling\",\"locales\":[{\"id_article_category\":\"2\",\"title\":\"Travelling\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_article_category\":\"2\",\"title\":\"Jalan Jalan\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":2}]}','2017-02-02 11:04:09'),(96,1,1,'192.168.33.1','Category','Edit Category; ID: 1; Data: {\"uri_path\":\"sport\",\"locales\":[{\"id_article_category\":\"1\",\"title\":\"Sport\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":1},{\"id_article_category\":\"1\",\"title\":\"Olahraga\",\"description\":\"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<\\/p>\",\"id_localization\":2}]}','2017-02-02 11:04:18'),(97,1,1,'192.168.33.1','Pages','Add Pages; ID: 3; Data: {\"parent_page\":\"0\",\"page_name\":\"Article\",\"page_type\":\"module\",\"uri_path\":\"article\",\"module\":\"article\",\"ext_link\":\"\",\"position\":\"3\",\"id_status\":\"1\",\"is_featured\":true,\"is_header\":true,\"is_footer\":true,\"locales\":[{\"id_page\":3,\"title\":\"Article\",\"teaser\":\"\",\"description\":\"\",\"id_localization\":1},{\"id_page\":3,\"title\":\"Artikel\",\"teaser\":\"\",\"description\":\"\",\"id_localization\":2}]}','2017-02-02 11:47:54'),(98,1,1,'192.168.33.1','Article','Add Article; ID: 2; Data: {\"id_article_category\":\"17\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"alias-aut-anim-aut-laudantium-eius-autea\",\"id_status\":\"1\",\"is_featured\":true,\"locales\":[{\"id_article\":2,\"title\":\"Alias aut anim aut laudantium eius autea\",\"teaser\":\"Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.\",\"description\":\"<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\\r\\n<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\",\"id_localization\":1},{\"id_article\":2,\"title\":\"Quia a magni voluptas\",\"teaser\":\"Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.\",\"description\":\"<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\\r\\n<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\",\"id_localization\":2}]}','2017-02-02 12:59:30'),(99,1,1,'192.168.33.1','Article','Edit Article; ID: 2; Data: {\"id_article_category\":\"15\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"alias-aut-anim-aut-laudantium-eius-autea\",\"id_status\":\"1\",\"is_featured\":true,\"modify_date\":\"2017-02-02 19:59:40\",\"locales\":[{\"id_article\":\"2\",\"title\":\"Alias aut anim aut laudantium eius autea\",\"teaser\":\"Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.\",\"description\":\"<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\\r\\n<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\",\"id_localization\":1},{\"id_article\":\"2\",\"title\":\"Quia a magni voluptas\",\"teaser\":\"Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.\",\"description\":\"<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\\r\\n<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\",\"id_localization\":2}]}','2017-02-02 12:59:40'),(100,1,1,'192.168.33.1','Article','Edit Article; ID: 2; Data: {\"id_article_category\":\"2\",\"publish_date\":\"2017-02-02\",\"expire_date\":null,\"uri_path\":\"alias-aut-anim-aut-laudantium-eius-autea\",\"id_status\":\"1\",\"is_featured\":true,\"modify_date\":\"2017-02-02 20:01:39\",\"locales\":[{\"id_article\":\"2\",\"title\":\"Alias aut anim aut laudantium eius autea\",\"teaser\":\"Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.\",\"description\":\"<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\\r\\n<p>Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.Dolore consequatur? Omnis voluptatibus unde provident, odio sequi sint reiciendis nisi eum ea velit itaque aute maxime placeat, sequi.<\\/p>\",\"id_localization\":1},{\"id_article\":\"2\",\"title\":\"Quia a magni voluptas\",\"teaser\":\"Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.\",\"description\":\"<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\\r\\n<p>Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.Incidunt, culpa ad a ullam nisi quis rerum mollitia in ad dolore in reiciendis porro quasi est ullamco in fugit.<\\/p>\",\"id_localization\":2}]}','2017-02-02 13:01:39');
+/*!40000 ALTER TABLE `fat_xms_log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fat_xms_session`
+--
+
+DROP TABLE IF EXISTS `fat_xms_session`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fat_xms_session` (
+  `id` varchar(128) COLLATE utf8_bin NOT NULL,
   `ip_address` varchar(45) COLLATE utf8_bin NOT NULL,
   `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
   `data` blob NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `ci_sessions_timestamp` (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `fat_xms_sessions`
+-- Dumping data for table `fat_xms_session`
 --
 
-LOCK TABLES `fat_xms_sessions` WRITE;
-/*!40000 ALTER TABLE `fat_xms_sessions` DISABLE KEYS */;
-INSERT INTO `fat_xms_sessions` VALUES ('49f49c2b0f004d492dfe15a7e9db697aab901925','::1',1460193223,'__ci_last_regenerate|i:1460193221;tmp_login_redirect|s:0:\"\";'),('646acf837b40d5c1d4247b7bb4d433c1d571339f','::1',1460195631,'__ci_last_regenerate|i:1460195382;');
-/*!40000 ALTER TABLE `fat_xms_sessions` ENABLE KEYS */;
+LOCK TABLES `fat_xms_session` WRITE;
+/*!40000 ALTER TABLE `fat_xms_session` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fat_xms_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -727,4 +610,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-09 17:09:25
+-- Dump completed on 2017-02-02 20:10:02

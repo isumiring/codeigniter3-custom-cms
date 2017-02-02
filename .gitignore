@@ -8,6 +8,12 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 
+user_guide_src/build/*
+user_guide_src/cilexer/build/*
+user_guide_src/cilexer/dist/*
+user_guide_src/cilexer/pycilexer.egg-info/*
+/vendor/
+
 # IDE Files
 #-------------------------
 /nbproject/
@@ -19,19 +25,3 @@ application/logs/*
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
-
-
-
-**/config/development
-**/config/production
-*/logs/log-*.php
-*/logs/!index.html
-*/cache/*
-*/cache/!index.html
-*/logs/log-*.php
-!*/logs/index.html
-*/cache/*
-!*/cache/index.html
-!*/cache/.htaccess
-application/vendor
-application/composer.lock
