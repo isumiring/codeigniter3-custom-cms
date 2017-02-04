@@ -1,12 +1,18 @@
 .DS_Store
 
-application/cache/*
-!application/cache/index.html
-!application/cache/.htaccess
+frontend/cache/*
+backend/cache/*
+!frontend/cache/index.html
+!frontend/cache/.htaccess
+!backend/cache/index.html
+!backend/cache/.htaccess
 
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
+frontend/logs/*
+!frontend/logs/index.html
+!frontend/logs/.htaccess
+backend/logs/*
+!backend/logs/index.html
+!backend/logs/.htaccess
 
 user_guide_src/build/*
 user_guide_src/cilexer/build/*
